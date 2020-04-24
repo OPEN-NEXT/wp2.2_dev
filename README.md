@@ -11,3 +11,7 @@ Github API personal access token file:
 * A two-line file with any name, but placed besides `start.py`.
 * First line is username
 * Second line is the token string
+
+## License
+
+[GNU GPLv3 or later © 2020 Pen-Yuan Hsing](../LICENSE)
