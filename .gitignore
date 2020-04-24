@@ -3,6 +3,9 @@
 # Github personal API token
 token
 
+# Generated JSON files
+*.json
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
