@@ -3,9 +3,6 @@
 
 # Recursively find all forks of a Github repository
 
-import io
-import sys
-
 # Import `requests` library for API calls
 try:
     import requests
