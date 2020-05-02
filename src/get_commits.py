@@ -18,7 +18,7 @@ import json
 # Pull commits from a git repository
 ##########
 
-def get_commits(username, reponame):
+def get_commits(username, reponame, commits):
     """
     TODO: Add docstring. See: https://realpython.com/documenting-python-code/
     TODO: Implement recursion argument, default to False.
@@ -28,7 +28,8 @@ def get_commits(username, reponame):
 
     `username` : str, required
     `reponame` : str, required
-
+    `commits` : list, required
+ 
     Raises
     ======
 
@@ -38,9 +39,7 @@ def get_commits(username, reponame):
     """
     
     repo_URL = 'https://github.com/' + username + '/' + reponame
-    local_path = './__GrimoireDumps__/' + username + '-' + reponame
-    output_JSON = './__GrimoireDumps__/' + username + '-' + reponame + '.json'
-    
+    local_path = '../__DATA__/grimoire_dumps/' + username + '-' + reponame
     print('fetching info at ' + repo_URL)
     git = Git(repo_URL, local_path)
     
@@ -56,40 +55,27 @@ def get_commits(username, reponame):
     del c
     
     # Keep just commit `data`
-    commits = []
     for commit_data in repo_fetched:
         commits.append(commit_data["data"])
     
-    ##########
-    # Export commits to a JSON file
-    ##########
+ 
     
-    # convert commits to a JSON string for export
-    commits_JSON = json.dumps(commits, sort_keys=True, indent=4)
     
-    # save the commits to a file
-    with open(output_JSON, 'w') as f:
-        f.write(commits_JSON)
-    del f
-    
-    # this reloads the commits from the exported file
-    #with open(output_JSON, 'r') as f:
-    #    content = f.read()
-    #    commits = json.loads(content)
-    
+    # JB 2020 05 03 - BEGIN
     ##########
     # Get file chamges in each commit
     ##########
-    
-    file_changes = []
-    for commit in commits:
-        file_changes.append({
-            "Author": commit["Author"],
-            "CommitDate": commit["CommitDate"],
-            "commit": commit["commit"],
-            "files": commit["files"],
-            "no_files": len(commit["files"])
-            })
+    # commented out (not used but useful snippet for later)
+    # file_changes = []
+    # for commit in commits:
+    #     file_changes.append({
+    #         "Author": commit["Author"],
+    #         "CommitDate": commit["CommitDate"],
+    #         "commit": commit["commit"],
+    #         "files": commit["files"],
+    #         "no_files": len(commit["files"])
+    #        })
+    # JB 2020 05 03 - BEGIN
 
 
 

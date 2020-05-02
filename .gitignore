@@ -8,7 +8,7 @@ token
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
-__GrimoireDumps__/
+__DATA__/
 *.py[cod]
 *$py.class
 

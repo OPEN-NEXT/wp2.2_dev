@@ -78,17 +78,33 @@ def main():
 
     get_Github_forks(username=username, reponame=repo, forks=forks, auth=auth)
 
-    forks_json = json.dumps(forks, sort_keys=True, indent=4)
-
-    output_file = repo + ".json"
-
+    # JB 2020 05 03 - BEGIN
+    # Commented saving a json file with fork references
+    # we don't need a file anymore since we used directly the fork references to fetch commits
+    # forks_json = json.dumps(forks, sort_keys=True, indent=4)
+    # output_file = repo + ".json"
     # save the Perceval docs to a file
-    with open(output_file, 'w') as f:
-        f.write(forks_json)
+    # with open(output_file, 'w') as f:
+    #     f.write(forks_json)
+    # JB 2020 05 03 - END
 
     for fork in forks:
         print("retrieving commits in " + fork['user'] + "/" + fork['repo'])
-        get_commits(fork['user'], fork['repo'])
+        commits = list()
+        get_commits(username=fork['user'], reponame=fork['repo'], commits=commits)
+        output_JSON = '../__DATA__/JSON_commits/' + fork['user'] + '-' + fork['repo'] + '.json'
+        # convert commits to a JSON string for export
+        commits_JSON = json.dumps(commits, sort_keys=True, indent=4)
+        # save the commits to a file
+        with open(output_JSON, 'w') as f:
+           f.write(commits_JSON)
+        del f
+        
+        # this reloads the commits from the exported file
+        #with open(output_JSON, 'r') as f:
+        #    content = f.read()
+        #    commits = json.loads(content)
+
 
 if __name__ == "__main__":
     main()
