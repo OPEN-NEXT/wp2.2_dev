@@ -88,22 +88,28 @@ def main():
     #     f.write(forks_json)
     # JB 2020 05 03 - END
 
+    unique_commits = list() # compilation of all commits of all forks, without duplicates
     for fork in forks:
         print("retrieving commits in " + fork['user'] + "/" + fork['repo'])
-        commits = list()
+        commits = list() # all commits of this fork
         get_commits(username=fork['user'], reponame=fork['repo'], commits=commits)
-        output_JSON = '../__DATA__/JSON_commits/' + fork['user'] + '-' + fork['repo'] + '.json'
-        # convert commits to a JSON string for export
-        commits_JSON = json.dumps(commits, sort_keys=True, indent=4)
-        # save the commits to a file
-        with open(output_JSON, 'w') as f:
-           f.write(commits_JSON)
-        del f
-        
-        # this reloads the commits from the exported file
-        #with open(output_JSON, 'r') as f:
-        #    content = f.read()
-        #    commits = json.loads(content)
+        known_commits_shas = [x['commit'] for x in unique_commits]
+        for commit in commits:
+            if not commit['commit'] in known_commits_shas:
+                unique_commits.append(commit)
+    
+    output_JSON = '../__DATA__/JSON_commits/' + username + '-' + repo + '.json'
+    # convert commits to a JSON string for export
+    commits_JSON = json.dumps(unique_commits, sort_keys=True, indent=4)
+    # save the commits to a file
+    with open(output_JSON, 'w') as f:
+       f.write(commits_JSON)
+    del f
+    
+    # this reloads the commits from the exported file
+    #with open(output_JSON, 'r') as f:
+    #    content = f.read()
+    #    commits = json.loads(content)
 
 
 if __name__ == "__main__":

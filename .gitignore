@@ -2,6 +2,7 @@
 
 # Github personal API token
 token
+.token
 
 # Generated JSON files
 *.json

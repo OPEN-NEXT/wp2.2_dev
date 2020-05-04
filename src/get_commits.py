@@ -12,7 +12,6 @@
 ##########
 
 from perceval.backends.core.git import Git
-import json
 
 ##########
 # Pull commits from a git repository
