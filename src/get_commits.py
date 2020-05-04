@@ -49,9 +49,9 @@ def get_commits(username, reponame, commits):
     repo_fetched = [commit for commit in git.fetch()]
     
     # Print the contents of those commits
-    for c in repo_fetched:
-        print(c["data"])
-    del c
+    # for c in repo_fetched:
+    #     print(c["data"])
+    # del c
     
     # Keep just commit `data`
     for commit_data in repo_fetched:

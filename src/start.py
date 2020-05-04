@@ -3,20 +3,27 @@
 
 import sys
 import getopt
-
+import networkx as nx
 import json
 
+# import the necessary custom functions
+# TODO: is there a way to use indirection to avoid repeating the same code again and again?
 try:
     from get_Github_forks import get_Github_forks
 except:
     print("Need `get_Github_forks.py`")
     exit(1)
-
 try:
     from get_commits import get_commits
 except:
     print("Need `get_commits.py`")
     exit(1)
+try:
+    from build_branch import build_branch
+except:
+    print("Need `get_commits.py`")
+    exit(1)
+
 
 def main():
     # get command line arguments
@@ -88,29 +95,38 @@ def main():
     #     f.write(forks_json)
     # JB 2020 05 03 - END
 
-    unique_commits = list() # compilation of all commits of all forks, without duplicates
+    known_commits = list() # compilation of all commits of all forks, without duplicates
     for fork in forks:
         print("retrieving commits in " + fork['user'] + "/" + fork['repo'])
         commits = list() # all commits of this fork
         get_commits(username=fork['user'], reponame=fork['repo'], commits=commits)
-        known_commits_shas = [x['commit'] for x in unique_commits]
+        known_commits_shas = [x['commit'] for x in known_commits]
         for commit in commits:
             if not commit['commit'] in known_commits_shas:
-                unique_commits.append(commit)
+                known_commits.append(commit)
     
     output_JSON = '../__DATA__/JSON_commits/' + username + '-' + repo + '.json'
     # convert commits to a JSON string for export
-    commits_JSON = json.dumps(unique_commits, sort_keys=True, indent=4)
+    commits_JSON = json.dumps(known_commits, sort_keys=True, indent=4)
     # save the commits to a file
     with open(output_JSON, 'w') as f:
        f.write(commits_JSON)
     del f
     
+    # JB 2020 05 03 - BEGIN
+    # JB comment: is this to check whether the export was successful? Needed?
     # this reloads the commits from the exported file
     #with open(output_JSON, 'r') as f:
     #    content = f.read()
     #    commits = json.loads(content)
+    # JB 2020 05 03 - END
 
-
+    # recreate the 'network' view in GitHub (repo > insights > network)
+    network = nx.DiGraph() # netwrok is supposed to be a DAG (directed acyclic graph)
+    build_branch(known_commits, network)
+            
+    output_GML = '../__DATA__/commit_networks/' + username + '-' + repo + '.gml'
+    nx.write_gml(network, output_GML)
+    
 if __name__ == "__main__":
     main()
