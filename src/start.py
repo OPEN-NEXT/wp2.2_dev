@@ -19,7 +19,7 @@ except:
     print("Need `get_commits.py`")
     exit(1)
 try:
-    from build_branch import build_branch
+    from build_commit_history import build_commit_history
 except:
     print("Need `get_commits.py`")
     exit(1)
@@ -122,11 +122,11 @@ def main():
     # JB 2020 05 03 - END
 
     # recreate the 'network' view in GitHub (repo > insights > network)
-    network = nx.DiGraph() # netwrok is supposed to be a DAG (directed acyclic graph)
-    build_branch(known_commits, network)
+    commit_history = nx.DiGraph() # netwrok is supposed to be a DAG (directed acyclic graph)
+    build_commit_history(known_commits, commit_history)
             
-    output_GML = '../__DATA__/commit_networks/' + username + '-' + repo + '.gml'
-    nx.write_gml(network, output_GML)
+    output_GML = '../__DATA__/commit_histories/' + username + '-' + repo + '.gml'
+    nx.write_gml(commit_history, output_GML)
     
 if __name__ == "__main__":
     main()
