@@ -18,11 +18,11 @@ try:
 except:
     print("Need `get_commits.py`")
     exit(1)
-try:
-    from build_commit_history import build_commit_history
-except:
-    print("Need `get_commits.py`")
-    exit(1)
+#try:
+#    from build_commit_history import build_commit_history
+#except:
+#    print("Need `get_commits.py`")
+#    exit(1)
 
 
 def main():
@@ -84,6 +84,8 @@ def main():
                 'parent_repo': repo})
 
     get_Github_forks(username=username, reponame=repo, forks=forks, auth=auth)
+
+    print("There are " + str(forks.__len__()) + " forks of " + username + "/" + repo)
 
     # JB 2020 05 03 - BEGIN
     # Commented saving a json file with fork references
