@@ -7,6 +7,9 @@ token
 # Generated JSON files
 *.json
 
+# Visual Studio Code files
+launch.json
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 __DATA__/
