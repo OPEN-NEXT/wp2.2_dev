@@ -125,11 +125,11 @@ def main():
     # JB 2020 05 03 - END
 
     # recreate the 'network' view in GitHub (repo > insights > network)
-    commit_history = nx.DiGraph() # netwrok is supposed to be a DAG (directed acyclic graph)
-    build_commit_history(known_commits, commit_history)
-            
-    output_GML = '../__DATA__/commit_histories/' + username + '-' + repo + '.gml'
-    nx.write_gml(commit_history, output_GML)
+    #commit_history = nx.DiGraph() # netwrok is supposed to be a DAG (directed acyclic graph)
+    #build_commit_history(known_commits, commit_history)
+    #        
+    #output_GML = '../__DATA__/commit_histories/' + username + '-' + repo + '.gml'
+    #nx.write_gml(commit_history, output_GML)
     
 if __name__ == "__main__":
     main()
