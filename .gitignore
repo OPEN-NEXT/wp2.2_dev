@@ -1,5 +1,8 @@
 # files for git to ignore
 
+# LibreOffice lock files
+.~lock*
+
 # Github personal API token
 token
 .token
