@@ -1,13 +1,16 @@
 PRODUCT,HOME PAGE,PRODUCT CATEGORY,PRODUCT DESCRIPTION,AFFILIATED GITHUB REPOSITORIES
+24-bit stero audio DAC for Raspberry Pi,https://github.com/dilshan/max2-audio-dac,,audio digital-to-analog (DAC) converter,dilshan/max2-audio-dac
 3DMIN's PushPull,http://www.3dmin.org/research/open-development-and-design/pushpull/,Musical Instruments and Games and Toys and Arts and Crafts and Educational Equipment and Materials and Accessories and Supplies,musical instrument,3DMIN/pushpull-kicad
 3D-printable micropipette,http://biorxiv.org/content/early/2017/02/20/109231,Laboratory and Measuring and Observing and Testing Equipment,Micropipette,Biological-Microsystems-Laboratory/micropipette
 3d-printed-oxygen-control-insert,https://github.com/Biological-Microsystems-Laboratory/3d-printed-oxygen-control-insert,Laboratory and Measuring and Observing and Testing Equipment,microfluidic device,Biological-Microsystems-Laboratory/3d-printed-oxygen-control-insert
+4-port high power USB 2.0 hub,https://github.com/dilshan/usb2-power-hub,,USB hub,dilshan/usb2-power-hub
 Aeroquad,http://aeroquad.com/content.php,Musical Instruments and Games and Toys and Arts and Crafts and Educational Equipment and Materials and Accessories and Supplies,quadcopter,AeroQuad/FlightControlBoards
 AeroSeeD micro-eolienne,https://github.com/aeroseed/urbolienne,Power Generation and Distribution Machinery and Accessories,wind turbine,aeroseed/urbolienne
 AFRo,http://www.remap.org.uk/,Medical Equipment and Accessories and Supplies,Assisted Feeding Robot,Axford/AFRo;Axford/AFRo2
 AguaClara,http://www.aguaclarallc.com/,Cleaning Equipment and Supplies,water treatment plant,
 Ai.Frame Apollo,http://aiframe.me/product/107?language=en,Musical Instruments and Games and Toys and Arts and Crafts and Educational Equipment and Materials and Accessories and Supplies,humanoid robot,
 Air Quality Egg,http://airqualityegg.com/,Laboratory and Measuring and Observing and Testing Equipment,air measuring device,
+Airpup,https://www.crowdsupply.com/head-full-of-air/airpup,,kite-balloon aerial sensing platform,mathewlippincott/airpup-balloon; mathewlippincott/airpup.net
 Aker wormhouse,https://www.akerkits.com/,Farming and Fishing and Forestry and Wildlife Machinery and Accessories,wormhouse kit for urban gardening,AKERKits/GrowSquare;AKERKits/Husky-Planter-Large;AKERKits/Husky-Planter-Medium;AKERKits/Husky-Planter-Small;AKERKits/WormHaus;AKERKits/GroWall;AKERKits/GrowGrid;AKERKits/EggHaus;AKERKits/V-Planter-Small;AKERKits/V-Planter-Medium;AKERKits/V-Planter-Large;AKERKits/Boxy-Planter-Large;AKERKits/Boxy-Planter-Medium;AKERKits/Boxy-Planter-Small;AKERKits/Slender-Planter;AKERKits/SideSquare;AKERKits/Hexagon-Planter;AKERKits/CornerSquare
 Andre cars,http://www.pureengineering.com/blog/andrecars,Commercial and Military and Private Vehicles and their Accessories and Components,car,
 Apertus Axiom Alpha,https://lab.apertus.org/,Printing and Photographic and Audio and Visual Equipment and Supplies,camera,apertus-open-source-cinema/alpha-hardware
@@ -27,15 +30,19 @@ BCN3D Sigma,https://www.bcn3dtechnologies.com/en/sigma-getting-started/,Industri
 Bicitractor,http://www.instructables.com/id/BICITRACTOR-B300-POC21-Version/,Farming and Fishing and Forestry and Wildlife Machinery and Accessories,pedal-powered tractor,
 Bicycle mill,http://www.mayapedal.org/machines.en,Industrial Manufacturing and Processing Machinery and Accessories,pedal-powered milling machine,
 BioNico,https://www.wevolver.com/wevolver.staff/bionico/main/description/,Medical Equipment and Accessories and Supplies,prosthetic hand,
+Biropettes,https://open-labware.net/projects/biropettes/,,micropipette,
 blink1,https://blink1.thingm.com/,Office Equipment and Accessories and Supplies,USB RGB LED notification light,todbot/blink1;todbot/BlinkM0;todbot/blink1-adapters;todbot/blinkm_mk2;todbot/CtrlM;todbot/FreeM;todbot/blinkm_xbee_adapter
 Bloombot,http://bloombot.wikidot.com/,Farming and Fishing and Forestry and Wildlife Machinery and Accessories,hydroponic gardening system,
+BrachioGraph,https://www.brachiograph.art/,,pen plotter,
 "c,mm,n","http://wiki.p2pfoundation.net/C,mm,n",Commercial and Military and Private Vehicles and their Accessories and Components,car,
 Carla Cargo,http://www.carlacargo.de/de/,Commercial and Military and Private Vehicles and their Accessories and Components,cargo bikes,
 CNC1,http://www.oomlout.com/a/products/cnc1/,Industrial Manufacturing and Processing Machinery and Accessories,desktop CNC router,
 Coffee Detonator,https://learn.adafruit.com/coffee-detonator/,Domestic Appliances and Supplies and Consumer Electronic Products,coffee grinder,
+ColorHug,https://hughski.com/,,colorimeter,
 CubeFactory2,https://cubefactory.wordpress.com/,Industrial Manufacturing and Processing Machinery and Accessories,Autonomous and portable mini factory,CubeFactory2/cubefactory
 Cyclone PCB Factory,http://reprap.org/wiki/Cyclone_PCB_Factory,Industrial Manufacturing and Processing Machinery and Accessories,CNC mill,CarlosGS/Cyclone-PCB-Factory;robsbots/Cyclone_Pcb
 Derouleuse a plastique,http://www.latelierpaysan.org/Derouleuse-a-plastiques,Farming and Fishing and Forestry and Wildlife Machinery and Accessories,Mulching film dispenser,
+DIY Particle Detector,https://zenodo.org/record/3361756,,ionising radiation spectrometer,ozel/DIY_particle_detector
 DIYLILCNC,http://diylilcnc.org/,Industrial Manufacturing and Processing Machinery and Accessories,CNC mill,
 Do-It-Yourself SLS Printer,https://www.indiegogo.com/projects/you-sls-the-first-desktop-open-source-lasers,Industrial Manufacturing and Processing Machinery and Accessories,Selective laser sintering machine,
 Double Pendulum,https://imaginary.org/hands-on/double-pendulum,Politics and Civic Affairs Services,museum exhibits,
@@ -51,6 +58,7 @@ Eliodomestico,http://www.gabrielediamanti.com/projects/eliodomestico,Domestic Ap
 elphel Eyesis4Pi 393,http://www3.elphel.com/eyesis4pi-393,Printing and Photographic and Audio and Visual Equipment and Supplies,Stereophotogrammetric camera,
 e-puck,http://www.e-puck.org,Musical Instruments and Games and Toys and Arts and Crafts and Educational Equipment and Materials and Accessories and Supplies,educational robot,
 EQ-1 Headphones,https://www.thingiverse.com/thing:674179,Information Technology Broadcasting and Telecommunications,headphones,
+eVOLVER,https://www.fynchbio.com/,,biology experiment wetware,FYNCH-BIO/dpu; FYNCH-BIO/hardware; FYNCH-BIO/evolver-electron; FYNCH-BIO/evolver; FYNCH-BIO/evolver-arduino
 Fab@Home,https://en.wikipedia.org/wiki/Fab@Home,Industrial Manufacturing and Processing Machinery and Accessories,3D printer,karlgluck/fabathome
 FABOOL Laser CO2,https://www.wevolver.com/yoshiya.arii/fabool-laser-co2/fe84b74-main/description/,Industrial Manufacturing and Processing Machinery and Accessories,laser cutter,
 Faraday Motion Hyperboard,http://blog.faradaymotion.com/hyperboard/,sports and Recreational Equipment and Supplies and Accessories,skateboard,faraday-motion/faradaymotion-hyperboard-3dmodels
@@ -63,6 +71,7 @@ Film-Retter Inline cleaner,https://www.super-8.com/film-reiniger.html,Printing a
 FlexBot,http://www.flexbot.cc/,Musical Instruments and Games and Toys and Arts and Crafts and Educational Equipment and Materials and Accessories and Supplies,Quadcopter,HexAirbot/flexbot-design;HexAirbot/HexNanoMWC_HEX;HexAirbot/HexNanoMWC_QUAD;HexAirbot/FlexBLE;HexAirbot/Board
 FLOAT Beijing,https://www.kickstarter.com/projects/replaymy/smart-air-kites-float-beijing,Laboratory and Measuring and Observing and Testing Equipment,air quality measuring kite,
 FluoPi,https://www.biomaker.org/projects/open-source-autonomous-imaging-station,Laboratory and Measuring and Observing and Testing Equipment,Fluorescence Imaging Station,SynBioUC/FluoPi
+FlyPi,https://open-labware.net/projects/flypi/,,microscopy platform,amchagas/Flypi
 bGeigie,https://github.com/Safecast/General/wiki/Safecast-Devices,Laboratory and Measuring and Observing and Testing Equipment,sensor device for environmental parameters,Safecast/bGeigie3;Safecast/bGeigieNano-wifi;Safecast/bGeigieNanoKit
 GEK Gasifier,http://www.allpowerlabs.com/,Power Generation and Distribution Machinery and Accessories,gasifier,
 Gesture Keyboard,https://www.seeed.cc/Control Your Music Players with Hand Gestures-p-2024.html,Information Technology Broadcasting and Telecommunications,gesture control device,
@@ -72,12 +81,14 @@ HACKberry,http://exiii-hackberry.com/,Medical Equipment and Accessories and Supp
 handibot,https://handibot.com/,Industrial Manufacturing and Processing Machinery and Accessories,portable CNC tool,Handibot/handibot-hardware
 Hard Drive Centrifuge,http://www.gaudi.ch/GaudiLabs/?page_id=328,Laboratory and Measuring and Observing and Testing Equipment,centrifuge as part of generic lab equipment,
 Helium,https://www.crowdsupply.com/blueshift/helium,Information Technology Broadcasting and Telecommunications,portable speaker,blueshiftPDX/Helium
+Henry Audio USB DAC 128 Mk 3,https://www.henryaudio.com/,,audio digital-to-analog (DAC) converter,
 Hexayurt,http://hexayurt.com/,Politics and Civic Affairs Services,disaster relief shelter,
 Hexy,http://arcbotics.com/products/hexy/,Musical Instruments and Games and Toys and Arts and Crafts and Educational Equipment and Materials and Accessories and Supplies,hexapod robot,ArcBotics/Hexy
 HIEBO 4 lamp,http://mifactori.de/hiebo-4/,Domestic Appliances and Supplies and Consumer Electronic Products,lamp,
 Hovalin,http://www.hovalin.com/,Musical Instruments and Games and Toys and Arts and Crafts and Educational Equipment and Materials and Accessories and Supplies,violin,
 HROS Humanoid Endoskeleton,https://interbotix.com/HR-OS1,Musical Instruments and Games and Toys and Arts and Crafts and Educational Equipment and Materials and Accessories and Supplies,Humanoid robot,Interbotix/ArbotixPro;Interbotix/HROS1-3D-Models;Interbotix/ArbotixM-Hardware;Interbotix/HROS5-3D-Models
 Hughski ColorHug2,http://www.hughski.com/,Laboratory and Measuring and Observing and Testing Equipment,Display colorimeter,hughski/colorhug1-hardware;hughski/colorhug-plus-hardware;hughski/colorhug-plus-model;hughski/colorhug2-hardware;hughski/colorhug-als-hardware
+Hyperspectral Scanner,https://open-labware.net/projects/hyperspectral-scanner/,,hyperspectral scanner,BadenLab/3Dprinting_and_electronics
 iCub,http://www.icub.org/,Laboratory and Measuring and Observing and Testing Equipment,humanoid robot,
 InMoov,http://inmoov.fr/,Laboratory and Measuring and Observing and Testing Equipment,humanoid robot,
 KidCareTV,https://bitbucket.org/emone_th/kidcaretv/wiki/Home,Domestic Appliances and Supplies and Consumer Electronic Products,Video switch for TV,
@@ -88,6 +99,7 @@ Laboratory Sample Rotator,http://www.sciencedirect.com/science/article/pii/S2468
 Lasersaur,http://www.lasersaur.com/,Industrial Manufacturing and Processing Machinery and Accessories,laser cutter,nortd/lasersaur
 L'atelier s'adapte / table a langer,http://lateliersadapte.org/tag/table-a-langer/,Medical Equipment and Accessories and Supplies,changing table,
 Le Petit COOL,http://lacool.co/,Farming and Fishing and Forestry and Wildlife Machinery and Accessories,personal smart greenhouse,LaCoolCo/LePetitCOOL
+LED Zappelin,https://github.com/BadenLab/LED-Zappelin,,visual and optogenetics stimulation LED controller,BadenLab/LED-Zappelin
 LEGO(R) Bricks Michelson Interferometer,http://www.myphotonics.eu/,Laboratory and Measuring and Observing and Testing Equipment,optomechanic workbenches,
 littleRP,http://www.littlerp.com/,Industrial Manufacturing and Processing Machinery and Accessories,3D printer,goopyplastic/littlerp;goopyplastic/littlerp2;goopyplastic/tslot-tantillus;goopyplastic/tslot-i3-y-axis
 LiveWire,https://www.wevolver.com/miebi.sikoki/livewire/main/description,Industrial Manufacturing and Processing Machinery and Accessories,CNC wire bender,
@@ -108,10 +120,12 @@ Micromanipulator,https://open-labware.net/projects/micromanipulator/,Laboratory 
 Microspot,https://github.com/gvJaime/microspot,Medical Equipment and Accessories and Supplies, portable automated microscope ,gvJaime/microspot
 mobilECG,http://mobilecg.hu/,Medical Equipment and Accessories and Supplies,mobile electrocardiography device,openmeddev/MobilECG-II
 Model T (Yale OpenHand Project),https://www.eng.yale.edu/grablab/openhand/,Medical Equipment and Accessories and Supplies,prothestic hand,grablab/openhand-hardware
+Mouse,https://github.com/biomurph/Mouse,,mouse,biomurph/Mouse
 Multimachine,http://opensourcemachine.org/,Industrial Manufacturing and Processing Machinery and Accessories,machine tool,
 Multiplo,https://github.com/multiplo,Musical Instruments and Games and Toys and Arts and Crafts and Educational Equipment and Materials and Accessories and Supplies,robotics building system,multiplo/mechanics;multiplo/electronics
 Mutable Instruments - Grid,https://mutable-instruments.net/modules/grids/,Musical Instruments and Games and Toys and Arts and Crafts and Educational Equipment and Materials and Accessories and Supplies,Topographic drum sequencer,pichenettes/eurorack
 Mycroft Mark 1,https://mycroft.ai/,Information Technology Broadcasting and Telecommunications,AI assistant,MycroftAI/hardware-mycroft-mark-1
+NeuG,https://www.fsij.org/gnuk/neug_version1_0_7.html,,true random number generator,
 Neurobytes,http://www.neurotinker.com/neurobytes/,Musical Instruments and Games and Toys and Arts and Crafts and Educational Equipment and Materials and Accessories and Supplies,electronic neurons,zakqwy/NeuroBytes;zakqwy/NeuroBytes-v04
 Neuroon,https://neuroonopen.com/,Domestic Appliances and Supplies and Consumer Electronic Products,Electronic sleeping mask,inteliclinic/NeuroonOpenHardwareDocumentation
 ng.uavp,http://ng.uavp.ch/FrontPage,Musical Instruments and Games and Toys and Arts and Crafts and Educational Equipment and Materials and Accessories and Supplies,quadcopter,
@@ -129,14 +143,19 @@ Open Gigabot,https://re3d.org/gigabot/,Industrial Manufacturing and Processing M
 Open source beehives,http://opensourcebeehives.net/,Farming and Fishing and Forestry and Wildlife Machinery and Accessories,beehive,
 Open Source metal 3D printer,http://www.appropedia.org/Open-source_metal_3-D_printer,Industrial Manufacturing and Processing Machinery and Accessories,3D printer,
 open source roaster,https://caffedolcealchemia.com/open-source/,Domestic Appliances and Supplies and Consumer Electronic Products,coffee roaster,
+Open Source Seeds,https://www.opensourceseeds.org/,,seeds,
 Open Spin Microscopy,https://sites.google.com/site/openspinmicroscopy/,Laboratory and Measuring and Observing and Testing Equipment,SPIM/DSLM/OPT microscopes platform,
 Open structures' OpenCargoBike,http://beta.openstructures.net/pages/14/structures/3,Commercial and Military and Private Vehicles and their Accessories and Components,cargo bike,
 Open wheels,http://www.openwheels.cc/,Commercial and Military and Private Vehicles and their Accessories and Components,segway,
 Open.Theremin,http://www.gaudi.ch/OpenTheremin/,Musical Instruments and Games and Toys and Arts and Crafts and Educational Equipment and Materials and Accessories and Supplies,Theremin,GaudiLabs/OpenTheremin_V3_Shield;GaudiLabs/OpenTheremin_Shield
+OpenAPS,https://openaps.org/,,artificial pancreas system,
 OpenBCI,http://openbci.com,Information Technology Broadcasting and Telecommunications,Brain-computer interface platform,OpenBCI/Ganglion_Hardware_Design_Files;OpenBCI/V3_Hardware_Design_Files;OpenBCI/OpenBCI-V2hardware-DEPRECATED;OpenBCI/Ultracortex;OpenBCI/3D-printed-electrode
 OpenBikeWorks' HubJohn,http://openbikeworks.blogspot.de/p/what.html,Commercial and Military and Private Vehicles and their Accessories and Components,Cargo bike,
 OpenBugFarm,http://www.openbugfarm.com/,Farming and Fishing and Forestry and Wildlife Machinery and Accessories,bug farm kit,TinyFarms/OpenBugFarm
+OpenCase,https://github.com/berserkwarwolf/OpenCase,,computer case,berserkwarwolf/OpenCase
+OpenCTD,https://hackaday.io/project/12564-oceanography-for-everyone-the-openctd,,"water conductivity, temperature, and depth (CTD) sensor",OceanographyforEveryone/OpenCTD
 OpenDesk's Lean Desk,https://www.opendesk.cc/,Furniture and Furnishings,table,
+OpenDrop,https://github.com/Wild-Spy/OpenDrop,,Animal-borne bio-logging sensor,Wild-Spy/OpenDrop
 OpenEV Charging Station,https://www.openevse.com/,Commercial and Military and Private Vehicles and their Accessories and Components,Electric Vehicle Charging Station Controller,
 OpenEVSE,https://store.openevse.com/,Commercial and Military and Private Vehicles and their Accessories and Components,Electric vehicle charging station,OpenEVSE/Enclosures;OpenEVSE/OpenEVSE_EV_Simulator;OpenEVSE/DIY_OpenEVSE_PLUS;OpenEVSE/OpenEVSE_PLUS;OpenEVSE/OpenEVSE_LCD;OpenEVSE/OpenEVSE_LED
 OpenFeeder,https://openfeeder.github.io/,Live Plant and Animal Material and Accessories and Supplies,bird automatic feeder,OpenFeeder/mechanics;OpenFeeder/electronics
@@ -149,6 +168,7 @@ OpenPipe,http://openpipe.cc/,Musical Instruments and Games and Toys and Arts and
 OpenPnP-OpenBuilds,http://openpnp.org/,Industrial Manufacturing and Processing Machinery and Accessories,SMT pick and place machine,openpnp/openpnp-openbuilds
 OpenQCM,http://openqcm.com/technology,Laboratory and Measuring and Observing and Testing Equipment,Quartz Crystal Microbalance,
 OpenROV,http://www.openrov.com/,Musical Instruments and Games and Toys and Arts and Crafts and Educational Equipment and Materials and Accessories and Supplies,submarine robot,OpenROV/openrov-hardware;OpenROV/openrov-electronics
+Openspritzer,https://open-labware.net/projects/openspritzer/,,picospritzer liquid delivery solution,
 OPenT,https://sites.google.com/site/openspinmicroscopy/home/opt,Medical Equipment and Accessories and Supplies,optical tomography device,
 Opentrons,https://opentrons.com/,Laboratory and Measuring and Observing and Testing Equipment,pipetting robot,Opentrons/otone_hardware;Opentrons/opentrons-modules;Opentrons/Smoothieboard
 OpenWaterbike,http://www.openwaterbike.com/,Sports and Recreational Equipment and Supplies and Accessories,pedal boat,
@@ -161,15 +181,20 @@ OSVR-HDK2,http://www.osvr.org/hdk2.html,Information Technology Broadcasting and 
 OSWash,http://www.oswash.org/,Domestic Appliances and Supplies and Consumer Electronic Products,washing machine,
 Pandora,http://pandorawiki.org/Main_Page,Musical Instruments and Games and Toys and Arts and Crafts and Educational Equipment and Materials and Accessories and Supplies,game console,
 Parabolic solar hot water heater,http://www.appropedia.org/Anisa_Foundation_parabolic_solar_hot_water_heater,Distribution and Conditioning Systems and Equipment and Components,hot water heater,
+PhoneScope,https://open-labware.net/projects/phone-scope/,,pocket microscope with mobile phone,
 Photometric System for Enzymatic Nitrate Quantification,https://www.appropedia.org/Open-Source_Photometric_System_for_Enzymatic_Nitrate_Quantification,Laboratory and Measuring and Observing and Testing Equipment,enzymatic nitrate quantification system,
 piccolo,http://piccolo.cc/,Industrial Manufacturing and Processing Machinery and Accessories,pocket-sized CNC-bot,DiatomStudio/Piccolo
 Pico Cross Flow,http://www.picocrossflow.com/,Power Generation and Distribution Machinery and Accessories,cross flow turbine,
 Pigott wind turbine,http://scoraigwind.co.uk/,Power Generation and Distribution Machinery and Accessories,Wind Turbine,
 PiKon,https://pikonic.com/,Printing and Photographic and Audio and Visual Equipment and Supplies,Telescope,
 Pisteur solaire - Entropie,https://www.asso-entropie.fr/fr/,Domestic Appliances and Supplies and Consumer Electronic Products,solar tracker,
+Pixy,https://pixycam.com/pixy-cmucam5,,camera,
+Pixy2,https://pixycam.com/pixy2/,,camera,
 Plan B,https://ytec3d.com/plan-b/,Industrial Manufacturing and Processing Machinery and Accessories,3D printer,
 plants & machines,http://www.plantsandmachines.de/,Farming and Fishing and Forestry and Wildlife Machinery and Accessories,robotic indoor garden,
 Plen,https://plen.jp/,Musical Instruments and Games and Toys and Arts and Crafts and Educational Equipment and Materials and Accessories and Supplies,humanoid robot,plenprojectcompany/PLEN2;plenprojectcompany/plen-RS485Board;plenprojectcompany/plen-EdisonBoard;plenprojectcompany/plen-3DModel_Fusion360;plenprojectcompany/plen-ControlBoard;plenprojectcompany/plen-HeadBoard
+Ploopy,https://github.com/ploopyco/mouse,,trackball mouse,ploopyco/mouse
+Pocket Science Lab,https://pslab.io/,,sensor device,fossasia/pslab-hardware; fossasia/pslab-firmware; fossasia/pslab-android; fossasia/pslab-desktop; fossasia/pslab-case
 Pointcast,https://github.com/Safecast/General/wiki/Safecast-Devices,Laboratory and Measuring and Observing and Testing Equipment,sensor device for environmental parameters,Safecast/Pointcast
 POM,https://www.osvehicle.com/renaultpomsignup/,Commercial and Military and Private Vehicles and their Accessories and Components,mass vehicle,
 Poppy,https://www.poppy-project.org/,Laboratory and Measuring and Observing and Testing Equipment,humanoid robot,poppy-project/poppy-humanoid;poppy-project/poppy-ergo-jr;poppy-project/poppy-ergo-starter;poppy-project/poppy-torso;poppy-project/pixl;poppy-project/Robotis-library;poppy-project/Poppy-basic-arms;poppy-project/Poppy-minimal-head-design;poppy-project/poppy-ergo;poppy-project/Poppy-lightweight-biped-legs;poppy-project/robot-support-toolbox;poppy-project/poppy-soft-starfish;poppy-project/poppy-soft-connector;poppy-project/poppy-6dof-right-arm;poppy-project/poppy-dragster-mini;poppy-project/poppy-4wheels-mini;poppy-project/poppy-multipod-mini;poppy-project/poppy-snake-mini;poppy-project/Poppy-multiarticulated-torso
@@ -183,6 +208,7 @@ Raidlight Responsiv 3L,https://github.com/Raidlight/Projet-Pilote-Open-Source,sp
 Raptor Hand,https://e-nable.fr/,Medical Equipment and Accessories and Supplies,hand prosthetics,
 Rasa,http://www.riversimple.com/the-design-of-the-rasa/,Commercial and Military and Private Vehicles and their Accessories and Components,car,
 rBot,https://rbotcnc.wordpress.com/,Industrial Manufacturing and Processing Machinery and Accessories,3D printer,
+Real-time clock based automatic LED lamp,https://github.com/dilshan/rtc-lamp,,LED lamp,dilshan/rtc-lamp
 Recyclebot,http://www.appropedia.org/Recyclebot_v2.3,Industrial Manufacturing and Processing Machinery and Accessories,waste plastic recycling machines,
 RepRap Mendel,http://reprap.org/wiki/Mendel,Industrial Manufacturing and Processing Machinery and Accessories,3D printer,
 Retr3D,http://maaphoo.github.io/Retr3d/,industrial Manufacturing and Processing Machinery and Accessories,3D printer made of retired materials,Maaphoo/Retr3d
@@ -198,6 +224,8 @@ Shybo,http://www.sciencedirect.com/science/article/pii/S246806721730038X,Musical
 Solarcast,https://blog.safecast.org/2017/04/introducing-solarcast/,Laboratory and Measuring and Observing and Testing Equipment,sensor device for environmental parameters,Safecast/Solarcast;Safecast/SolarcastNano;Safecast/Safecast-Air
 SolarFlower,http://solarflower.org/,Domestic Appliances and Supplies and Consumer Electronic Products,solar energy collector,
 Solar-OSE,https://www.instructables.com/id/Solar-OSE-Solar-concentrator-for-steam-generation/,Domestic Appliances and Supplies and Consumer Electronic Products,solar concentrator,osefrance/SolarConcentrator
+Spikeling,https://open-labware.net/projects/spikeling/,,spiking neuron,BadenLab/Spikeling
+StereoPi,https://stereopi.com/,,camera,realizator/stereopi-kicad-schematic; realizator/stereopi-fisheye-robot; realizator/stereopi-tutorial; realizator/stereopi-cpp-tutorial; realizator/StereoPi-ROS-depth-map-test
 Sunzilla,http://www.sunzilla.de/,Power Generation and Distribution Machinery and Accessories,solar generator,
 Syringe Pump,http://www.appropedia.org/Open-source_syringe_pump,Laboratory and Measuring and Observing and Testing Equipment,syringe pump,
 Tantillus,http://tantillus.x10host.com/OldHome.html,Industrial Manufacturing and Processing Machinery and Accessories,portable 3D printer,Intrinsically-Sublime/Tantillus
@@ -211,11 +239,14 @@ Thymio,https://www.thymio.org/home-en:home,Musical Instruments and Games and Toy
 Tinker bike,http://www.jacklenniedesigner.com/tinker,Commercial and Military and Private Vehicles and their Accessories and Components,motorbike,
 Tiny boy,http://www.tinyboy.net/,Industrial Manufacturing and Processing Machinery and Accessories,3D printer,HKCOTA/TinyBoy;HKCOTA/TinyBoy-2
 Toolbox for Opto-Mechanical Components,http://journals.plos.org/plosone/article?id=10.1371/journal.pone.0169832,Laboratory and Measuring and Observing and Testing Equipment,opto-mechanical component,
+Transatomic,http://www.transatomicpower.com/open-source/,,nuclear reactor,
 Turbidimeter,https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4029670/,Laboratory and Measuring and Observing and Testing Equipment,water quality measuring device,wash4all/open-turbidimeter-project
+Turris,https://project.turris.cz/en/hardware-documentation,,wireless router,
 Two-Stroke Diesel Engine,https://hackaday.io/project/10670-open-source-two-stroke-diesel-engine,commercial and Military and Private Vehicles and their Accessories and Components,diesel engine,
 Tympan version A,https://tympan.org/,Medical Equipment and Accessories and Supplies,Design tools for the development of hearing aids,Tympan/Tympan_Rev_C_Hardware;Tympan/Tympan-rev-A-Hardware-OBSOLETE
 uArm Metal,http://ufactory.cc/,Industrial Manufacturing and Processing Machinery and Accessories,desktop robotic arm,
 Ultimaker 2,https://ultimaker.com/,Industrial Manufacturing and Processing Machinery and Accessories,3D printer,Ultimaker/Ultimaker2;Ultimaker/Ultimaker3;Ultimaker/Ultimaker3Extended;Ultimaker/Ultimaker2Plus;Ultimaker/Ultimaker2Go;Ultimaker/Ultimaker2ExtendedPlus;Ultimaker/Ultimaker2Extended;Ultimaker/HeatedBedUpgrade;Ultimaker/Ultimaker-Original-Plus;Ultimaker/UltimakerOriginal
+Ultimate Hacking Keyboard,https://ultimatehackingkeyboard.com/,,mechanical keyboard,UltimateHackingKeyboard/agent; UltimateHackingKeyboard/firmware; UltimateHackingKeyboard/KSDK_2.0_MK22FN512xxx12; UltimateHackingKeyboard/KSDK_2.0_MKL03Z8xxx4; UltimateHackingKeyboard/bootloader;  UltimateHackingKeyboard/flasher; UltimateHackingKeyboard/ugl-kicad-lib; UltimateHackingKeyboard/electronics; UltimateHackingKeyboard/datasheets; UltimateHackingKeyboard/MCUXpresso_SDK_2.2_MKL03Z32xxx4; UltimateHackingKeyboard/MCUXpresso_SDK_2.2_MK22FN512xxx12
 Ultrascope,http://www.openspaceagency.com/ultrascope/,Printing and Photographic and Audio and Visual Equipment and Supplies,telescope,
 Underwater Glider,https://www.wevolver.com/alex.williams/project/0d0cba1-main/description/,Commercial and Military and Private Vehicles and their Accessories and Components,autonomous underwater vehicle,
 UPSat,https://upsat.gr/,Commercial and Military and Private Vehicles and their Accessories and Components,satellite,librespacefoundation/upsat-comms-hardware;librespacefoundation/upsat-structural;librespacefoundation/upsat-obc-hardware;librespacefoundation/HeaterBoard;librespacefoundation/UPSatDeploymentBoard;librespacefoundation/upsat-eps-hardware;librespacefoundation/upsat-su-breakout;librespacefoundation/upsat-adcs-hardware;librespacefoundation/four-to-one-balun;librespacefoundation/g5500-ardushield;librespacefoundation/lsf-kicad-libs
