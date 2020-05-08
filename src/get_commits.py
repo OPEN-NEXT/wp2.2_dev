@@ -1,7 +1,6 @@
-# [license info here]
-
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 # Get commits in a git repository.
 # When two files are edited within the same commit, that counts as a connection
@@ -12,6 +11,7 @@
 ##########
 
 from perceval.backends.core.git import Git
+from perceval.errors import RepositoryError # To handle errors with repositories
 
 ##########
 # Pull commits from a git repository
@@ -46,16 +46,21 @@ def get_commits(username, reponame, commits):
     # It returns a list of dictionaries, where the `data` key in each
     # dictionary contains the actual metadata for each commit.
     # Other stuff are metadata about the perceval `fetch()` operation.
-    repo_fetched = [commit for commit in git.fetch()]
+    try:
+        repo_fetched = [commit for commit in git.fetch()]
+        # Keep just commit `data`
+        for commit_data in repo_fetched:
+            commits.append(commit_data["data"])
+    except RepositoryError as repo_error:
+        print("Error with this repository...")
+        pass
     
     # Print the contents of those commits
     # for c in repo_fetched:
     #     print(c["data"])
     # del c
     
-    # Keep just commit `data`
-    for commit_data in repo_fetched:
-        commits.append(commit_data["data"])
+
     
  
     

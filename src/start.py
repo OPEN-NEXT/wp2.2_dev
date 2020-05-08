@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 import sys
 import getopt
@@ -19,11 +20,11 @@ try:
 except:
     print("Need `get_commits.py`")
     exit(1)
-try:
-    from build_commit_history import build_commit_history
-except:
-    print("Need `get_commits.py`")
-    exit(1)
+#try:
+#    from build_commit_history import build_commit_history
+#except:
+#    print("Need `get_commits.py`")
+#    exit(1)
 
 
 def main():
@@ -86,6 +87,8 @@ def main():
 
     get_Github_forks(username=username, reponame=repo, forks=forks, auth=auth)
 
+    print("There are " + str(forks.__len__()) + " forks of " + username + "/" + repo)
+
     # JB 2020 05 03 - BEGIN
     # Commented saving a json file with fork references
     # we don't need a file anymore since we used directly the fork references to fetch commits
@@ -123,11 +126,11 @@ def main():
     # JB 2020 05 03 - END
 
     # recreate the 'network' view in GitHub (repo > insights > network)
-    commit_history = nx.DiGraph() # netwrok is supposed to be a DAG (directed acyclic graph)
-    build_commit_history(known_commits, commit_history)
-            
-    output_GML = '../__DATA__/commit_histories/' + username + '-' + repo + '.gml'
-    nx.write_gml(commit_history, output_GML)
+    #commit_history = nx.DiGraph() # netwrok is supposed to be a DAG (directed acyclic graph)
+    #build_commit_history(known_commits, commit_history)
+    #        
+    #output_GML = '../__DATA__/commit_histories/' + username + '-' + repo + '.gml'
+    #nx.write_gml(commit_history, output_GML)
     
     # alternative to GML file: pyvis visualisation
     # alternative: 1 https://towardsdatascience.com/python-interactive-network-visualization-using-networkx-plotly-and-dash-e44749161ed7
