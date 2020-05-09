@@ -76,7 +76,7 @@ def main():
             auth["secret"] = token_items[1]
             del(token_file, token_items)
     except FileNotFoundError as token_error:
-        print("Can't find or open Github API access token file.\n" + + str(token_error))
+        print("Can't find or open Github API access token file.\n" + str(token_error))
         exit(2)
 
     forks = list()
@@ -129,19 +129,19 @@ def main():
     commit_history = nx.DiGraph() # netwrok is supposed to be a DAG (directed acyclic graph)
     build_commit_history(known_commits, commit_history)
             
-    output_GML = '../__DATA__/commit_histories/' + username + '-' + repo + '.gml'
-    nx.write_gml(commit_history, output_GML)
+    output_GraphML = '../__DATA__/commit_histories/' + username + '-' + repo + '.GraphML'
+    # stringize the non string node attributes not supported by GrapML
+    for node in commit_history.nodes():
+        commit_history.nodes[node]['refs'] = str(commit_history.nodes[node]['refs'])
+        commit_history.nodes[node]['parents'] = str(commit_history.nodes[node]['parents'])
+    nx.write_graphml(commit_history, output_GraphML)
     
     # alternative to GML file: pyvis visualisation
-    # alternative: 1 https://towardsdatascience.com/python-interactive-network-visualization-using-networkx-plotly-and-dash-e44749161ed7
-    # alternative: 2 https://graph-tool.skewed.de/
-    # alternative 3: vis.js from scratch https://github.com/marcin-kolda/py-graph-vis
     pyvis_network = Network(height="1000px", width="562px", bgcolor="#222222", font_color="white")
     pyvis_network.show_buttons(filter_=['layout'])
     pyvis_network.from_nx(commit_history)
     output_pyvis = '../__DATA__/commit_histories/' + username + '-' + repo + '.html'
     pyvis_network.save_graph(output_pyvis)
-   
     
 if __name__ == "__main__":
     main()
