@@ -28,6 +28,7 @@ Imported from [this file](https://github.com/MIE5R0/opennext/blob/master/WP2/Tas
 * Wikipedia has a [list of open source hardware projects](https://en.wikipedia.org/wiki/List_of_open-source_hardware_projects)
   * What if we published our list of open source hardware into this page?
 * [Open Know-How projects](https://www.openknowhow.org/)
+* [Dronecode](https://www.dronecode.org/) is "a nonprofit hosted under the Linux Foundation, dedicated to fostering open-source components and their communities". Worth checking if it links to OSH drones or drone components.
 -   parse oshwa certification directory
 -   http://remo2hbo.f4.htw-berlin.de/
 - 	https://www.crowdsupply.com/open-hardware
