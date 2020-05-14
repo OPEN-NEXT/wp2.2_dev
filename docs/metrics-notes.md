@@ -19,6 +19,13 @@ CHAOSS develops and maintains [a set of metrics](https://chaoss.community/metric
   * QUANTITATIVE & QUALITATIVE: Diversity and inclusion of online and offline participation - E.g. gender, age, ethnicity, and other diversity indices, is everyone welcome?
   * QUALITATIVE (?): Onboarding for newcomers, ease of contribution
 
+### Challenges for open source hardware
+
+Applying, adding to, or modifying CHAOSS metrics to the context of open source hardware has come challenges. For example:
+
+* Many hardware CAD files are stored in (often proprietary) binary formats, or at least in formats not meant to be read as code.
+* There's some work (Gopsill et al.) using the temporal proximity of file edits to infer directional dependency relationships. However, git commits mean files are often edited "simultaneously" within the same commit, so no directionality can be derived. Or can it?
+
 ## Existing dashboard implementations
 
 ### KiBiter/GrimoireLab
