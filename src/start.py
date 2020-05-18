@@ -2,11 +2,12 @@
 # -*- coding: utf-8 -*-
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-import sys
+import sys, os
 import getopt
 import networkx as nx
 import json
 from pyvis.network import Network
+
 
 # import the necessary custom functions
 # TODO: is there a way to use indirection to avoid repeating the same code again and again?
@@ -25,13 +26,17 @@ try:
 except:
     print("Need `get_commits.py`")
     exit(1)
-
+try:
+    from load_config import load_config
+except:
+    print("Need `load_config.py`")
+    exit(1)
 
 def main():
     # get command line arguments
     try:
-        options, remainder = getopt.getopt(sys.argv[1:], 'u:r:t:', [
-                                           'user=', 'repo=', 'token='])
+        options, remainder = getopt.getopt(sys.argv[1:], 'u:r:', [
+                                           'user=', 'repo='])
     except getopt.GetoptError as err:
         print(str(err))
         sys.exit(2)
@@ -39,15 +44,12 @@ def main():
     # initialise the parameters to be found in the arguments
     username = ''
     repo = ''
-    token_path = ''
 
     for option, argument in options:
         if option in ('-u', '--user'):
             username = argument
         if option in ('-r', '--repo'):
             repo = argument
-        if option in ('-t', '--token'):
-            token_path = argument
  
     # check whether all required parameters have been given as arguments and if not throw exception and abort
     if username == '':
@@ -56,13 +58,11 @@ def main():
     if repo == '':
         print ("Argument required: GitHub repository. Type '-r <filepath>' in the command line")
         sys.exit(2)
-    if token_path == '':
-        print ("Argument required: OAuth token file. Type '-t <directory path>' in the command line")
-        sys.exit(2)
 
     print("User: " + username)
     print("Repository: " + repo)
-    print("Token file: " + token_path)
+
+    config = load_config()
     #
     # Get Github personal access token
     #
@@ -70,7 +70,7 @@ def main():
     auth = dict()
 
     try:
-        with open(file=token_path, mode="r") as token_file:
+        with open(file=config["token_file_path"], mode="r") as token_file:
             token_items = token_file.read().split(sep="\n")
             auth["login"] = token_items[0]
             auth["secret"] = token_items[1]
@@ -109,7 +109,7 @@ def main():
             if not commit['commit'] in known_commits_shas:
                 known_commits.append(commit)
     
-    output_JSON = '../__DATA__/JSON_commits/' + username + '-' + repo + '.json'
+    output_JSON = os.path.join(config["data_dir_path"],'JSON_commits', username + '-' + repo + '.json')
     # convert commits to a JSON string for export
     commits_JSON = json.dumps(known_commits, sort_keys=True, indent=4)
     # save the commits to a file
@@ -129,7 +129,7 @@ def main():
     commit_history = nx.DiGraph() # netwrok is supposed to be a DAG (directed acyclic graph)
     build_commit_history(known_commits, commit_history)
             
-    output_GraphML = '../__DATA__/commit_histories/' + username + '-' + repo + '.GraphML'
+    output_GraphML = os.path.join(config["data_dir_path"], 'commit_histories', username + '-' + repo + '.GraphML')
     # stringize the non string node attributes not supported by GrapML
     for node in commit_history.nodes():
         commit_history.nodes[node]['refs'] = str(commit_history.nodes[node]['refs'])
@@ -140,7 +140,7 @@ def main():
     pyvis_network = Network(height="1000px", width="562px", bgcolor="#222222", font_color="white")
     pyvis_network.show_buttons(filter_=['layout'])
     pyvis_network.from_nx(commit_history)
-    output_pyvis = '../__DATA__/commit_histories/' + username + '-' + repo + '.html'
+    output_pyvis = os.path.join(config["data_dir_path"], 'commit_histories', username + '-' + repo + '.html')
     pyvis_network.save_graph(output_pyvis)
     
 if __name__ == "__main__":
