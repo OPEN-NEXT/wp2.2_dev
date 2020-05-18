@@ -6,7 +6,7 @@ import sys
 import getopt
 import networkx as nx
 import json
-from pyvis.network import Network
+#from pyvis.network import Network
 
 # import the necessary custom functions
 # TODO: is there a way to use indirection to avoid repeating the same code again and again?
@@ -130,6 +130,11 @@ def main():
     build_commit_history(known_commits, commit_history)
             
     output_GraphML = '../__DATA__/commit_histories/' + username + '-' + repo + '.GraphML'
+    output_JSON = '../__DATA__/commit_histories/' + username + '-' + repo + '.json'
+    JSON_string = json.dumps(nx.node_link_data(commit_history), sort_keys=True, indent=4)
+    with open(output_JSON, 'w') as f:
+       f.write(JSON_string)
+    del f
     # stringize the non string node attributes not supported by GrapML
     for node in commit_history.nodes():
         commit_history.nodes[node]['refs'] = str(commit_history.nodes[node]['refs'])
@@ -137,11 +142,11 @@ def main():
     nx.write_graphml(commit_history, output_GraphML)
     
     # alternative to GML file: pyvis visualisation
-    pyvis_network = Network(height="1000px", width="562px", bgcolor="#222222", font_color="white")
-    pyvis_network.show_buttons(filter_=['layout'])
-    pyvis_network.from_nx(commit_history)
-    output_pyvis = '../__DATA__/commit_histories/' + username + '-' + repo + '.html'
-    pyvis_network.save_graph(output_pyvis)
+    # pyvis_network = Network(height="1000px", width="562px", bgcolor="#222222", font_color="white")
+    # pyvis_network.show_buttons(filter_=['layout'])
+    # pyvis_network.from_nx(commit_history)
+    # output_pyvis = '../__DATA__/commit_histories/' + username + '-' + repo + '.html'
+    # pyvis_network.save_graph(output_pyvis)
     
 if __name__ == "__main__":
     main()
