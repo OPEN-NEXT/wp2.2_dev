@@ -33,11 +33,15 @@
         </tbody>
       </table>
 
+<script type="text/javascript" src="data.json"></script>
 <script type="text/javascript">
+
+var jsonData = JSON.parse(data);
+console.log(jsonData[0]);
 
 // create an array with nodes
     nodes = new vis.DataSet([
-        { id: "a", label: "a", title: "Node 1", attr1: "attr 1", color: "#FFFF00" },
+        { id: "a", label: jsonData[0].name, title: "Node 1", attr1: "attr 1", color: "#FFFF00" },
         { id: "b", label: "b", title: "Node 2", attr1: "attr 2", color: "#6E6EFD" },
         { id: "c", label: "c", title: "Node 3", attr1: "attr 3", color: "#6E6EFD" },
         { id: "d", label: "d", title: "Node 4", attr1: "attr 4", color: "#6E6EFD" },
