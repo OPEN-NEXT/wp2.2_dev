@@ -103,13 +103,17 @@ def main():
     for fork in forks:
         print("retrieving commits in " + fork['user'] + "/" + fork['repo'])
         commits = list() # all commits of this fork
-        get_commits(username=fork['user'], reponame=fork['repo'], commits=commits)
+        get_commits(username=fork['user'], reponame=fork['repo'], commits=commits, config=config)
         known_commits_shas = [x['commit'] for x in known_commits]
         for commit in commits:
             if not commit['commit'] in known_commits_shas:
                 known_commits.append(commit)
     
-    output_JSON = os.path.join(config["data_dir_path"],'JSON_commits', username + '-' + repo + '.json')
+    # checks whether the export dir exists and if not creates it # TODO: this is a code snippet we use three times, we should make a function out of it
+    output_dir_JSON = os.path.join(config["data_dir_path"],'JSON_commits')
+    if not os.path.isdir(output_dir_JSON):
+        os.makedirs(output_dir_JSON)
+    output_JSON = os.path.join(output_dir_JSON, username + '-' + repo + '.json')
     # convert commits to a JSON string for export
     commits_JSON = json.dumps(known_commits, sort_keys=True, indent=4)
     # save the commits to a file
@@ -129,7 +133,11 @@ def main():
     commit_history = nx.DiGraph() # netwrok is supposed to be a DAG (directed acyclic graph)
     build_commit_history(known_commits, commit_history)
             
-    output_GraphML = os.path.join(config["data_dir_path"], 'commit_histories', username + '-' + repo + '.GraphML')
+    # checks whether the export dir exists and if not creates it # TODO: this is a code snippet we use three times, we should make a function out of it
+    output_dir_GRAPHML = os.path.join(config["data_dir_path"],'commit_histories')
+    if not os.path.isdir(output_dir_GRAPHML):
+        os.makedirs(output_dir_GRAPHML)
+    output_GraphML = os.path.join(output_dir_GRAPHML, username + '-' + repo + '.GraphML')
     # stringize the non string node attributes not supported by GrapML
     for node in commit_history.nodes():
         commit_history.nodes[node]['refs'] = str(commit_history.nodes[node]['refs'])
