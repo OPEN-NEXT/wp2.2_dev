@@ -10,6 +10,7 @@
 # Import libraries
 ##########
 
+import os
 from perceval.backends.core.git import Git
 from perceval.errors import RepositoryError # To handle errors with repositories
 
@@ -17,7 +18,7 @@ from perceval.errors import RepositoryError # To handle errors with repositories
 # Pull commits from a git repository
 ##########
 
-def get_commits(username, reponame, commits):
+def get_commits(username, reponame, commits, config):
     """
     TODO: Add docstring. See: https://realpython.com/documenting-python-code/
     TODO: Implement recursion argument, default to False.
@@ -38,8 +39,14 @@ def get_commits(username, reponame, commits):
     """
     
     repo_URL = 'https://github.com/' + username + '/' + reponame
-    local_path = '../__DATA__/grimoire_dumps/' + username + '-' + reponame
     print('fetching info at ' + repo_URL)
+
+     # checks whether the export dir exists and if not creates it # TODO: this is a code snippet we use three times, we should make a function out of it
+    local_dir = os.path.join(config["data_dir_path"],'grimoire_dumps')
+    if not os.path.isdir(local_dir):
+        os.makedirs(local_dir)
+    local_path = os.path.join(local_dir, username + '-' + reponame)
+
     git = Git(repo_URL, local_path)
     
     # `fetch()` gets commits from all branches by default.
