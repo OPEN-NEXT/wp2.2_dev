@@ -14,6 +14,7 @@ This document will summarise best practices for Python code and styling.
 ### exception handling
 
 * The ["definitive" guide](https://julien.danjou.info/python-exceptions-guide/) to Python exceptions
+* A few more good practices [in this guide](https://eli.thegreenplace.net/2008/08/21/robust-exception-handling/)
 
 ### Static types
 
