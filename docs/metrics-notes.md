@@ -19,6 +19,8 @@ CHAOSS develops and maintains [a set of metrics](https://chaoss.community/metric
   * QUANTITATIVE & QUALITATIVE: Diversity and inclusion of online and offline participation - E.g. gender, age, ethnicity, and other diversity indices, is everyone welcome?
   * QUALITATIVE (?): Onboarding for newcomers, ease of contribution
 
+Wikifactory would like to consider good practices as documented in this [fictiv Hardware Guide](https://www.fictiv.com/hwg/) for the dashboard.
+
 ### Challenges for open source hardware
 
 Applying, adding to, or modifying CHAOSS metrics to the context of open source hardware has come challenges. For example:
