@@ -58,6 +58,7 @@ def main():
             token_items = token_file.read().split(sep="\n")
             auth["login"] = token_items[0]
             auth["secret"] = token_items[1]
+            del token_file, token_items
     except FileNotFoundError as token_error:
         print("Can't find or open Github API access token file.\n" + str(token_error))
         exit(2)
