@@ -2,12 +2,13 @@
 # -*- coding: utf-8 -*-
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-import sys, os
 import getopt
-import networkx as nx
 import json
-from pyvis.network import Network
+import os
+import sys
 
+import networkx as nx
+from pyvis.network import Network
 
 # import the necessary custom functions
 # TODO: is there a way to use indirection to avoid repeating the same code again and again?
