@@ -9,6 +9,8 @@ This document is to collate notes on relevant open source hardware (OSH) literat
 Citation:
 
 Gopsill, J. A., Snider, C. M., Emmanuel, L., Joel-Edgar, S., & Hick, B. J. (2017). Automatic design structure matrices: A comparison of two formula student projects. 6. https://jamesgopsill.github.io/Publications/papers/conference/2017-iced/2017-iced.pdf
+Gopsill, J. A., Snider, C. M., & Hicks, B. J. (2019). The emergent structures within digital engineering work: What can we learn from dynamic DSMs of near-identical systems design projects? Design Science, 31.
+
 
 Notes:
 
