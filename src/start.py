@@ -2,10 +2,9 @@
 # -*- coding: utf-8 -*-
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-import getopt
+import argparse
 import json
 import os
-import sys
 
 import networkx as nx
 from pyvis.network import Network
@@ -35,34 +34,18 @@ except:
 
 def main():
     # get command line arguments
-    try:
-        options, remainder = getopt.getopt(sys.argv[1:], 'u:r:', [
-                                           'user=', 'repo='])
-    except getopt.GetoptError as err:
-        print(str(err))
-        sys.exit(2)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-u", "--user", type=str, required=True)
+    parser.add_argument("-r", "--repo", type=str, required=True)
+    arguments = parser.parse_args()
+
+    print(f"Will mine from this GitHub repo: {arguments.user}/{arguments.repo}")
 
     # initialise the parameters to be found in the arguments
-    username = ''
-    repo = ''
+    username = arguments.user
+    repo = arguments.repo
 
-    for option, argument in options:
-        if option in ('-u', '--user'):
-            username = argument
-        if option in ('-r', '--repo'):
-            repo = argument
- 
-    # check whether all required parameters have been given as arguments and if not throw exception and abort
-    if username == '':
-        print ("Argument required: GitHub username. Type '-u <username>' in the command line")
-        sys.exit(2)
-    if repo == '':
-        print ("Argument required: GitHub repository. Type '-r <filepath>' in the command line")
-        sys.exit(2)
-
-    print("User: " + username)
-    print("Repository: " + repo)
-
+    # load configuration file
     config = load_config()
     #
     # Get Github personal access token
@@ -75,7 +58,6 @@ def main():
             token_items = token_file.read().split(sep="\n")
             auth["login"] = token_items[0]
             auth["secret"] = token_items[1]
-            del(token_file, token_items)
     except FileNotFoundError as token_error:
         print("Can't find or open Github API access token file.\n" + str(token_error))
         exit(2)
