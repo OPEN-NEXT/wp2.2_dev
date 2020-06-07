@@ -9,21 +9,36 @@
 # Use the perceval library to access GitHub.
 from perceval.backends.core.github import GitHub
 
-# Use perceval's GitHub() to dump issues data from repository.
-repo_dump = GitHub(owner="OPEN-NEXT", repository="wp2.2_dev", api_token=["9dba7d2bc919139eb32f6cd67aedc7771cb229dc"], sleep_for_rate=True, sleep_time=300)
+owner: str = "OPEN-NEXT"
+repo: str = "wp2.2_dev"
+tokens: list = ["9dba7d2bc919139eb32f6cd67aedc7771cb229dc"]
 
-# Clean up the dumped data which results in a list that contains a "data"
-# columns which contains the actual data on each issue.
-issues_dump: list = [item for item in repo_dump.fetch()]
 
-# Create a new list and append data from each issue to it.
-issues_list: list = list()
-for issue in issues_dump:
-    issues_list.append(issue["data"])
-# Sort this issues list by GitHub issue number. Note the use of a lambda 
-# function, see here: https://docs.python.org/3/howto/sorting.html
-issues_list = sorted(issues_list, key=lambda issue: issue["number"])
-# Alternative sorting method with custom instead of lambda function.
-# def get_issue_number (issue: dict):
-#     return issue["number"]
-# issues_list = sorted(issues_list, key=get_issue_number)
+def get_GitHub_issues(owner: str, repo: str, tokens: list):
+    # Use perceval's GitHub() to dump issues data from repository.
+    repo_dump = GitHub(owner=owner, repository=repo,
+                       api_token=tokens, sleep_for_rate=True, sleep_time=300)
+
+    # Clean up the dumped data which results in a list that contains a "data"
+    # columns which contains the actual data on each issue.
+    issues_dump: list = [item for item in repo_dump.fetch()]
+
+    # Create a new list and append data from each issue to it.
+    issues_list: list = list()
+    for issue in issues_dump:
+        issues_list.append(issue["data"])
+    # Sort this issues list by GitHub issue number. Note the use of a lambda
+    # function, see here: https://docs.python.org/3/howto/sorting.html
+    issues_list = sorted(issues_list, key=lambda issue: issue["number"])
+    # # Alternative sorting method with custom instead of lambda function.
+    # def get_issue_number (issue: dict):
+    #     return issue["number"]
+    # issues_list = sorted(issues_list, key=get_issue_number)
+
+    # Add repository information to list.
+    for issue in issues_list:
+        issue.update({"owner": owner, "repo": repo})
+
+    return issues_list
+
+my_issues = get_GitHub_issues(owner=owner, repo=repo, tokens=tokens)
