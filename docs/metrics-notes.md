@@ -21,6 +21,8 @@ CHAOSS develops and maintains [a set of metrics](https://chaoss.community/metric
 
 Wikifactory would like to consider good practices as documented in this [fictiv Hardware Guide](https://www.fictiv.com/hwg/) for the dashboard.
 
+Other than CHAOSS, there is also an initiative called [All Contributors](https://github.com/all-contributors/all-contributors) that seeks to recognise the contribution from all people, not just programmers who contribute code. There is a proposed badge system, which from our perspective might allow differentiating between different types of contributions from people associated with an OSH project.
+
 ### Challenges for open source hardware
 
 Applying, adding to, or modifying CHAOSS metrics to the context of open source hardware has come challenges. For example:
