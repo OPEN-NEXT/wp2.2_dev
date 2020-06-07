@@ -6,7 +6,7 @@ This document contains various notes on metrics used to measure the progress of 
 
 Since we didn't want to re-invent the wheel, currently we're looking at [CHAOSS](https://chaoss.community/) which is a project under the Linux Foundation. CHAOSS is an initialism for **C**ommunity **H**ealth **A**nalytics **O**pen **S**ource **S**oftware.
 
-CHAOSS develops and maintains [a set of metrics](https://chaoss.community/metrics/) to measure the health of an open source software project. The list is long, but I encourage everyone to skim through this list to get a feel for what they're thinking. Some general thoughts:
+CHAOSS develops and maintains [a set of metrics](https://chaoss.community/metrics/) (also see [here](https://github.com/chaoss/metrics) for more details) to measure the health of an open source software project. The list is long, but I encourage everyone to skim through this list to get a feel for what they're thinking. Some general thoughts:
 
 * Some metrics are clearly of interest to us, just a few examples:
   * QUANTITATIVE: the *elephant/bus factor*, which is related to the diversity and work distribution about contributors.
@@ -33,6 +33,8 @@ Applying, adding to, or modifying CHAOSS metrics to the context of open source h
 ### KiBiter/GrimoireLab
 
 A company called [Bitergia](https://bitergia.com/) has implemented CHAOSS metrics into their product: a customisable dashboard for softare companies that Bitergia sets up for them as a consultant. Their [dashboard](https://bitergia.netlify.app/bitergia-analytics/) looks impressive, and can pull data not just from git repositories, but also issue trackers, continous integration tools, mailing lists (analyse with natural language processing???), chat (e.g. IRC, Matrix, Slack), wikis, or social media.
+
+For a full example of an implemented dashboard, look [here](https://katacontainers.biterg.io/app/kibana#/dashboard/690980f0-2886-11e9-b662-975152e57997).
 
 The dashboard's underlying software is called [KiBiter](https://github.com/chaoss/grimoirelab-kibiter) (which is forked from [Kibana](https://en.wikipedia.org/wiki/Kibana)). Are the Wikifactory people familiar with it?
 
