@@ -20,24 +20,24 @@ def get_configuration() -> dict:
     # Define commandline options
     parser = argparse.ArgumentParser(
         description="Mines metadata from GitHub repositories given a list.")
-    parser.add_argument("-c", "--config", type=str, required=False,
+    parser.add_argument("-c", "--config_file", type=str, required=False,
                         help="Path to configuration file. Will override corresponding --auth and --repolist options.")
-    parser.add_argument("-a", "--auth", type=str, required=False,
+    parser.add_argument("-a", "--auth_token", type=str, required=False,
                         help="Path to GitHub personal authentication token file.")
-    parser.add_argument("-d", "--data", type=str, default="__DATA__", required=False,
+    parser.add_argument("-d", "--data_dir", type=str, default="__DATA__", required=False,
                         help="Path to directory for storing downloaded data (which will be created if it doesn't exist).")
-    parser.add_argument(
-        "repolist", type=str, default="example.csv", help="Path to CSV file containing list of repositories to mine.")
+    parser.add_argument("-r", "--repo_file", type=str, default="repolist_example.csv", required=False, 
+                        help="Path to CSV file containing list of repositories to mine.")
     # Get commandlines options
     parsed_config = parser.parse_args()
 
     # Create dictionary to hold options
     configuration: dict = dict()
     # Put user supplied options into the dictionary
-    configuration["config_file"] = parsed_config.config
-    configuration["auth_token"] = parsed_config.auth
-    configuration["data_dir"] = parsed_config.data
-    configuration["repo_file"] = parsed_config.repolist
+    configuration["config_file"] = parsed_config.config_file
+    configuration["auth_token"] = parsed_config.auth_token
+    configuration["data_dir"] = parsed_config.data_dir
+    configuration["repo_file"] = parsed_config.repo_file
 
     # Use configuration file if it is specified, overriding any existing options
     if (configuration["config_file"] == None) or (configuration["config_file"] == ""):
