@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-import argparse
 import json
 import os
 import sys
@@ -12,6 +11,7 @@ from pyvis.network import Network
 
 # import the necessary custom functions
 try:
+    from initialise import get_configuration
     from get_Github_forks import get_Github_forks
     from get_commits import get_commits
     from build_commit_history import build_commit_history
@@ -26,35 +26,27 @@ except:
 
 
 def main():
-    # get command line arguments
-    parser = argparse.ArgumentParser()
-    parser.add_argument("-u", "--user", type=str, required=True)
-    parser.add_argument("-r", "--repo", type=str, required=True)
-    arguments = parser.parse_args()
-
-    print(
-        f"Will mine from this GitHub repo: {arguments.user}/{arguments.repo}")
+    # Get commandline and configuration file options
+    configuration: dict = get_configuration()
 
     # initialise the parameters to be found in the arguments
-    username = arguments.user
-    repo = arguments.repo
+    #username = configuration.user
+    #repo = configuration.repo
 
-    # load configuration file
-    config = load_config()
     #
     # Get Github personal access token
     #
 
-    auth = dict()
+    auth: str = str()
 
     try:
-        with open(file=config["token_file_path"], mode="r") as token_file:
+        with open(file=configuration["auth_token"], mode="r") as token_file:
             token_items = token_file.read().split(sep="\n")
             auth["login"] = token_items[0]
             auth["secret"] = token_items[1]
             del token_file, token_items
     except FileNotFoundError as token_error:
-        print("Can't find or open Github API access token file.\n" + str(token_error))
+        print("Can't find Github API access token file.\n" + str(token_error))
         exit(2)
 
     forks = list()
@@ -83,14 +75,14 @@ def main():
         print("retrieving commits in " + fork['user'] + "/" + fork['repo'])
         commits = list()  # all commits of this fork
         get_commits(
-            username=fork['user'], reponame=fork['repo'], commits=commits, config=config)
+            username=fork['user'], reponame=fork['repo'], commits=commits, config=configuration)
         known_commits_shas = [x['commit'] for x in known_commits]
         for commit in commits:
             if not commit['commit'] in known_commits_shas:
                 known_commits.append(commit)
 
     # checks whether the export dir exists and if not creates it # TODO: this is a code snippet we use three times, we should make a function out of it
-    output_dir_JSON = os.path.join(config["data_dir_path"], 'JSON_commits')
+    output_dir_JSON = os.path.join(configuration["data_dir_path"], 'JSON_commits')
     if not os.path.isdir(output_dir_JSON):
         os.makedirs(output_dir_JSON)
     output_JSON = os.path.join(
@@ -117,7 +109,7 @@ def main():
 
     # checks whether the export dir exists and if not creates it # TODO: this is a code snippet we use three times, we should make a function out of it
     output_dir_GRAPHML = os.path.join(
-        config["data_dir_path"], 'commit_histories')
+        configuration["data_dir_path"], 'commit_histories')
     if not os.path.isdir(output_dir_GRAPHML):
         os.makedirs(output_dir_GRAPHML)
     output_GraphML = os.path.join(
@@ -136,7 +128,7 @@ def main():
     pyvis_network.show_buttons(filter_=['layout'])
     pyvis_network.from_nx(commit_history)
     output_pyvis = os.path.join(
-        config["data_dir_path"], 'commit_histories', username + '-' + repo + '.html')
+        configuration["data_dir_path"], 'commit_histories', username + '-' + repo + '.html')
     pyvis_network.save_graph(output_pyvis)
 
 
