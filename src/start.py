@@ -15,6 +15,7 @@ try:
     from get_Github_forks import get_Github_forks
     from get_commits import get_commits
     from build_commit_history import build_commit_history
+    from build_file_change_history import build_file_change_history
     from load_config import load_config
 except ImportError as import_error:
     print(
@@ -103,7 +104,7 @@ def main():
     del f
 
     # JB 2020 05 03 - BEGIN
-    # JB comment: is this to check whether the export was successful? Needed?
+    # JB comment: is this to check whether the export was successful? TODO @Pen: Needed?
     # this reloads the commits from the exported file
     # with open(output_JSON, 'r') as f:
     #    content = f.read()
@@ -139,6 +140,18 @@ def main():
         config["data_dir_path"], 'commit_histories', username + '-' + repo + '.html')
     pyvis_network.save_graph(output_pyvis)
 
+    # build history of file changes
+    # network is supposed to be a DAG (directed acyclic graph)
+    file_change_history = nx.DiGraph() 
+    build_file_change_history(known_commits, file_change_history)
+    # checks whether the export dir exists and if not creates it # TODO: this is a code snippet we use three times, we should make a function out of it
+    output_dir_GRAPHML = os.path.join(
+        config["data_dir_path"], 'file_change_histories')
+    if not os.path.isdir(output_dir_GRAPHML):
+        os.makedirs(output_dir_GRAPHML)
+    output_GraphML = os.path.join(
+        output_dir_GRAPHML, username + '-' + repo + '.GraphML')
+    nx.write_graphml(file_change_history, output_GraphML)
 
 if __name__ == "__main__":
     main()
