@@ -11,7 +11,7 @@ from perceval.backends.core.github import GitHub
 
 owner: str = "OPEN-NEXT"
 repo: str = "wp2.2_dev"
-tokens: list = ["9dba7d2bc919139eb32f6cd67aedc7771cb229dc"]
+tokens: list = [""]
 
 
 def get_GitHub_issues(owner: str, repo: str, tokens: list):
