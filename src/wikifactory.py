@@ -8,6 +8,17 @@
 # It also possible to introspect the api and see all exposed graphql queries and
 # mutations in the graphiql interface running at:
 # https://wikifactory.com/api/graphql
+#
+# This script has been written as a starting point and is by no means something
+# that gives a complete overview about our api, although I hope that I covered the
+# most important things and given you some helpful pointers where to look if you
+# want to know more about how our api works.
+# Regardless of that I am sure that you will have further questions. Don't
+# hesitate to come to us with any questions that arise or feedback about
+# our api.
+# Also keep in mind you are interacting with an api which has so far only been
+# meant for internal consumption. We'd be happy to know about any kind of
+# performance or security problems that you might find.
 
 from gql import gql, Client
 from gql.transport.requests import RequestsHTTPTransport
@@ -101,11 +112,8 @@ def query_all_projects(client, tag="", sortBy="", contains="[]"):
         hasNextPage = page.get("hasNextPage", False)
         if hasNextPage:
             after = 'after:"{after}",'.format(after=page["endCursor"])
-        if len(ret) > 100:
-            break
 
     print("Done querying {n} projects.".format(n=len(ret)))
-
     return ret
 
 
@@ -145,36 +153,81 @@ def make_project_url(project):
 
 # Instead of querying multiple projects with "projects", it can be beneficial to
 # query the api for a specific project id and use this approach to get more
-# information about a project. This functions is used to demonstrate how to
-# get the contributions of a projects, and all of the files in the projects
+# information about a project. The next two functions demonstrate how to
+# get the contributions of a project, and all of the files in a projects
 # repository.
 def query_project_contributions(id):
-    # The query getting a project by its id, then following the contributions
-    # edge to all of its contributions, and the contribution(no 's'! singular)
-    # edge to its "head" contribution and getting all files from that "head"
-    # contribution.
+    contributions = []
+
+    # We are querying a project by its id, then follow the contributions
+    # edge to enumerate all contributions (like commits in git) to that
+    # project.
+    hasNextPage = True
+    after = ""
+    while hasNextPage:
+        # Notice how the contributions edge is a connection(containts a pageInfo)
+        # that requires you to do pagination to get all contributions. Very similar
+        # to what we had to do in the query_all_projects function, but this time
+        # for a deeper nested edge.
+        t = Template(
+            """
+            query {
+              project(id: "$id") {
+                result {
+                  contributions($after first:25, sortBy:"recent") {
+                   pageInfo {
+                     hasNextPage
+                     endCursor
+                    }
+                    edges {
+                      node {
+                        version
+                        title
+                        dateCreated
+                        creator {
+                          username
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+            """
+        )
+        query = gql(t.substitute(id=id, after=after))
+        project_query = client.execute(query)
+        result = (
+            project_query.get("project", {}).get("result", {}).get("contributions", {})
+        )
+        page = result.get("pageInfo", {})
+        edges = result.get("edges", [])
+        for edge in edges:
+            node = edge.get("node", {})
+            contributions.append(node)
+
+        hasNextPage = page.get("hasNextPage", False)
+        if hasNextPage:
+            after = 'after:"{after}",'.format(after=page["endCursor"])
+
+    return contributions
+
+
+def query_project_files(id):
+    # In addition to the contributionS edge there is also a contribution(no 's'! singular)
+    # edge that points the most recent contribution. We follow that contribution edge to
+    # the "head" contribution and then get all files of the projects from "head", meaning
+    # we get all files representing the latest state of the projects file repository.
     t = Template(
         """
         query {
           project(id: "$id") {
             result {
-              name
-              contributions {
-                edges {
-                  node {
-                    version
-                    title
-                    dateCreated
-                    creator {
-                      username
-                    }
-                  }
-                }
-              }
               contribution {
                 files {
                   filename
                   dirname
+                  isFolder
                 }
               }
             }
@@ -185,12 +238,15 @@ def query_project_contributions(id):
     query = gql(t.substitute(id=id))
     project_query = client.execute(query)
     project = project_query.get("project", {}).get("result", {})
-    return project
+    files = project.get("contribution", {}).get("files", [])
+    return files
 
 
+# Main section of this example script, just calling the functions as demonstration
+# and outputing their results in a somewhat nice to read format.
 if __name__ == "__main__":
     sample_transport = RequestsHTTPTransport(
-        url="https://dev.wikifactory.com/api/graphql", verify=True, retries=3
+        url="https://wikifactory.com/api/graphql", verify=True, retries=3
     )
 
     client = Client(transport=sample_transport, fetch_schema_from_transport=True)
@@ -238,6 +294,8 @@ if __name__ == "__main__":
         )
     print("")
 
+    # we'll show all contributions of the most followed ottodiy project
+    # in a similar format to what git log would output
     most_followed_otto_project = otto_projects[0]
     print(
         "Showing contributions of the most followed otto project: {name}".format(
@@ -245,5 +303,53 @@ if __name__ == "__main__":
         )
     )
 
-    repo = query_project_contributions(most_followed_otto_project.get("id", None))
-    print(repo)
+    contributions = query_project_contributions(
+        most_followed_otto_project.get("id", None)
+    )
+    for contribution in contributions:
+        t = Template(
+            """\033[33mcontribution $commit\033[0m
+Author: $author
+Date: $date
+
+    $title
+"""
+        )
+        print(
+            t.substitute(
+                commit=contribution.get("version"),
+                author=contribution.get("creator", {}).get("username"),
+                date=contribution.get("dateCreated"),
+                title=contribution.get("title"),
+            )
+        )
+
+    # and finally we'll also list all files from the head contribution from
+    # the most followed ottodiy as working urls
+    print(
+        "Listing all files in the repository of project: {name}".format(
+            name=most_followed_otto_project.get("name", None)
+        )
+    )
+    files = query_project_files(most_followed_otto_project.get("id", None))
+
+    root = {}
+    for f in files:
+        if f.get("isFolder", False):
+            continue
+
+        dirname = f.get("dirname", "")
+        if dirname != "":
+            dirname += "/"
+        dirfiles = root.get(dirname, [])
+        dirfiles.append(f.get("filename", None))
+        root[dirname] = dirfiles
+
+    url = make_project_url(most_followed_otto_project)
+    for dirname, files in root.items():
+        for filename in files:
+            print(
+                Template("$url/file/$dirname$filename").substitute(
+                    url=url, dirname=dirname, filename=filename
+                )
+            )
