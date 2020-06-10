@@ -71,7 +71,7 @@ def get_configuration() -> dict:
             print("Please try again, exiting.")
             exit(1)
 
-    # Then put the authentication string into its own entry
+    # Put the authentication string into its own entry
     try:
         with open(configuration["auth_token"], mode="r") as token_file:
             token_file_lines = token_file.read().split(sep="\n")
@@ -85,6 +85,11 @@ def get_configuration() -> dict:
     except Exception as other_error:
         print(f"Error accessing GitHub API authentication token file: \n {other_error}")
         exit(1)
+    # TODO: Check whether authentication key string looks correct
+
+    # TODO: Check and if `data_dir` doesn't exist, create it
+
+    # TODO: Check if `repo_file` exists, looks right, and parses correctly
 
     # Return a dictionary of initialisation options
     return configuration
