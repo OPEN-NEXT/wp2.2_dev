@@ -77,3 +77,5 @@ def build_committer_graph(file_change_history, committer_graph):
                 # if is already a recorded interaction (get_edge_data returns {'weight': <weight>}), we increment the recorded weight
                 committer_graph[parent_node["Author"]][child_node["Author"]]['weight'] = \
                     committer_graph[parent_node["Author"]][child_node["Author"]]['weight'] + 1
+
+        # TODO: implement bidirectionality of edges and associate different weights for antagonistic edges
