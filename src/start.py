@@ -16,6 +16,7 @@ try:
     from get_commits import get_commits
     from build_commit_history import build_commit_history
     from build_file_change_history import build_file_change_history
+    from build_committer_graph import build_committer_graph
     from load_config import load_config
 except ImportError as import_error:
     print(
@@ -90,7 +91,7 @@ def main():
             if not commit['commit'] in known_commits_shas:
                 known_commits.append(commit)
 
-    # checks whether the export dir exists and if not creates it # TODO: this is a code snippet we use three times, we should make a function out of it
+    # checks whether the export dir exists and if not creates it # TODO: this is a code snippet we use many times, we should make a function out of it
     output_dir_JSON = os.path.join(config["data_dir_path"], 'JSON_commits')
     if not os.path.isdir(output_dir_JSON):
         os.makedirs(output_dir_JSON)
@@ -116,7 +117,7 @@ def main():
     commit_history = nx.DiGraph()
     build_commit_history(known_commits, commit_history)
 
-    # checks whether the export dir exists and if not creates it # TODO: this is a code snippet we use three times, we should make a function out of it
+    # checks whether the export dir exists and if not creates it # TODO: this is a code snippet we use many times, we should make a function out of it
     output_dir_GRAPHML = os.path.join(
         config["data_dir_path"], 'commit_histories')
     if not os.path.isdir(output_dir_GRAPHML):
@@ -144,7 +145,7 @@ def main():
     # network is supposed to be a DAG (directed acyclic graph)
     file_change_history = nx.DiGraph() 
     build_file_change_history(known_commits, file_change_history)
-    # checks whether the export dir exists and if not creates it # TODO: this is a code snippet we use three times, we should make a function out of it
+    # checks whether the export dir exists and if not creates it # TODO: this is a code snippet we use many times, we should make a function out of it
     output_dir_GRAPHML = os.path.join(
         config["data_dir_path"], 'file_change_histories')
     if not os.path.isdir(output_dir_GRAPHML):
@@ -153,5 +154,18 @@ def main():
         output_dir_GRAPHML, username + '-' + repo + '.GraphML')
     nx.write_graphml(file_change_history, output_GraphML)
 
+    # build committer graph
+    committer_graph = nx.Graph() 
+    build_committer_graph(file_change_history, committer_graph)
+   # checks whether the export dir exists and if not creates it # TODO: this is a code snippet we use many times, we should make a function out of it
+    output_dir_GRAPHML = os.path.join(
+        config["data_dir_path"], 'committer_graphs')
+    if not os.path.isdir(output_dir_GRAPHML):
+        os.makedirs(output_dir_GRAPHML)
+    output_GraphML = os.path.join(
+        output_dir_GRAPHML, username + '-' + repo + '.GraphML')
+    nx.write_graphml(committer_graph, output_GraphML)
+
+    
 if __name__ == "__main__":
     main()
