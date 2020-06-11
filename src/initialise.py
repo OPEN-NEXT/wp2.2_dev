@@ -32,9 +32,11 @@ def get_configuration() -> dict:
     parser.add_argument("-a", "--auth_token", type=str, required=False,
                         help="Path to GitHub personal authentication token file.")
     parser.add_argument("-d", "--data_dir", type=str, default="__DATA__", required=False,
-                        help="Path to directory for storing downloaded data (which will be created if it doesn't exist).")
+                        help="Output directory for storing downloaded data.")
     parser.add_argument("-r", "--repo_file", type=str, default="repolist_example.csv", required=False, 
                         help="Path to CSV file containing list of repositories to mine.")
+    parser.add_argument("--force_create_dir", type=bool, default=True, required=False,
+                        help = "If data output directory doesn't exist, create it.")
     parsed_config = parser.parse_args()
 
     # Create dictionary to hold options
@@ -44,6 +46,7 @@ def get_configuration() -> dict:
     configuration["auth_token"] = parsed_config.auth_token
     configuration["data_dir"] = parsed_config.data_dir
     configuration["repo_file"] = parsed_config.repo_file
+    configuration["create_data_dir"] = parsed_config.force_create_dir
 
     #
     # Apply configuration file if it is supplied
@@ -118,8 +121,24 @@ def get_configuration() -> dict:
             exit(1)
         else:
             print("GitHub authentication key looks OK.")
+    
+    #
+    # Create ouput data directory `data_dir`
+    #
 
-    # If `data_dir` doesn't exist, create it
+    # If `data_dir` doesn't exist, create it unless explicitly disabled
+    try:
+        assert os.path.isdir(configuration["data_dir"]), "Output directory '{}' doesn't exist.".format(configuration["data_dir"])
+    except AssertionError as no_data_dir:
+        print(no_data_dir)
+        if configuration["create_data_dir"]:
+            print("Creating output data directory:")
+            print(os.getcwd() + configuration["data_dir"])
+            os.makedirs(name=configuration["data_dir"])
+        else:
+            print("Option 'create_data_dir' is {}, exiting.".format(configuration["create_data_dir"]))
+            exit(1)
+
 
     # TODO: Check if `repo_file` exists, looks right, and parses correctly
 

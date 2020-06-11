@@ -2,5 +2,6 @@
     "auth_token": "token",
     "data_dir": "__DATA__",
     "repo_file": "repolist_example.csv",
+    "create_data_dir": true,
     "fake_option": "this will be intentionaly ignored by the script"
 }
