@@ -7,8 +7,10 @@
 
 import argparse
 import json
+import os
 import sys
 from json.decoder import JSONDecodeError
+from sys import stderr
 from warnings import warn
 
 
@@ -44,8 +46,9 @@ def get_configuration() -> dict:
     configuration["repo_file"] = parsed_config.repo_file
 
     #
-    # Apply configuration file is supplied
+    # Apply configuration file if it is supplied
     #
+
     if (configuration["config_file"] == None) or (configuration["config_file"] == ""):
         print("No configuration file specified.")
     else:
@@ -62,15 +65,21 @@ def get_configuration() -> dict:
                 del config_file
         except FileNotFoundError as not_found:
             print(f"Specified configuration file not found:\n{not_found}", file=sys.stderr)
-        # Configuration file options will override commandline options
-        for key in custom_config.keys():
-            try:
-                configuration[key] # Will throw KeyError exception if key doesn't/shouldn't exist
-                configuration[key] = custom_config[key]
-            except KeyError as key_error:  # Deal with undefined options
-                warn(message=f"{key_error} option is not supported in configuration file.", category=SyntaxWarning)
+        else:
+            # Override commandline options with configuration file
+            for key in custom_config.keys():
+                try:
+                    configuration[key] # Will throw KeyError exception if option doesn't/shouldn't exist
+                except KeyError as key_error:  # Deal with undefined option
+                    warn(message=f"{key_error} option is not supported in configuration file.", category=SyntaxWarning)
+                else:
+                    configuration[key] = custom_config[key] # This way, only valid options will be used
 
+
+    #
     # Test for required options still missing (if so, complain)
+    #
+
     # Use a list comprehension that will include items still empty or `None`
     empty_options: list = [key for key, value in configuration.items() if key != "config_file" and (value == "" or value == None)]
     if len(empty_options) > 0:
@@ -79,6 +88,10 @@ def get_configuration() -> dict:
             print(missing_item, file=sys.stderr)
             print("Please try again, exiting.", file=sys.stderr)
             exit(1)
+
+    #
+    # Process GitHub API token
+    #
 
     # Put the authentication string into its own entry
     try:
@@ -94,18 +107,19 @@ def get_configuration() -> dict:
     except Exception as other_error:
         print(f"Error accessing GitHub API authentication token file: \n{other_error}", file=sys.stderr)
         exit(1)
-    # Check if authentication key string looks correct
-    # AFAIK the token should be exactly 40 alphanumeric characters
-    # TODO: Handle this with proper exception handling one day.
-    if configuration["auth_token"].isalnum() and len(configuration["auth_token"]) == 40:
-        print("GitHub authentication key looks OK.")
-    else:
-        print("GitHub authentication key doesn't look right:\n{}".format(configuration["auth_token"]), file=sys.stderr)
-        print("It should be a 40-character alphanumeric string. Please try again.", file=sys.stderr)
-        exit(1)
+    else: 
+        # Check if authentication key string looks correct
+        # AFAIK the token should be exactly 40 alphanumeric characters
+        try:
+            assert (configuration["auth_token"].isalnum() and len(configuration["auth_token"]) == 40)
+        except AssertionError:
+            print("GitHub authentication key doesn't look right:\n{}".format(configuration["auth_token"]), file=stderr)
+            print("It should be a 40-character alphanumeric string. Please try again.", file=stderr)
+            exit(1)
+        else:
+            print("GitHub authentication key looks OK.")
 
     # If `data_dir` doesn't exist, create it
-
 
     # TODO: Check if `repo_file` exists, looks right, and parses correctly
 
