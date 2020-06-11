@@ -18,7 +18,11 @@ def initialise_options() -> dict:
     """Initialise starting options for git-mining script
 
     Returns:
-        dictionary: key-value pairs for file paths to configuration (key "config_file"), GitHub authentication token (key "auth_file"), directory for downloaded data (key "data_dir"), and list of repositories to mine (key "repo_file").
+        dictionary: key-value pairs for file paths to configuration (key "config_file"), 
+        GitHub authentication token (key "auth_file"), 
+        ouput directory for downloaded data (key "data_dir"), 
+        list of repositories to mine (key "repo_file"), 
+        and if output directory should be created (key "create_data_dir").
     """
     #
     # Retrive configuration options
@@ -35,7 +39,7 @@ def initialise_options() -> dict:
                         help="Output directory for storing downloaded data.")
     parser.add_argument("-r", "--repo_file", type=str, default="repolist_example.csv", required=False, 
                         help="Path to CSV file containing list of repositories to mine.")
-    parser.add_argument("--force_create_dir", type=bool, default=True, required=False,
+    parser.add_argument("--create_data_dir", type=bool, default=True, required=False,
                         help = "If data output directory doesn't exist, create it.")
     parsed_config = parser.parse_args()
 
@@ -46,7 +50,7 @@ def initialise_options() -> dict:
     configuration["auth_token"] = parsed_config.auth_token
     configuration["data_dir"] = parsed_config.data_dir
     configuration["repo_file"] = parsed_config.repo_file
-    configuration["create_data_dir"] = parsed_config.force_create_dir
+    configuration["create_data_dir"] = parsed_config.create_data_dir
 
     #
     # Apply configuration file if it is supplied
