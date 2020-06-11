@@ -1,0 +1,91 @@
+<html>
+<head>
+    <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+
+    <style type="text/css">
+        #mynetwork {
+            width: 562;
+            height: 750px;
+            border: 1px solid lightgray;
+            background-color: #031f2c;
+        }
+    </style>
+</head>
+<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+<meta content="utf-8" http-equiv="encoding">
+<body>
+    <table class="view">
+        <colgroup>
+          <col width="33%" />
+          <col width="67%" />
+        </colgroup>
+        <tbody>
+          <tr style="vertical-align:top">
+            <td>
+                <h2>Network</h2>
+                <div id="mynetwork"></div>
+            </td>
+            <td>
+              <h2>Event Span</h2>
+              <pre id="eventSpan"></pre>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+<script type="text/javascript" src="data.json"></script>
+<script type="text/javascript">
+
+var jsonData = JSON.parse(data);
+console.log(jsonData[0]);
+
+// create an array with nodes
+    nodes = new vis.DataSet([
+        { id: "mkampik <max@wikifactory.com>", label: "mkampik <max@wikifactory.com>", title: "mkampik <max@wikifactory.com>", value: 2, color: "#FFFF00" },
+        { id: "Pen-Yuan Hsing <penyuanhsing@posteo.is>", label: "Pen-Yuan Hsing <penyuanhsing@posteo.is>", title: "Pen-Yuan Hsing <penyuanhsing@posteo.is>", value: 67, color: "#6E6EFD" },
+        { id: "Jeremy Bonvoisin <j.bonvoisin@bath.ac.uk>", label: "Jeremy Bonvoisin <j.bonvoisin@bath.ac.uk>", title: "Jeremy Bonvoisin <j.bonvoisin@bath.ac.uk>", value: 58, color: "#6E6EFD" },
+        { id: "penyuan <penyuan@users.noreply.github.com>", label: "penyuan <penyuan@users.noreply.github.com>", title: "penyuan <penyuan@users.noreply.github.com>", value: 7, color: "#6E6EFD" }
+    ]);
+
+    document.getElementById("eventSpan").innerHTML = JSON.stringify(
+        nodes.get(),
+        null,
+        4
+        );
+
+    // create an array with edges
+    edges = new vis.DataSet([
+        { id: "1", from: "Pen-Yuan Hsing <penyuanhsing@posteo.is>", to: "penyuan <penyuan@users.noreply.github.com>", value: 6 },
+        { id: "2", from: "Pen-Yuan Hsing <penyuanhsing@posteo.is>", to: "Jeremy Bonvoisin <j.bonvoisin@bath.ac.uk>", value: 33},
+        { id: "3", from: "Jeremy Bonvoisin <j.bonvoisin@bath.ac.uk>", to: "penyuan <penyuan@users.noreply.github.com>", value: 3 }
+    ]);
+
+    // create a network
+    var container = document.getElementById('mynetwork');
+
+    // provide the data in the vis format
+    var data = {
+        nodes: nodes,
+        edges: edges
+    };
+    
+    var options = {
+        interaction: {hover: true},
+        nodes: {shape: "dot"}
+    };
+
+    // initialize your network!
+    var network = new vis.Network(container, data, options);
+
+
+    network.on("click", function(params) {
+        document.getElementById("eventSpan").innerHTML =
+            //params.nodes[0];
+            JSON.stringify(nodes.get([params.nodes[0]]), null, 4);
+        console.log(
+            "click event, getNodeAt returns: " + this.getNodeAt(params.pointer.DOM)
+        );
+    });
+</script>
+</body>
+</html>

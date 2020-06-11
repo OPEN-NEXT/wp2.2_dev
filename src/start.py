@@ -2,19 +2,27 @@
 # -*- coding: utf-8 -*-
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+################################################################################################################################################
+################################################################################################################################################
+# Imports 
+################################################################################################################################################
+################################################################################################################################################
+
 import argparse
 import json
 import os
 import sys
 
 import networkx as nx
-from pyvis.network import Network
+import json
 
 # import the necessary custom functions
 try:
     from get_Github_forks import get_Github_forks
     from get_commits import get_commits
     from build_commit_history import build_commit_history
+    from build_file_change_history import build_file_change_history
+    from build_committer_graph import build_committer_graph
     from load_config import load_config
 except ImportError as import_error:
     print(
@@ -24,6 +32,11 @@ except:
     print("Error when importing required modules.", file=sys.stderr)
     exit(1)
 
+################################################################################################################################################
+################################################################################################################################################
+# Initialisation 
+################################################################################################################################################
+################################################################################################################################################
 
 def main():
     # get command line arguments
@@ -57,6 +70,12 @@ def main():
         print("Can't find or open Github API access token file.\n" + str(token_error))
         exit(2)
 
+################################################################################################################################################
+################################################################################################################################################
+# Get (all forks of) all forks 
+################################################################################################################################################
+################################################################################################################################################
+
     forks = list()
     forks.append({'user': username,
                   'repo': repo,
@@ -68,15 +87,11 @@ def main():
     print("There are " + str(forks.__len__()) +
           " forks of " + username + "/" + repo)
 
-    # JB 2020 05 03 - BEGIN
-    # Commented saving a json file with fork references
-    # we don't need a file anymore since we used directly the fork references to fetch commits
-    # forks_json = json.dumps(forks, sort_keys=True, indent=4)
-    # output_file = repo + ".json"
-    # save the Perceval docs to a file
-    # with open(output_file, 'w') as f:
-    #     f.write(forks_json)
-    # JB 2020 05 03 - END
+################################################################################################################################################
+################################################################################################################################################
+# get all commits from all previously fetched forks 
+################################################################################################################################################
+################################################################################################################################################
 
     known_commits = list()  # compilation of all commits of all forks, without duplicates
     for fork in forks:
@@ -89,56 +104,97 @@ def main():
             if not commit['commit'] in known_commits_shas:
                 known_commits.append(commit)
 
-    # checks whether the export dir exists and if not creates it # TODO: this is a code snippet we use three times, we should make a function out of it
+    # checks whether the export dir exists and if not creates it # TODO: this is a code snippet we use many times, we should make a function out of it
     output_dir_JSON = os.path.join(config["data_dir_path"], 'JSON_commits')
     if not os.path.isdir(output_dir_JSON):
         os.makedirs(output_dir_JSON)
     output_JSON = os.path.join(
         output_dir_JSON, username + '-' + repo + '.json')
+    
     # convert commits to a JSON string for export
     commits_JSON = json.dumps(known_commits, sort_keys=True, indent=4)
+    
     # save the commits to a file
     with open(output_JSON, 'w') as f:
         f.write(commits_JSON)
     del f
 
-    # JB 2020 05 03 - BEGIN
-    # JB comment: is this to check whether the export was successful? Needed?
-    # this reloads the commits from the exported file
-    # with open(output_JSON, 'r') as f:
-    #    content = f.read()
-    #    commits = json.loads(content)
-    # JB 2020 05 03 - END
+################################################################################################################################################
+################################################################################################################################################
+# buid the commit history based on the previously fetched (flat) list of commits
+################################################################################################################################################
+################################################################################################################################################
 
     # recreate the 'network' view in GitHub (repo > insights > network)
     # netwrok is supposed to be a DAG (directed acyclic graph)
     commit_history = nx.DiGraph()
     build_commit_history(known_commits, commit_history)
 
-    # checks whether the export dir exists and if not creates it # TODO: this is a code snippet we use three times, we should make a function out of it
+    # checks whether the export dir exists and if not creates it # TODO: this is a code snippet we use many times, we should make a function out of it
     output_dir_GRAPHML = os.path.join(
         config["data_dir_path"], 'commit_histories')
     if not os.path.isdir(output_dir_GRAPHML):
         os.makedirs(output_dir_GRAPHML)
     output_GraphML = os.path.join(
         output_dir_GRAPHML, username + '-' + repo + '.GraphML')
+    
     # stringize the non string node attributes not supported by GrapML
     for node in commit_history.nodes():
         commit_history.nodes[node]['refs'] = str(
             commit_history.nodes[node]['refs'])
         commit_history.nodes[node]['parents'] = str(
             commit_history.nodes[node]['parents'])
+    
+    # export the file commit history as GraphML
     nx.write_graphml(commit_history, output_GraphML)
 
-    # alternative to GML file: pyvis visualisation
-    pyvis_network = Network(height="1000px", width="562px",
-                            bgcolor="#222222", font_color="white")
-    pyvis_network.show_buttons(filter_=['layout'])
-    pyvis_network.from_nx(commit_history)
-    output_pyvis = os.path.join(
-        config["data_dir_path"], 'commit_histories', username + '-' + repo + '.html')
-    pyvis_network.save_graph(output_pyvis)
+################################################################################################################################################
+################################################################################################################################################
+# build history of file changes based on the previously previously fetched (flat) list of commits
+################################################################################################################################################
+################################################################################################################################################
 
+    # network is supposed to be a DAG (directed acyclic graph)
+    file_change_history = nx.DiGraph() 
+    build_file_change_history(known_commits, file_change_history)
+    
+    # checks whether the export dir exists and if not creates it # TODO: this is a code snippet we use many times, we should make a function out of it
+    output_dir_GRAPHML = os.path.join(
+        config["data_dir_path"], 'file_change_histories')
+    if not os.path.isdir(output_dir_GRAPHML):
+        os.makedirs(output_dir_GRAPHML)
+    output_GraphML = os.path.join(
+        output_dir_GRAPHML, username + '-' + repo + '.GraphML')
+    
+    # export the file change history as GraphML
+    nx.write_graphml(file_change_history, output_GraphML)
 
+################################################################################################################################################
+################################################################################################################################################
+# build committer graph based on the previously previously generated file change history
+################################################################################################################################################
+################################################################################################################################################
+
+    committer_graph = nx.Graph() 
+    build_committer_graph(file_change_history, committer_graph)
+    
+    # checks whether the export dir exists and if not creates it # TODO: this is a code snippet we use many times, we should make a function out of it
+    output_dir_GRAPHML = os.path.join(
+        config["data_dir_path"], 'committer_graphs')
+    if not os.path.isdir(output_dir_GRAPHML):
+        os.makedirs(output_dir_GRAPHML)
+    output_GraphML = os.path.join(
+        output_dir_GRAPHML, username + '-' + repo + '.GraphML')
+    output_JSON = os.path.join(
+        output_dir_GRAPHML, username + '-' + repo + '.json')    
+    
+    # export the file committer graph as GraphML
+    nx.write_graphml(committer_graph, output_GraphML)
+
+    JSON_string = json.dumps(nx.node_link_data(committer_graph), sort_keys=True, indent=4)
+    with open(output_JSON, 'w') as f:
+       f.write(JSON_string)
+    del f
+    
 if __name__ == "__main__":
     main()
