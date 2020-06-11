@@ -41,10 +41,10 @@ console.log(jsonData[0]);
 
 // create an array with nodes
     nodes = new vis.DataSet([
-        { id: "mkampik <max@wikifactory.com>", label: "mkampik <max@wikifactory.com>", title: "mkampik <max@wikifactory.com>", weight: 2, color: "#FFFF00" },
-        { id: "Pen-Yuan Hsing <penyuanhsing@posteo.is>", label: "Pen-Yuan Hsing <penyuanhsing@posteo.is>", title: "Pen-Yuan Hsing <penyuanhsing@posteo.is>", weight: 67, color: "#6E6EFD" },
-        { id: "Jeremy Bonvoisin <j.bonvoisin@bath.ac.uk>", label: "Jeremy Bonvoisin <j.bonvoisin@bath.ac.uk>", title: "Jeremy Bonvoisin <j.bonvoisin@bath.ac.uk>", weight: 58, color: "#6E6EFD" },
-        { id: "penyuan <penyuan@users.noreply.github.com>", label: "penyuan <penyuan@users.noreply.github.com>", title: "penyuan <penyuan@users.noreply.github.com>", weight: 7, color: "#6E6EFD" }
+        { id: "mkampik <max@wikifactory.com>", label: "mkampik <max@wikifactory.com>", title: "mkampik <max@wikifactory.com>", value: 2, color: "#FFFF00" },
+        { id: "Pen-Yuan Hsing <penyuanhsing@posteo.is>", label: "Pen-Yuan Hsing <penyuanhsing@posteo.is>", title: "Pen-Yuan Hsing <penyuanhsing@posteo.is>", value: 67, color: "#6E6EFD" },
+        { id: "Jeremy Bonvoisin <j.bonvoisin@bath.ac.uk>", label: "Jeremy Bonvoisin <j.bonvoisin@bath.ac.uk>", title: "Jeremy Bonvoisin <j.bonvoisin@bath.ac.uk>", value: 58, color: "#6E6EFD" },
+        { id: "penyuan <penyuan@users.noreply.github.com>", label: "penyuan <penyuan@users.noreply.github.com>", title: "penyuan <penyuan@users.noreply.github.com>", value: 7, color: "#6E6EFD" }
     ]);
 
     document.getElementById("eventSpan").innerHTML = JSON.stringify(
@@ -55,9 +55,9 @@ console.log(jsonData[0]);
 
     // create an array with edges
     edges = new vis.DataSet([
-        { id: "1", from: "Pen-Yuan Hsing <penyuanhsing@posteo.is>", to: "penyuan <penyuan@users.noreply.github.com>" },
-        { id: "2", from: "Pen-Yuan Hsing <penyuanhsing@posteo.is>", to: "Jeremy Bonvoisin <j.bonvoisin@bath.ac.uk>" },
-        { id: "3", from: "Jeremy Bonvoisin <j.bonvoisin@bath.ac.uk>", to: "penyuan <penyuan@users.noreply.github.com>" }
+        { id: "1", from: "Pen-Yuan Hsing <penyuanhsing@posteo.is>", to: "penyuan <penyuan@users.noreply.github.com>", value: 6 },
+        { id: "2", from: "Pen-Yuan Hsing <penyuanhsing@posteo.is>", to: "Jeremy Bonvoisin <j.bonvoisin@bath.ac.uk>", value: 33},
+        { id: "3", from: "Jeremy Bonvoisin <j.bonvoisin@bath.ac.uk>", to: "penyuan <penyuan@users.noreply.github.com>", value: 3 }
     ]);
 
     // create a network
