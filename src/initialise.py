@@ -12,6 +12,7 @@ import sys
 from json.decoder import JSONDecodeError
 from sys import stderr
 from warnings import warn
+import csv
 
 
 def initialise_options() -> dict:
@@ -21,7 +22,7 @@ def initialise_options() -> dict:
         dictionary: key-value pairs for file paths to configuration (key "config_file"), 
         GitHub authentication token (key "auth_file"), 
         ouput directory for downloaded data (key "data_dir"), 
-        list of repositories to mine (key "repo_file"), 
+        list of repositories to mine (key "repo_list"), 
         and if output directory should be created (key "create_data_dir").
     """
     #
@@ -37,7 +38,7 @@ def initialise_options() -> dict:
                         help="Path to GitHub personal authentication token file.")
     parser.add_argument("-d", "--data_dir", type=str, default="__DATA__", required=False,
                         help="Output directory for storing downloaded data.")
-    parser.add_argument("-r", "--repo_file", type=str, default="repolist_example.csv", required=False, 
+    parser.add_argument("-r", "--repo_list", type=str, default="repolist_example.csv", required=False, 
                         help="Path to CSV file containing list of repositories to mine.")
     parser.add_argument("--create_data_dir", type=bool, default=True, required=False,
                         help = "If data output directory doesn't exist, create it.")
@@ -49,7 +50,7 @@ def initialise_options() -> dict:
     configuration["config_file"] = parsed_config.config_file
     configuration["auth_token"] = parsed_config.auth_token
     configuration["data_dir"] = parsed_config.data_dir
-    configuration["repo_file"] = parsed_config.repo_file
+    configuration["repo_list"] = parsed_config.repo_list
     configuration["create_data_dir"] = parsed_config.create_data_dir
 
     #
@@ -68,7 +69,7 @@ def initialise_options() -> dict:
                     custom_config = json.load(config_file)
                 except JSONDecodeError as json_error:
                     print(f"Error parsing configuration file:\n{json_error}", file=sys.stderr)
-                    exit(1)
+                    sys.exit(1)
                 del config_file
         except FileNotFoundError as not_found:
             print(f"Specified configuration file not found:\n{not_found}", file=sys.stderr)
@@ -76,11 +77,11 @@ def initialise_options() -> dict:
             # Override commandline options with configuration file
             for key in custom_config.keys():
                 try:
-                    configuration[key] # Will throw KeyError exception if option doesn't/shouldn't exist
-                except KeyError as key_error:  # Deal with undefined option
+                    configuration[key] # Will throw KeyError exception if option isn't defined
+                except KeyError as key_error: # Deal with undefined option
                     warn(message=f"{key_error} option is not supported in configuration file.", category=SyntaxWarning)
                 else:
-                    configuration[key] = custom_config[key] # This way, only valid options will be used
+                    configuration[key] = custom_config[key] # Only valid options will be used propogated
 
 
     #
@@ -94,7 +95,7 @@ def initialise_options() -> dict:
         for missing_item in empty_options: # List missing items
             print(missing_item, file=sys.stderr)
             print("Please try again, exiting.", file=sys.stderr)
-            exit(1)
+            sys.exit(1)
 
     #
     # Process GitHub API token
@@ -106,14 +107,14 @@ def initialise_options() -> dict:
             token_file_lines = token_file.read().split(sep="\n")
             # Read first line of provided token file as authentication token string
             configuration["auth_token"] = token_file_lines[0]
-            del token_file, token_file_lines
+        del token_file, token_file_lines
     except FileNotFoundError as token_file_error:
         print(f"Can't find GitHub API authentication token file.", file=sys.stderr)
         print(token_file_error)
-        exit(1)
+        sys.exit(1)
     except Exception as other_error:
         print(f"Error accessing GitHub API authentication token file: \n{other_error}", file=sys.stderr)
-        exit(1)
+        sys.exit(1)
     else: 
         # Check if authentication key string looks correct
         # AFAIK the token should be exactly 40 alphanumeric characters
@@ -122,7 +123,7 @@ def initialise_options() -> dict:
         except AssertionError:
             print("GitHub authentication key doesn't look right:\n{}".format(configuration["auth_token"]), file=stderr)
             print("It should be a 40-character alphanumeric string. Please try again.", file=stderr)
-            exit(1)
+            sys.exit(1)
         else:
             print("GitHub authentication key looks OK.")
     
@@ -137,14 +138,57 @@ def initialise_options() -> dict:
         print(no_data_dir)
         if configuration["create_data_dir"]:
             print("Creating output data directory:")
-            print(os.getcwd() + configuration["data_dir"])
+            print(os.getcwd() + "/" + configuration["data_dir"])
             os.makedirs(name=configuration["data_dir"])
         else:
             print("Option 'create_data_dir' is {}, exiting.".format(configuration["create_data_dir"]))
-            exit(1)
+            sys.exit(1)
+    
+    #
+    # Process input list of repositories (`repo_list`) to mine
+    #
 
-
-    # TODO: Check if `repo_file` exists, looks right, and parses correctly
+    # Check if `repo_list` exists and parses correctly
+    try:
+        assert os.path.isfile(configuration["repo_list"]), "Error accessing repository list: {}".format(configuration["repo_list"])
+    except AssertionError as no_repo_list:
+        print(no_repo_list)
+        sys.exit(1)
+    else:
+        try:
+            with open(configuration["repo_list"], newline="") as repo_file:
+                repo_csv = csv.DictReader(repo_file)
+                repo_list: list = list()
+                for row in repo_csv:
+                    repo_list.append(row)
+            del repo_file, repo_csv
+        except Exception as read_csv_error: # TODO: Make Exception more specific
+            print("Error parsing repository list: \n{read_csv_error}")
+            sys.exit(1)
+    # Check repository list format
+    bad_rows: list = list() # Create an empty list to record list items in wrong format
+    for row in repo_list: # TODO: More efficient way to check than go through each list item
+        try: # Make sure "owner" and "repo" fields consistently exist
+            assert "owner" in row and "repo" in row, "Repository list CSV file needs field names 'owner' and 'row'"
+        except AssertionError as fieldname_error:
+            print(fieldname_error)
+            sys.exit(1)
+        else:
+            # Record which items don't have exactly two items, one each for "owner" and "repo", 
+            # plus if there are empty (None) cells
+            if len(row) != 2 or None in row.values():
+                bad_rows.append(row)
+    try: # If there are bad items in repository list, print them and exit
+        assert len(bad_rows) == 0, "Some rows in repository list have problems: "
+    except AssertionError as item_error:
+        print(item_error)
+        for bad_row in bad_rows:
+            print(bad_row.values(), file=stderr) # TODO: Make this more human-readable
+        sys.exit(1)
+            
+    # TODO: Remove duplicate entries in `repo_list`
+    # Put `repo_list` into `configuration`
+    configuration["repo_list"] = repo_list
 
     # Return a dictionary of initialisation options
     return configuration

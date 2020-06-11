@@ -31,26 +31,6 @@ def main():
     # Get commandline and configuration file options
     configuration: dict = initialise_options()
 
-    # initialise the parameters to be found in the arguments
-    #username = configuration.user
-    #repo = configuration.repo
-
-    #
-    # Get Github personal access token
-    #
-
-    auth: str = str()
-
-    try:
-        with open(file=configuration["auth_token"], mode="r") as token_file:
-            token_items = token_file.read().split(sep="\n")
-            auth["login"] = token_items[0]
-            auth["secret"] = token_items[1]
-            del token_file, token_items
-    except FileNotFoundError as token_error:
-        print("Can't find Github API access token file.\n" + str(token_error))
-        exit(2)
-
     forks = list()
     forks.append({'user': username,
                   'repo': repo,
