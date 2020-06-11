@@ -14,7 +14,7 @@ from sys import stderr
 from warnings import warn
 
 
-def get_configuration() -> dict:
+def initialise_options() -> dict:
     """Initialise starting options for git-mining script
 
     Returns:

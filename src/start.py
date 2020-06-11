@@ -9,9 +9,11 @@ import sys
 import networkx as nx
 from pyvis.network import Network
 
+from initialise import initialise_options
+
 # import the necessary custom functions
 try:
-    from initialise import get_configuration
+    from initialise import initialise_options
     from get_Github_forks import get_Github_forks
     from get_commits import get_commits
     from build_commit_history import build_commit_history
@@ -27,7 +29,7 @@ except:
 
 def main():
     # Get commandline and configuration file options
-    configuration: dict = get_configuration()
+    configuration: dict = initialise_options()
 
     # initialise the parameters to be found in the arguments
     #username = configuration.user
