@@ -41,11 +41,10 @@ console.log(jsonData[0]);
 
 // create an array with nodes
     nodes = new vis.DataSet([
-        { id: "a", label: jsonData[0].name, title: "Node 1", attr1: "attr 1", color: "#FFFF00" },
-        { id: "b", label: "b", title: "Node 2", attr1: "attr 2", color: "#6E6EFD" },
-        { id: "c", label: "c", title: "Node 3", attr1: "attr 3", color: "#6E6EFD" },
-        { id: "d", label: "d", title: "Node 4", attr1: "attr 4", color: "#6E6EFD" },
-        { id: "e", label: "e", title: "Node 5", attr1: "attr 5", color: "#6E6EFD" }
+        { id: "mkampik <max@wikifactory.com>", label: "mkampik <max@wikifactory.com>", title: "mkampik <max@wikifactory.com>", weight: 2, color: "#FFFF00" },
+        { id: "Pen-Yuan Hsing <penyuanhsing@posteo.is>", label: "Pen-Yuan Hsing <penyuanhsing@posteo.is>", title: "Pen-Yuan Hsing <penyuanhsing@posteo.is>", weight: 67, color: "#6E6EFD" },
+        { id: "Jeremy Bonvoisin <j.bonvoisin@bath.ac.uk>", label: "Jeremy Bonvoisin <j.bonvoisin@bath.ac.uk>", title: "Jeremy Bonvoisin <j.bonvoisin@bath.ac.uk>", weight: 58, color: "#6E6EFD" },
+        { id: "penyuan <penyuan@users.noreply.github.com>", label: "penyuan <penyuan@users.noreply.github.com>", title: "penyuan <penyuan@users.noreply.github.com>", weight: 7, color: "#6E6EFD" }
     ]);
 
     document.getElementById("eventSpan").innerHTML = JSON.stringify(
@@ -56,11 +55,9 @@ console.log(jsonData[0]);
 
     // create an array with edges
     edges = new vis.DataSet([
-        { id: "1", from: "a", to: "b" },
-        { id: "2", from: "a", to: "c" },
-        { id: "3", from: "b", to: "d" },
-        { id: "4", from: "b", to: "e" },
-        { id: "5", from: "c", to: "b" }
+        { id: "1", from: "Pen-Yuan Hsing <penyuanhsing@posteo.is>", to: "penyuan <penyuan@users.noreply.github.com>" },
+        { id: "2", from: "Pen-Yuan Hsing <penyuanhsing@posteo.is>", to: "Jeremy Bonvoisin <j.bonvoisin@bath.ac.uk>" },
+        { id: "3", from: "Jeremy Bonvoisin <j.bonvoisin@bath.ac.uk>", to: "penyuan <penyuan@users.noreply.github.com>" }
     ]);
 
     // create a network
@@ -73,9 +70,8 @@ console.log(jsonData[0]);
     };
     
     var options = {
-        layout: {hierarchical: {direction: "UD"}},
         interaction: {hover: true},
-        nodes: {shape: "circle"}
+        nodes: {shape: "dot"}
     };
 
     // initialize your network!

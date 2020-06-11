@@ -129,13 +129,6 @@ def main():
     # netwrok is supposed to be a DAG (directed acyclic graph)
     commit_history = nx.DiGraph()
     build_commit_history(known_commits, commit_history)
-            
-    output_GraphML = '../__DATA__/commit_histories/' + username + '-' + repo + '.GraphML'
-    output_JSON = '../__DATA__/commit_histories/' + username + '-' + repo + '.json'
-    JSON_string = json.dumps(nx.node_link_data(commit_history), sort_keys=True, indent=4)
-    with open(output_JSON, 'w') as f:
-       f.write(JSON_string)
-    del f
 
     # checks whether the export dir exists and if not creates it # TODO: this is a code snippet we use many times, we should make a function out of it
     output_dir_GRAPHML = os.path.join(
@@ -154,7 +147,6 @@ def main():
     
     # export the file commit history as GraphML
     nx.write_graphml(commit_history, output_GraphML)
-
 
 ################################################################################################################################################
 ################################################################################################################################################
@@ -193,10 +185,16 @@ def main():
         os.makedirs(output_dir_GRAPHML)
     output_GraphML = os.path.join(
         output_dir_GRAPHML, username + '-' + repo + '.GraphML')
+    output_JSON = os.path.join(
+        output_dir_GRAPHML, username + '-' + repo + '.json')    
     
     # export the file committer graph as GraphML
     nx.write_graphml(committer_graph, output_GraphML)
 
+    JSON_string = json.dumps(nx.node_link_data(committer_graph), sort_keys=True, indent=4)
+    with open(output_JSON, 'w') as f:
+       f.write(JSON_string)
+    del f
     
 if __name__ == "__main__":
     main()
