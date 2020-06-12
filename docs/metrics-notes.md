@@ -57,3 +57,14 @@ KiBiter is one component of a CHAOSS project called [GrimoireLab](https://chaoss
 ![Augur screenshot](images/Augur_screenshot.png)
 
 I am also in touch with one of the main developers behind Augur, [Dr Sean Goggins](http://www.seangoggins.net/) from the University of Missouri. He said he's happy to answer questions and even take a quick look at our data.
+
+## Useful stuff for consideration in dashboard
+
+Here are some useful stuff (which might not necessarily be a, or a part of a, dashboard per-se) that are potential components of the dashboard we develop.
+
+### GitHub repo Insights tab
+
+* [Community profile](https://github.com/lovasoa/whitebophir/community)
+  * This provides a checklist that maps a repository to GitHub's [recommended community standards](https://opensource.guide/) (which, by the way, is itself worth looking at for our dashboard).
+  * I remember @mkampik mentioning the concept of "project stages", perhaps a checklist like this can be adapted to an open source hardware project.
+  * For example, each checklist item could represent a certain quantitative measure derived from a project's metadata (such as the bus factor), and will automatically checked off once a threshold is reached. And depending on which items are checked, a community would be put into a certain stage (that comes with a badge!).
