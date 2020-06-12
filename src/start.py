@@ -175,7 +175,7 @@ def main():
 ################################################################################################################################################
 ################################################################################################################################################
 
-    committer_graph = nx.Graph() 
+    committer_graph = nx.MultiDiGraph() 
     build_committer_graph(file_change_history, committer_graph)
     
     # checks whether the export dir exists and if not creates it # TODO: this is a code snippet we use many times, we should make a function out of it
