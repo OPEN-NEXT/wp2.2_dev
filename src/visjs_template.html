@@ -1,0 +1,109 @@
+<html>
+<head>
+    <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+
+    <style type="text/css">
+        #mynetwork {
+            font-style: 12px arial red;
+            width: 562;
+            height: 750px;
+            border: 1px solid lightgray;
+            background-color: #031f2c;
+        }
+    </style>
+</head>
+<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+<meta content="utf-8" http-equiv="encoding">
+<body>
+    <table class="view">
+        <colgroup>
+          <col width="33%" />
+          <col width="67%" />
+        </colgroup>
+        <tbody>
+          <tr style="vertical-align:top">
+            <td>
+                <h2>Network</h2>
+                <div id="mynetwork"></div>
+            </td>
+            <td>
+              <h2>Event Span</h2>
+              <pre id="eventSpan"></pre>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+<!-- <script type="text/javascript" src="data.json"></script> -->
+<script type="text/javascript">
+
+// create an array with nodes
+    var nodes = new vis.DataSet()
+    for (imported_node of imported_data["nodes"]) {
+        nodes.add(
+            { 
+                id: imported_node["id"], 
+                label: imported_node["id"],
+                title: imported_node["id"],
+                value: imported_node["weight"]
+            }
+        );
+    }
+
+    document.getElementById("eventSpan").innerHTML = JSON.stringify(
+        nodes.get(),
+        null,
+        4
+        );
+
+    // create an array with edges
+    var edges = new vis.DataSet()
+    var i = 0;
+    for (imported_edge of imported_data["links"]) {
+        edges.add(
+            { 
+                id: i, 
+                from: imported_edge["source"],
+                to: imported_edge["target"],
+                value: imported_edge["weight"],
+                arrows: "to"
+            }
+        );
+        i++;
+    }
+
+    // create a network
+    var container = document.getElementById('mynetwork');
+
+    // provide the data in the vis format
+    var data = {
+        nodes: nodes,
+        edges: edges
+    };
+    
+    var options = {
+        interaction: {hover: true},
+        nodes: {   
+            shape: "dot", 
+            font: {
+                color: "#ffffff"
+            },
+            borderWidth: 0
+        }
+    };
+
+    // initialize your network!
+    var network = new vis.Network(container, data, options);
+
+
+    network.on("click", function(params) {
+        document.getElementById("eventSpan").innerHTML =
+            //params.nodes[0];
+            JSON.stringify(nodes.get([params.nodes[0]]), null, 4);
+        console.log(
+            "click event, getNodeAt returns: " + this.getNodeAt(params.pointer.DOM)
+        );
+    });
+</script>
+</body>
+</html>
