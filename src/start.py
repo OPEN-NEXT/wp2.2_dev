@@ -8,6 +8,7 @@
 ################################################################################################################################################
 ################################################################################################################################################
 
+# standard libraries
 import argparse
 import json
 import os
@@ -16,7 +17,7 @@ import sys
 import networkx as nx
 import json
 
-# import the necessary custom functions
+# custom functions
 try:
     from get_Github_forks import get_Github_forks
     from get_commits import get_commits
@@ -31,6 +32,16 @@ except ImportError as import_error:
 except:
     print("Error when importing required modules.", file=sys.stderr)
     exit(1)
+
+# functions 
+
+def build_export_file_path(dir_path, filename):
+    # checks if the dir_path exists and if not create it
+    # then returns the (now valid) file path 
+    if not os.path.isdir(dir_path):
+        os.makedirs(dir_path)
+    return os.path.join(
+        dir_path, filename)
 
 ################################################################################################################################################
 ################################################################################################################################################
@@ -103,18 +114,14 @@ def main():
         for commit in commits:
             if not commit['commit'] in known_commits_shas:
                 known_commits.append(commit)
-
-    # checks whether the export dir exists and if not creates it # TODO: this is a code snippet we use many times, we should make a function out of it
-    output_dir_JSON = os.path.join(config["data_dir_path"], 'JSON_commits')
-    if not os.path.isdir(output_dir_JSON):
-        os.makedirs(output_dir_JSON)
-    output_JSON = os.path.join(
-        output_dir_JSON, username + '-' + repo + '.json')
     
     # convert commits to a JSON string for export
     commits_JSON = json.dumps(known_commits, sort_keys=True, indent=4)
     
     # save the commits to a file
+    output_JSON = build_export_file_path(
+        os.path.join(config["data_dir_path"], 'JSON_commits'), 
+        username + '-' + repo + '.json') 
     with open(output_JSON, 'w') as f:
         f.write(commits_JSON)
     del f
@@ -130,14 +137,6 @@ def main():
     commit_history = nx.DiGraph()
     build_commit_history(known_commits, commit_history)
 
-    # checks whether the export dir exists and if not creates it # TODO: this is a code snippet we use many times, we should make a function out of it
-    output_dir_GRAPHML = os.path.join(
-        config["data_dir_path"], 'commit_histories')
-    if not os.path.isdir(output_dir_GRAPHML):
-        os.makedirs(output_dir_GRAPHML)
-    output_GraphML = os.path.join(
-        output_dir_GRAPHML, username + '-' + repo + '.GraphML')
-    
     # stringize the non string node attributes not supported by GrapML
     for node in commit_history.nodes():
         commit_history.nodes[node]['refs'] = str(
@@ -146,6 +145,9 @@ def main():
             commit_history.nodes[node]['parents'])
     
     # export the file commit history as GraphML
+    output_GraphML = build_export_file_path(
+        os.path.join(config["data_dir_path"], 'commit_histories'), 
+        username + '-' + repo + '.GraphML') 
     nx.write_graphml(commit_history, output_GraphML)
 
 ################################################################################################################################################
@@ -158,15 +160,10 @@ def main():
     file_change_history = nx.DiGraph() 
     build_file_change_history(known_commits, file_change_history)
     
-    # checks whether the export dir exists and if not creates it # TODO: this is a code snippet we use many times, we should make a function out of it
-    output_dir_GRAPHML = os.path.join(
-        config["data_dir_path"], 'file_change_histories')
-    if not os.path.isdir(output_dir_GRAPHML):
-        os.makedirs(output_dir_GRAPHML)
-    output_GraphML = os.path.join(
-        output_dir_GRAPHML, username + '-' + repo + '.GraphML')
-    
     # export the file change history as GraphML
+    output_GraphML = build_export_file_path(
+        os.path.join(config["data_dir_path"], 'file_change_histories'), 
+        username + '-' + repo + '.GraphML') 
     nx.write_graphml(file_change_history, output_GraphML)
 
 ################################################################################################################################################
@@ -178,20 +175,16 @@ def main():
     committer_graph = nx.Graph() 
     build_committer_graph(file_change_history, committer_graph)
     
-    # checks whether the export dir exists and if not creates it # TODO: this is a code snippet we use many times, we should make a function out of it
-    output_dir_GRAPHML = os.path.join(
-        config["data_dir_path"], 'committer_graphs')
-    if not os.path.isdir(output_dir_GRAPHML):
-        os.makedirs(output_dir_GRAPHML)
-    output_GraphML = os.path.join(
-        output_dir_GRAPHML, username + '-' + repo + '.GraphML')
-    output_JSON = os.path.join(
-        output_dir_GRAPHML, username + '-' + repo + '.json')    
-    
     # export the file committer graph as GraphML
+    output_GraphML = build_export_file_path(
+        os.path.join(config["data_dir_path"], 'committer_graphs'), 
+        username + '-' + repo + '.GraphML') 
     nx.write_graphml(committer_graph, output_GraphML)
 
     JSON_string = json.dumps(nx.node_link_data(committer_graph), sort_keys=True, indent=4)
+    output_JSON = build_export_file_path(
+        os.path.join(config["data_dir_path"], 'committer_graphs'), 
+        username + '-' + repo + '.json') 
     with open(output_JSON, 'w') as f:
        f.write(JSON_string)
     del f
