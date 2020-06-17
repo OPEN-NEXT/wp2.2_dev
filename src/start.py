@@ -172,7 +172,7 @@ def main():
 ################################################################################################################################################
 ################################################################################################################################################
 
-    committer_graph = nx.Graph() 
+    committer_graph = nx.MultiDiGraph() 
     build_committer_graph(file_change_history, committer_graph)
     
     # export the file committer graph as GraphML

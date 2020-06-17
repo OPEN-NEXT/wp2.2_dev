@@ -74,8 +74,8 @@ def build_committer_graph(file_change_history, committer_graph):
                 # if there isn't any recorded interaction yet (get_edge_data returns None), we add an edge and initialise the weight to 1
                 committer_graph.add_edge(parent_node["Author"], child_node["Author"], weight = 1)
             else:
-                # if is already a recorded interaction (get_edge_data returns {'weight': <weight>}), we increment the recorded weight
-                committer_graph[parent_node["Author"]][child_node["Author"]]['weight'] = \
-                    committer_graph[parent_node["Author"]][child_node["Author"]]['weight'] + 1
-
-        # TODO: implement bidirectionality of edges and associate different weights for antagonistic edges
+                # if is already a recorded interaction, we increment the recorded weight
+                # there is a recorded interaction if get_edge_data returns {0 {'weight': <weight>}}
+                # the {0 ...} is because we use a MulitDiGraph, so get_edge_data returns a dict of links instead of one link
+                committer_graph[parent_node["Author"]][child_node["Author"]][0]['weight'] = \
+                    committer_graph[parent_node["Author"]][child_node["Author"]][0]['weight'] + 1
