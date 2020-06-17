@@ -4,6 +4,7 @@
 
     <style type="text/css">
         #mynetwork {
+            font-style: 12px arial red;
             width: 562;
             height: 750px;
             border: 1px solid lightgray;
@@ -33,19 +34,21 @@
         </tbody>
       </table>
 
-<script type="text/javascript" src="data.json"></script>
+<!-- <script type="text/javascript" src="data.json"></script> -->
 <script type="text/javascript">
 
-var jsonData = JSON.parse(data);
-console.log(jsonData[0]);
-
 // create an array with nodes
-    nodes = new vis.DataSet([
-        { id: "mkampik <max@wikifactory.com>", label: "mkampik <max@wikifactory.com>", title: "mkampik <max@wikifactory.com>", value: 2, color: "#FFFF00" },
-        { id: "Pen-Yuan Hsing <penyuanhsing@posteo.is>", label: "Pen-Yuan Hsing <penyuanhsing@posteo.is>", title: "Pen-Yuan Hsing <penyuanhsing@posteo.is>", value: 67, color: "#6E6EFD" },
-        { id: "Jeremy Bonvoisin <j.bonvoisin@bath.ac.uk>", label: "Jeremy Bonvoisin <j.bonvoisin@bath.ac.uk>", title: "Jeremy Bonvoisin <j.bonvoisin@bath.ac.uk>", value: 58, color: "#6E6EFD" },
-        { id: "penyuan <penyuan@users.noreply.github.com>", label: "penyuan <penyuan@users.noreply.github.com>", title: "penyuan <penyuan@users.noreply.github.com>", value: 7, color: "#6E6EFD" }
-    ]);
+    var nodes = new vis.DataSet()
+    for (imported_node of imported_data["nodes"]) {
+        nodes.add(
+            { 
+                id: imported_node["id"], 
+                label: imported_node["id"],
+                title: imported_node["id"],
+                value: imported_node["weight"]
+            }
+        );
+    }
 
     document.getElementById("eventSpan").innerHTML = JSON.stringify(
         nodes.get(),
@@ -54,11 +57,20 @@ console.log(jsonData[0]);
         );
 
     // create an array with edges
-    edges = new vis.DataSet([
-        { id: "1", from: "Pen-Yuan Hsing <penyuanhsing@posteo.is>", to: "penyuan <penyuan@users.noreply.github.com>", value: 6 },
-        { id: "2", from: "Pen-Yuan Hsing <penyuanhsing@posteo.is>", to: "Jeremy Bonvoisin <j.bonvoisin@bath.ac.uk>", value: 33},
-        { id: "3", from: "Jeremy Bonvoisin <j.bonvoisin@bath.ac.uk>", to: "penyuan <penyuan@users.noreply.github.com>", value: 3 }
-    ]);
+    var edges = new vis.DataSet()
+    var i = 0;
+    for (imported_edge of imported_data["links"]) {
+        edges.add(
+            { 
+                id: i, 
+                from: imported_edge["source"],
+                to: imported_edge["target"],
+                value: imported_edge["weight"],
+                arrows: "to"
+            }
+        );
+        i++;
+    }
 
     // create a network
     var container = document.getElementById('mynetwork');
@@ -71,7 +83,13 @@ console.log(jsonData[0]);
     
     var options = {
         interaction: {hover: true},
-        nodes: {shape: "dot"}
+        nodes: {   
+            shape: "dot", 
+            font: {
+                color: "#ffffff"
+            },
+            borderWidth: 0
+        }
     };
 
     // initialize your network!

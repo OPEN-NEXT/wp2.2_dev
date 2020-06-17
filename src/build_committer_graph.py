@@ -10,6 +10,7 @@
 ##########
 # Import libraries
 ##########
+import json
 import networkx as nx
 import seaborn as sns
 from collections import Counter
@@ -79,3 +80,20 @@ def build_committer_graph(file_change_history, committer_graph):
                 # the {0 ...} is because we use a MulitDiGraph, so get_edge_data returns a dict of links instead of one link
                 committer_graph[parent_node["Author"]][child_node["Author"]][0]['weight'] = \
                     committer_graph[parent_node["Author"]][child_node["Author"]][0]['weight'] + 1
+
+def export_committer_graph(committer_graph, file_path):
+    
+    # load the visjs template into a string
+    with open('visjs_template.html', 'r') as f:
+        html_string = f.read()
+    
+    # generate a string with js code including networkx data to concatenate with the visjs template
+    js_string = []
+    js_string.append("<script type='text/javascript'>\r\n")
+    js_string.append("imported_data = ")
+    js_string.append(json.dumps(nx.node_link_data(committer_graph), sort_keys=True, indent=4))
+    js_string.append("\r\n</script>\r\n")
+
+    with open(file_path, 'w') as f:
+       f.write(''.join(js_string) + html_string)
+    del f

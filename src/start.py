@@ -24,6 +24,7 @@ try:
     from build_commit_history import build_commit_history
     from build_file_change_history import build_file_change_history
     from build_committer_graph import build_committer_graph
+    from build_committer_graph import export_committer_graph
     from load_config import load_config
 except ImportError as import_error:
     print(
@@ -188,6 +189,9 @@ def main():
     with open(output_JSON, 'w') as f:
        f.write(JSON_string)
     del f
+
+    output_VISJS = os.path.join(os.path.join(config["data_dir_path"], 'committer_graphs'), username + '-' + repo + '.html')
+    export_committer_graph(committer_graph, output_VISJS)
     
 if __name__ == "__main__":
     main()
