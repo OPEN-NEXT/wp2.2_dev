@@ -15,13 +15,16 @@ from warnings import warn
 import csv
 
 
+# TODO: Add usage instructions to README.txt
+# TODO: Finish docstring
+# TODO: Add options for logging
 def initialise_options() -> dict:
     """Initialise starting options for git-mining script
 
     Returns:
         dictionary: key-value pairs for file paths to configuration (key "config_file"), 
-        GitHub authentication token (key "auth_file"), 
-        ouput directory for downloaded data (key "data_dir"), 
+        GitHub authentication token (key "auth_token"), 
+        output directory for downloaded data (key "data_dir"), 
         list of repositories to mine (key "repo_list"), 
         and if output directory should be created (key "create_data_dir").
     """
