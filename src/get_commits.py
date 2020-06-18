@@ -11,6 +11,7 @@
 ##########
 
 import os
+from sys import stderr
 from perceval.backends.core.git import Git
 from perceval.errors import RepositoryError # To handle errors with repositories
 
@@ -59,7 +60,7 @@ def get_commits(username, reponame, commits, config):
         for commit_data in repo_fetched:
             commits.append(commit_data["data"])
     except RepositoryError as repo_error:
-        print("Error with this repository...")
+        print("Error with this repository: " + username + "/" + reponame, file=stderr)
         pass
     
     # Print the contents of those commits
