@@ -9,7 +9,6 @@
 ################################################################################################################################################
 
 # standard libraries
-import argparse
 import json
 import os
 import sys
@@ -26,13 +25,9 @@ try:
     from build_file_change_history import build_file_change_history
     from build_committer_graph import build_committer_graph
     from build_committer_graph import export_committer_graph
-    from load_config import load_config
 except ImportError as import_error:
     print(
         f"Error importing required module(s):\n{import_error}", file=sys.stderr)
-    exit(1)
-except:
-    print("Error when importing required modules.", file=sys.stderr)
     exit(1)
 
 # functions 
@@ -55,54 +50,87 @@ def main():
     # Get commandline and configuration file options
     configuration: dict = initialise_options()
 
-################################################################################################################################################
-################################################################################################################################################
-# Get (all forks of) all forks 
-################################################################################################################################################
-################################################################################################################################################
+    #
+    # The rest of the script acts on each item in the list of git repositories to mine
+    #
 
-    forks = list()
-    forks.append({'user': username,
-                  'repo': repo,
-                  'parent_user': username,
-                  'parent_repo': repo})
+    for repository in configuration["repo_list"]:
+        username = repository["owner"]
+        repo = repository["repo"]
 
-    get_Github_forks(username=username, reponame=repo, forks=forks, auth=auth)
+        ########################################################################################################################################
+        ########################################################################################################################################
+        # Get (all forks of) all forks 
+        ########################################################################################################################################
+        ########################################################################################################################################
 
-    print("There are " + str(forks.__len__()) +
-          " forks of " + username + "/" + repo)
+        # Initialise an empty list of forks
+        forks = list()
+        forks.append({'user': username,
+                      'repo': repo,
+                      'parent_user': username,
+                      'parent_repo': repo})
 
-################################################################################################################################################
-################################################################################################################################################
-# get all commits from all previously fetched forks 
-################################################################################################################################################
-################################################################################################################################################
+        get_Github_forks(username=username, reponame=repo, forks=forks, auth=configuration["auth_token"])
 
-    known_commits = list()  # compilation of all commits of all forks, without duplicates
-    for fork in forks:
-        print("retrieving commits in " + fork['user'] + "/" + fork['repo'])
-        commits = list()  # all commits of this fork
-        get_commits(
-            username=fork['user'], reponame=fork['repo'], commits=commits, config=configuration)
-        known_commits_shas = [x['commit'] for x in known_commits]
-        for commit in commits:
-            if not commit['commit'] in known_commits_shas:
-                known_commits.append(commit)
-    # network is supposed to be a DAG (directed acyclic graph)
-    build_commit_history(known_commits, commit_history)
+        print("There are " + str(forks.__len__()) +
+              " forks of " + username + "/" + repo)
 
-    # stringize the non string node attributes not supported by GrapML
-    for node in commit_history.nodes():
-        commit_history.nodes[node]['refs'] = str(
-            commit_history.nodes[node]['refs'])
-        commit_history.nodes[node]['parents'] = str(
-            commit_history.nodes[node]['parents'])
+        ########################################################################################################################################
+        ########################################################################################################################################
+        # get all commits from all previously fetched forks 
+        ########################################################################################################################################
+        ########################################################################################################################################
+
+        known_commits = list()  # compilation of all commits of all forks, without duplicates
+        for fork in forks:
+            print("retrieving commits in " + fork['user'] + "/" + fork['repo'])
+            commits = list()  # all commits of this fork
+            get_commits(
+                username=fork['user'], reponame=fork['repo'], commits=commits, config=configuration)
+            known_commits_shas = [x['commit'] for x in known_commits]
+            for commit in commits:
+                if not commit['commit'] in known_commits_shas:
+                    known_commits.append(commit)
     
-    # export the file commit history as GraphML
-    output_GraphML = build_export_file_path(
-        os.path.join(config["data_dir_path"], 'commit_histories'), 
-        username + '-' + repo + '.GraphML') 
-    nx.write_graphml(commit_history, output_GraphML)
+        # convert commits to a JSON string for export
+        commits_JSON = json.dumps(known_commits, sort_keys=True, indent=4)
+    
+        # save the commits to a file
+        output_JSON = build_export_file_path(
+            os.path.join(configuration["data_dir"], 'JSON_commits'), 
+            username + '-' + repo + '.json') 
+        with open(output_JSON, 'w') as f:
+            f.write(commits_JSON)
+        del f
+
+        pass
+
+        ########################################################################################################################################
+        ########################################################################################################################################
+        # buid the commit history based on the previously fetched (flat) list of commits
+        ########################################################################################################################################
+        ########################################################################################################################################
+
+        # recreate the 'network' view in GitHub (repo > insights > network)
+        # network is supposed to be a DAG (directed acyclic graph)
+        commit_history = nx.DiGraph()
+        build_commit_history(known_commits, commit_history)
+
+        # stringize the non string node attributes not supported by GrapML
+        for node in commit_history.nodes():
+            commit_history.nodes[node]['refs'] = str(
+                commit_history.nodes[node]['refs'])
+            commit_history.nodes[node]['parents'] = str(
+                commit_history.nodes[node]['parents'])
+    
+        # export the file commit history as GraphML
+        output_GraphML = build_export_file_path(
+            os.path.join(config["data_dir_path"], 'commit_histories'), 
+            username + '-' + repo + '.GraphML') 
+        nx.write_graphml(commit_history, output_GraphML)
+
+        pass
 
 ################################################################################################################################################
 ################################################################################################################################################
