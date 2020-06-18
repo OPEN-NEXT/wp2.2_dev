@@ -8,8 +8,8 @@
 try:
     import requests
 # If library not present, throw exception
-except:
-    print("Need `requests` library")
+except ImportError:
+    print("Need `requests` library available")
     exit(1)
 
 def get_Github_forks(username, reponame, forks, auth=None):
@@ -52,8 +52,7 @@ def get_Github_forks(username, reponame, forks, auth=None):
         else:
             r = requests.get(url=request_url,
                              params={"page": page},
-                             auth=(auth['login'],
-                                   auth['secret']))
+                             headers={"Authorization": "token " + auth})
         j = r.json()
         r.close()
 
