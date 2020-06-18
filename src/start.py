@@ -126,53 +126,53 @@ def main():
     
         # export the file commit history as GraphML
         output_GraphML = build_export_file_path(
-            os.path.join(config["data_dir_path"], 'commit_histories'), 
+            os.path.join(configuration["data_dir"], 'commit_histories'), 
             username + '-' + repo + '.GraphML') 
         nx.write_graphml(commit_history, output_GraphML)
 
+        ################################################################################################################################################
+        ################################################################################################################################################
+        # build history of file changes based on the previously previously fetched (flat) list of commits
+        ################################################################################################################################################
+        ################################################################################################################################################
+
+        # network is supposed to be a DAG (directed acyclic graph)
+        file_change_history = nx.DiGraph() 
+        build_file_change_history(known_commits, file_change_history)
+    
+        # export the file change history as GraphML
+        output_GraphML = build_export_file_path(
+            os.path.join(configuration["data_dir"], 'file_change_histories'), 
+            username + '-' + repo + '.GraphML') 
+        nx.write_graphml(file_change_history, output_GraphML)
+
         pass
 
-################################################################################################################################################
-################################################################################################################################################
-# build history of file changes based on the previously previously fetched (flat) list of commits
-################################################################################################################################################
-################################################################################################################################################
+        ################################################################################################################################################
+        ################################################################################################################################################
+        # build committer graph based on the previously previously generated file change history
+        ################################################################################################################################################
+        ################################################################################################################################################
 
-    # network is supposed to be a DAG (directed acyclic graph)
-    file_change_history = nx.DiGraph() 
-    build_file_change_history(known_commits, file_change_history)
+        committer_graph = nx.MultiDiGraph() 
+        build_committer_graph(file_change_history, committer_graph)
     
-    # export the file change history as GraphML
-    output_GraphML = build_export_file_path(
-        os.path.join(config["data_dir_path"], 'file_change_histories'), 
-        username + '-' + repo + '.GraphML') 
-    nx.write_graphml(file_change_history, output_GraphML)
+        # export the file committer graph as GraphML
+        output_GraphML = build_export_file_path(
+            os.path.join(configuration["data_dir"], 'committer_graphs'), 
+            username + '-' + repo + '.GraphML') 
+        nx.write_graphml(committer_graph, output_GraphML)
 
-################################################################################################################################################
-################################################################################################################################################
-# build committer graph based on the previously previously generated file change history
-################################################################################################################################################
-################################################################################################################################################
+        JSON_string = json.dumps(nx.node_link_data(committer_graph), sort_keys=True, indent=4)
+        output_JSON = build_export_file_path(
+            os.path.join(configuration["data_dir"], 'committer_graphs'), 
+            username + '-' + repo + '.json') 
+        with open(output_JSON, 'w') as f:
+           f.write(JSON_string)
+        del f
 
-    committer_graph = nx.MultiDiGraph() 
-    build_committer_graph(file_change_history, committer_graph)
-    
-    # export the file committer graph as GraphML
-    output_GraphML = build_export_file_path(
-        os.path.join(config["data_dir_path"], 'committer_graphs'), 
-        username + '-' + repo + '.GraphML') 
-    nx.write_graphml(committer_graph, output_GraphML)
-
-    JSON_string = json.dumps(nx.node_link_data(committer_graph), sort_keys=True, indent=4)
-    output_JSON = build_export_file_path(
-        os.path.join(config["data_dir_path"], 'committer_graphs'), 
-        username + '-' + repo + '.json') 
-    with open(output_JSON, 'w') as f:
-       f.write(JSON_string)
-    del f
-
-    output_VISJS = os.path.join(os.path.join(config["data_dir_path"], 'committer_graphs'), username + '-' + repo + '.html')
-    export_committer_graph(committer_graph, output_VISJS)
+        output_VISJS = os.path.join(os.path.join(configuration["data_dir"], 'committer_graphs'), username + '-' + repo + '.html')
+        export_committer_graph(committer_graph, output_VISJS)
     
 if __name__ == "__main__":
     main()
