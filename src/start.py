@@ -88,7 +88,7 @@ def main():
         for commit in commits:
             if not commit['commit'] in known_commits_shas:
                 known_commits.append(commit)
-    # netwrok is supposed to be a DAG (directed acyclic graph)
+    # network is supposed to be a DAG (directed acyclic graph)
     build_commit_history(known_commits, commit_history)
 
     # stringize the non string node attributes not supported by GrapML
