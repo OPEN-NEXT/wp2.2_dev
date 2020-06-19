@@ -68,3 +68,26 @@ Here are some useful stuff (which might not necessarily be a, or a part of a, da
   * This provides a checklist that maps a repository to GitHub's [recommended community standards](https://opensource.guide/) (which, by the way, is itself worth looking at for our dashboard).
   * I remember @mkampik mentioning the concept of "project stages", perhaps a checklist like this can be adapted to an open source hardware project.
   * For example, each checklist item could represent a certain quantitative measure derived from a project's metadata (such as the bus factor), and will automatically checked off once a threshold is reached. And depending on which items are checked, a community would be put into a certain stage (that comes with a badge!).
+
+### Playing with interaction graphs
+
+Accessing events stored such as commits or other events captured by Git based platforms (GitHub, Wikifactory) such as issues and comments, we can build interaction graphs giving an overview of collaborative activities in the project. See the very simple example below generated from the repository WP2.2_dev based on file change events.
+
+![Interaction network screenshot](images/interation_network_exampe_screenshot.png)
+
+From such networks, it is possible to generate metrics such as:
+ - Centrality index: indicates the relative importance of all nodes in a graph. High index indicates the project is centered around one or few central people.
+ - Clustering index: indicates the degree to which nodes tend to cluster
+together. An average clustering coefficient indicates contributors are clustered in subgroups of three or more people directly working on the same files. 
+ - Some interpretation of the [bus factor](https://en.wikipedia.org/wiki/Bus_factor): computed as the minimum number of team members that have to suddenly disappear for the interaction graph to be disconnected into subgraphs.
+ - Completeness: ratio between the number of edges in the graph and the number of edges the graph would have, would it be complete. This gives an average value of how many people each contributor works with.
+
+Such graphs can also give some idea about:
+- the relative contributions of people in the project and can participate to "gamification". Different kinds of contributions can be displayed (e.g. comments in issues and commits), either alternatively, side by side or integrated in a common weighed score.
+- the evolution of participants from periphery to core (see for example [this study](https://link.springer.com/chapter/10.1007/978-3-319-65151-4_21))
+
+Furthermore, plotting the evolution of this graph over time (from project start to now) can give some insights about the community dynamics: is it booming, stalling or declining? Is it stable or a "come-and-go" project? etc
+
+### Playing with Design Structure Matrices
+
+[TODO]
