@@ -11,7 +11,7 @@ token
 .config
 
 # Generated JSON files
-*.json
+JSON_commits/*.json
 
 # Visual Studio Code files
 .vscode/

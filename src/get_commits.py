@@ -11,6 +11,7 @@
 ##########
 
 import os
+from sys import stderr
 from perceval.backends.core.git import Git
 from perceval.errors import RepositoryError # To handle errors with repositories
 
@@ -42,12 +43,12 @@ def get_commits(username, reponame, commits, config):
     print('fetching info at ' + repo_URL)
 
      # checks whether the export dir exists and if not creates it # TODO: this is a code snippet we use three times, we should make a function out of it
-    local_dir = os.path.join(config["data_dir_path"],'grimoire_dumps')
+    local_dir = os.path.join(config["data_dir"],'grimoire_dumps')
     if not os.path.isdir(local_dir):
         os.makedirs(local_dir)
-    local_path = os.path.join(local_dir, username + '-' + reponame)
+    data_dump_path = os.path.join(local_dir, username + '-' + reponame)
 
-    git = Git(repo_URL, local_path)
+    git = Git(repo_URL, data_dump_path)
     
     # `fetch()` gets commits from all branches by default.
     # It returns a list of dictionaries, where the `data` key in each
@@ -59,7 +60,7 @@ def get_commits(username, reponame, commits, config):
         for commit_data in repo_fetched:
             commits.append(commit_data["data"])
     except RepositoryError as repo_error:
-        print("Error with this repository...")
+        print("Error with this repository: " + username + "/" + reponame, file=stderr)
         pass
     
     # Print the contents of those commits
