@@ -6,18 +6,17 @@
 # initialise the rest of the scripts in this repository.
 
 import argparse
+import csv
 import json
 import os
 import sys
+import unicodedata
 from json.decoder import JSONDecodeError
 from sys import stderr
 from warnings import warn
-import csv
-
 
 # TODO: Add usage instructions to README.txt
-# TODO: Finish docstring
-# TODO: Add options for logging
+
 def initialise_options() -> dict:
     """Initialise starting options for git-mining script
 
@@ -26,6 +25,7 @@ def initialise_options() -> dict:
         GitHub authentication token (key "auth_token"), 
         output directory for downloaded data (key "data_dir"), 
         list of repositories to mine (key "repo_list"), 
+        log level (key "log_level"), 
         and if output directory should be created (key "create_data_dir").
     """
     #
@@ -43,6 +43,8 @@ def initialise_options() -> dict:
                         help="Output directory for storing downloaded data.")
     parser.add_argument("-r", "--repo_list", type=str, default="repolist_example.csv", required=False, 
                         help="Path to CSV file containing list of repositories to mine.")
+    parser.add_argument("-l", "--log_level", type=str, default="error", required=False, 
+                        help = "Log level. Valid options: debug, info, warning, error (default), critical.")
     parser.add_argument("--create_data_dir", type=bool, default=True, required=False,
                         help = "If data output directory doesn't exist, create it.")
     parsed_config = parser.parse_args()
@@ -54,6 +56,7 @@ def initialise_options() -> dict:
     configuration["auth_token"] = parsed_config.auth_token
     configuration["data_dir"] = parsed_config.data_dir
     configuration["repo_list"] = parsed_config.repo_list
+    configuration["log_level"] = parsed_config.log_level
     configuration["create_data_dir"] = parsed_config.create_data_dir
 
     #
@@ -147,6 +150,33 @@ def initialise_options() -> dict:
             print("Option 'create_data_dir' is {}, exiting.".format(configuration["create_data_dir"]))
             sys.exit(1)
     
+    #
+    # Handle log level option
+    #
+
+    # Check if user-supplied option is indeed a string
+    if isinstance(configuration["log_level"], str):
+        # Case-insensitive comparison using Python built-in functions `casefold()` and 
+        # `unicode.normalize()`. More info: 
+        # https://stackoverflow.com/a/29247821/186904
+        log_level = configuration["log_level"].casefold()
+        configuration["log_level"] = unicodedata.normalize("NFKD", log_level)
+        # Create a string of acceptable log level strings to compare against
+        valid_log_levels: list = ["critical".casefold(),
+                                  "error".casefold(),
+                                  "warning".casefold(),
+                                  "info".casefold(),
+                                  "debug".casefold()]
+        # Check if user-supplied option is in list of valid log levels
+        if log_level in valid_log_levels:
+            pass
+        else:
+            # Otherwise, stop execution
+            raise ValueError("{} is not a valid log level.".format(configuration["log_level"]))
+    else:
+        raise TypeError("{} doesn't seem to be a valid string.".format(configuration["log_level"]))
+    del valid_log_levels, log_level
+
     #
     # Process input list of repositories (`repo_list`) to mine
     #
