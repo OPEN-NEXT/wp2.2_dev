@@ -8,6 +8,10 @@ Imported from [this file](https://github.com/MIE5R0/opennext/blob/master/WP2/Tas
 
 * Is there a way to look for open source hardware on [Tindie](https://www.tindie.com/)?
 * [Gource](https://gource.io/) is an open source software version control visualization tool
+
+## OSH hosting/publishing platforms
+
+* Of course there's Wikifactory.
 * [CircuitHub](https://circuithub.com/) allows (relatively) simple automated third-party manufacturing of PCBs
 * [Kitspace](https://kitspace.org/) allows sharing and easy ordering of parts for electronics designs
 * [LabMaker](https://www.labmaker.org/) sells open science hardware products
@@ -18,6 +22,8 @@ Imported from [this file](https://github.com/MIE5R0/opennext/blob/master/WP2/Tas
   * GoSH [forum post](https://forum.openhardware.science/t/makernet-org-commercial-open-hardware/1763)
 * [OSH Park](https://oshpark.com/) is another PCB publishing and manufacturing platform
 * [InventHub](https://inventhub.io/) is also a Github-like platform for hosting and sharing hardware projects, with "visual version control"
+* [GroupGets](https://groupgets.com/) is more of a crowdfunding site
+* 
 
 ## Possible new projects to investigate
 
