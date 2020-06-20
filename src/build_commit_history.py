@@ -74,24 +74,28 @@ def build_commit_history(known_commits, commit_history):
         refs = commit_history.nodes[branch_head]['refs']
         parents = commit_history.nodes[branch_head]['parents']
 
-        # there must be the same number of parents and branch refs 
+        # there must be the same number of parents and branch refs so we can tell which branch name to associate with which parent commit 
         if len(refs)!=len(parents):
-            raise Exception
-        else:
-            # add the attribute 'branch' to the current node and propagate it upwards in the DAG
-            for i in range(len(refs)):
-                # if the name contains 'refs/heads/', then the ref is a branch ref (could be a release ref (in this case it would conain*refs/tags*))
-                if 'refs/heads/' in refs[i]:
-                    
-                    # we add the branch to our list of known branch names (needed for colourizing later)
-                    branch_names.append(refs[i])
+            # there are some cases where the number of branch names is lower as the number of parents
+            # TODO: investigate why such cases exist
+            # in this case we "invent" a branch name
+            for i in range(len(parents)-len(refs)):
+                refs.append("unknownBranchName"+str(i))
 
-                    commit_history.nodes[branch_head]['branch'] = refs[i]
-                    # if the parent is a branch head, we stop here
-                    if len(commit_history.nodes[parents[i][:7]]['refs']) == 0:
-                        # if branch info has already been added to the parent, we stop here as well
-                        if not 'branch' in commit_history.nodes[parents[i][:7]]:
-                            propagate_branch_name(commit_history, parents[i][:7], refs[i])
+        # add the attribute 'branch' to the current node and propagate it upwards in the DAG
+        for i in range(len(refs)):
+            # if the name contains 'refs/heads/', then the ref is a branch ref (could be a release ref (in this case it would conain*refs/tags*))
+            if 'refs/heads/' in refs[i]:
+                
+                # we add the branch to our list of known branch names (needed for colourizing later)
+                branch_names.append(refs[i])
+
+                commit_history.nodes[branch_head]['branch'] = refs[i]
+                # if the parent is a branch head, we stop here
+                if len(commit_history.nodes[parents[i][:7]]['refs']) == 0:
+                    # if branch info has already been added to the parent, we stop here as well
+                    if not 'branch' in commit_history.nodes[parents[i][:7]]:
+                        propagate_branch_name(commit_history, parents[i][:7], refs[i])
 
     # ------------------------------------------------------------
     # fourth pass: colorize
