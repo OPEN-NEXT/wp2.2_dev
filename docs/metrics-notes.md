@@ -88,6 +88,8 @@ Such graphs can also give some idea about:
 
 Furthermore, plotting the evolution of this graph over time (from project start to now) can give some insights about the community dynamics: is it booming, stalling or declining? Is it stable or a "come-and-go" project? etc
 
+See also [this blogpost](https://reticular.hypotheses.org/1745) about using graph topology metrics and their meaning for social network analysis.
+
 ### Playing with Design Structure Matrices
 
 [TODO]
