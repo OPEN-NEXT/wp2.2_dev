@@ -62,6 +62,10 @@ I am also in touch with one of the main developers behind Augur, [Dr Sean Goggin
 
 Here are some useful stuff (which might not necessarily be a, or a part of a, dashboard per-se) that are potential components of the dashboard we develop.
 
+### Existing dashboard implementations
+
+Don't forget to consider existing implementations as desribed earlier in this document.
+
 ### GitHub repo Insights tab
 
 * [Community profile](https://github.com/lovasoa/whitebophir/community)
