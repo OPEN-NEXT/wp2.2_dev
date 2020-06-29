@@ -94,6 +94,24 @@ Furthermore, plotting the evolution of this graph over time (from project start 
 
 See also [this blogpost](https://reticular.hypotheses.org/1745) about using graph topology metrics and their meaning for social network analysis.
 
-### Playing with Design Structure Matrices
+### Playing with design structure matrices (DSMs)
 
-[TODO]
+A [design structure matrix (DSM)](https://wikipedia.org/wiki/Design_structure_matrix) is conceptually related to interaction graphs, but has potential to be a simple, compact visual representation of a complex system.
+
+Here is a simple example (from [here](https://commons.wikimedia.org/wiki/File:A_sample_Design_Structure_Matrix_(DSM).png#/media/File:A_sample_Design_Structure_Matrix_(DSM).png), [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0)):
+
+![A simple DSM](https://upload.wikimedia.org/wikipedia/commons/3/36/A_sample_Design_Structure_Matrix_%28DSM%29.png)
+
+The rows and columns of this DSM show the elements of a system (A, B, C, etc.), while the "1"s are connections between elements. An obvious use case would be to visualise the dependency relationships between source code files in a software project.
+
+Some notes:
+
+1. The connections between elements clearly don't have to be "1"s, they can be weighted to represent the any quatitative measure of those connections.
+
+2. There can be *directionality* in DSMs which can show how elements of a design depend on each other.
+
+3. As mentioned earlier in this document, Gopsill et al. used DSMs to capture dependency relationships between hardware design files. However, that work used the temporal proximity of file changes to infer the directionality of dependencies. How can this directionality be derived from version control systems such as git?
+
+4. This visualisation does not have to be only for hardware designs, perhaps it can be used to show social and/or organisational structure of development communities?
+
+5. DSMs are basically a specific case of adjacency matrices, which should not be difficult to implement in Python. See [this article](https://medium.com/techmacademy/graphs-adjacency-matrix-behind-the-scenes-visual-tour-6512493912c0) and [this post](https://stackoverflow.com/q/29464252/186904) for simple examples.
