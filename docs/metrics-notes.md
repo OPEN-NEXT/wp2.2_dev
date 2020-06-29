@@ -92,4 +92,17 @@ See also [this blogpost](https://reticular.hypotheses.org/1745) about using grap
 
 ### Playing with Design Structure Matrices
 
-[TODO]
+[Design structure matrices](https://en.wikipedia.org/wiki/Design_structure_matrix), also called dependency structure matrices, in short DSM, provide a graphical overview of dependencies between elements of an assembly. It allows judging on the modularity, the granularity and the complexity of a system. They are "widely known for their ability to support engineers in the management of dependencies across product and organisational architectures." [1]
+
+Components of an assembly are represented as row and columns of a square matrix and the value in cell (n,m) represent the interaction between subcomponents n and m. See an example below (taken from [2]). From there, it is possible to use clustering algorithms and other processing techniques (partitionning, sequencing) to discover structural features that are not visible at first sight. For example:
+ - loops (A depends on B, who depends on C, who depends on A)
+ - independend modules
+ - bus modules / structural elements
+
+![DSM example](https://www.researchgate.net/profile/Yutaka_Nomaguchi/publication/252176446/figure/fig2/AS:669312016732174@1536587828427/Design-Structure-Matrix-of-the-formula-car-project.png)
+
+Interactions between components are generally defined based on how much components interact with each others (whether they touch each others, are aligned to each others, exchange energy or movement, exchange information, etc.) DSMs are also generally generated manually by a system engineer who has an overview of the system. However, the wide use of product data management system with file versioning history opens the possibility to generate DSMs automatically based on co-occurrence of file changes: if two files are generally edited in a common short time frame, it may mean that they are interdependent. According to [1] who tested this technique on a Student Formula car development: "Recent work in the field has exploited product lifecycle management systems to generate DSMs via the co-occurrence of edits to engineering files. These are referred to as dynamic DSMs and results have demonstrated both the efficacy and accuracy of dynamic DSMs in representing engineering work and emergent product architectures. " 
+
+[1]: Gopsill, J., Snider, C., & Hicks, B. (2019). The emergent structures in digital engineering work: What can we learn from dynamic DSMs of near-identical systems design projects? Design Science, 5, E28. doi:10.1017/dsj.2019.20
+
+[2]: Nomaguchi, Y., Tsutsumi, D., & Fujita, K. (2007). Design process planning from a viewpoint of progressive nature of knowledge acquisition. In DS 42: Proceedings of ICED 2007, the 16th International Conference on Engineering Design, Paris, France, 28.-31.07. 2007 (pp. 679-680).
