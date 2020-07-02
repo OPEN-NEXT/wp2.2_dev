@@ -68,17 +68,8 @@ def build_file_change_history(known_commits, file_change_history):
                      file_change_history.nodes[node_id]["action"] = filechange["action"]
                 else:
                     print(f"Warning: missing file edition information (key 'action') for file {filechange['file']} in commit {commit['commit']}")
-
-                # NOTE 1: not all filechange information contains the keys "action", "added" and "removed".
-                # NOTE 2: actions can either be A, M, D, or MM (this list may not be exhaustive), 
-                #         in the repository jurgenwesterhoff/bGeigieNanoKit, some actions are R052, R074, R066, C085, DD
-                # TODO 1: verify the list of possible actions, their meaning and why sometimes the information is missing
-                # TODO 2: detect rename events   
-                # TODO 3: investigate why keys are missing in some commits. 
-
         else:
-            print("warning: commit " + commit['commit'] + " has no attribute 'files'.")
-            # TODO: investigate why some commits have no attribute 'file'      
+            print("warning: commit " + commit['commit'] + " has no attribute 'files'.")  
  
     
     # Partition the unstuctured list of file changes.
