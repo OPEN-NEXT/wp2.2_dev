@@ -10,8 +10,9 @@ token
 # custom config
 .config
 
-# Generated JSON files
-JSON_commits/*.json
+# Input data and config files
+*.json
+*.csv
 
 # Visual Studio Code files
 .vscode/
