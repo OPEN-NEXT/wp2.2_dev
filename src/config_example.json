@@ -1,8 +1,0 @@
-{
-    "auth_token": "token",
-    "data_dir": "__DATA__",
-    "repo_list": "repolist_example.csv",
-    "create_data_dir": true,
-    "log_level": "DEBUG",
-    "fake_option": "this will be intentionaly ignored by the script"
-}
