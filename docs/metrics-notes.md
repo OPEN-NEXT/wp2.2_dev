@@ -73,7 +73,7 @@ Don't forget to consider existing implementations as desribed earlier in this do
   * I remember @mkampik mentioning the concept of "project stages", perhaps a checklist like this can be adapted to an open source hardware project.
   * For example, each checklist item could represent a certain quantitative measure derived from a project's metadata (such as the bus factor), and will automatically checked off once a threshold is reached. And depending on which items are checked, a community would be put into a certain stage (that comes with a badge!).
 
-### Playing with interaction graphs
+### Interaction graphs
 
 Accessing events stored such as commits or other events captured by Git based platforms (GitHub, Wikifactory) such as issues and comments, we can build interaction graphs giving an overview of collaborative activities in the project. See the very simple example below generated from the repository WP2.2_dev based on file change events.
 
@@ -94,7 +94,7 @@ Furthermore, plotting the evolution of this graph over time (from project start 
 
 See also [this blogpost](https://reticular.hypotheses.org/1745) about using graph topology metrics and their meaning for social network analysis.
 
-### Playing with design structure matrices (DSMs)
+### Design structure matrices (DSMs)
 
 [Design structure matrices](https://en.wikipedia.org/wiki/Design_structure_matrix), also called dependency structure matrices, in short DSM, provide a graphical overview of dependencies between elements of an assembly. It allows judging on the modularity, the granularity and the complexity of a system. They are "widely known for their ability to support engineers in the management of dependencies across product and organisational architectures." [1] More broadly speaking, a DSM has potential to be a simple, compact visual representation of a complex system.
 
@@ -131,3 +131,17 @@ Some notes and observations:
 4. This visualisation does not have to be only for hardware designs, perhaps it can be used to show social and/or organisational structure of development communities?
 
 5. DSMs are basically a specific case of adjacency matrices, which should not be difficult to implement in Python. See [this article](https://medium.com/techmacademy/graphs-adjacency-matrix-behind-the-scenes-visual-tour-6512493912c0) and [this post](https://stackoverflow.com/q/29464252/186904) for simple examples.
+
+
+### What could be the dashboard used for
+
+- Give an idea of "what kind of project it is"
+  - insights into the technology (like GitHub bar indicating which languages are used)
+  - activity graph / participant network
+- Give an pproximate measure of what we mean with success:
+  - number of downloads / views
+  - number of commits
+  - stability of commits
+- Provide insights to guide projects
+  - way to encourage projects adopting the mantra "release early, release often".
+  - give guidance based on project phase (discover the phases or tie the analyses in theses phases declared by the user)
