@@ -41,11 +41,10 @@ def build_file_change_history(known_commits, file_change_history):
     for commit in known_commits:
         if 'files' in commit:
             for filechange in commit['files']:
+                node_id = filechange["file"] + "_" + commit["commit"] # unique node identifier
                 file_change_history.add_node(
-                    filechange["file"] + "_" + commit["commit"], # unique node identifier
-                    unique_id = filechange["file"] + "_" + commit["commit"], 
-                    added = filechange["added"],
-                    removed = filechange["removed"],
+                    node_id, # unique node identifier
+                    unique_id = node_id, 
                     file = filechange["file"],
                     Author = commit["Author"],
                     Committer = commit["Commit"],
@@ -55,13 +54,27 @@ def build_file_change_history(known_commits, file_change_history):
                 )
                 # NOTE: For some reason it is not possible to retrieve the unique id of a node from networkx (at least I haven't found the way).
                 #       As a consequence, I need to store the unique id as an attribute. That is a bit ugly and redundant...
+                # TODO: Find a way to retrieve the ID of a networkx node.
 
+                if "added" in filechange:
+                    file_change_history.nodes[node_id]["added"] = filechange["added"]
+                else:
+                    print(f"Warning: missing file edition information (key 'added') for file {filechange['file']} in commit {commit['commit']}")
+                if "removed" in filechange:
+                    file_change_history.nodes[node_id]["removed"] = filechange["removed"]
+                else:
+                    print(f"Warning: missing file edition information (key 'removed') for file {filechange['file']} in commit {commit['commit']}")
                 if "action" in filechange:
-                     file_change_history.nodes[filechange["file"] + "_" + commit["commit"]]["action"] = filechange["action"]
-                # NOTE 1: not all filechange information contains the key "action"
-                # NOTE 2: actions can either be A, M, D, or MM (this list may not be exhaustive)
+                     file_change_history.nodes[node_id]["action"] = filechange["action"]
+                else:
+                    print(f"Warning: missing file edition information (key 'action') for file {filechange['file']} in commit {commit['commit']}")
+
+                # NOTE 1: not all filechange information contains the keys "action", "added" and "removed".
+                # NOTE 2: actions can either be A, M, D, or MM (this list may not be exhaustive), 
+                #         in the repository jurgenwesterhoff/bGeigieNanoKit, some actions are R052, R074, R066, C085, DD
                 # TODO 1: verify the list of possible actions, their meaning and why sometimes the information is missing
-                # TODO 2: detect rename events      
+                # TODO 2: detect rename events   
+                # TODO 3: investigate why keys are missing in some commits. 
 
         else:
             print("warning: commit " + commit['commit'] + " has no attribute 'files'.")
