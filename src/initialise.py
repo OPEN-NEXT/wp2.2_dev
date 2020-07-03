@@ -101,6 +101,18 @@ def initialise_options() -> dict:
         sys.exit(1)
 
     #
+    # Handle log level option
+    #
+
+    # Apply user-supplied config, if supplied. If not, continue with default settings
+    if "log_config" in configuration:
+        try:
+            dictConfig(configuration["log_config"])
+        except Exception as log_config_error:
+            logging.critical(f"Error parsing log config: {log_config_error}")
+            sys.exit(1)
+
+    #
     # Process GitHub API token
     #
 
@@ -145,18 +157,6 @@ def initialise_options() -> dict:
             os.makedirs(name=configuration["data_dir"])
         else:
             logging.critical("Option 'create_data_dir' is {}, exiting.".format(configuration["create_data_dir"]))
-            sys.exit(1)
-    
-    #
-    # Handle log level option
-    #
-    # Check if user-supplied option is indeed a string
-    if "log_config" in configuration:
-        # https://docs.python.org/3/library/logging.config.html#logging-config-dictschema
-        try:
-            dictConfig(configuration["log_config"])
-        except Exception as log_config_error: # TODO: Make Exception more specific
-            logging.critical(f"Error parsing log config: {log_config_error}")
             sys.exit(1)
 
     #

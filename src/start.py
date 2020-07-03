@@ -12,14 +12,13 @@
 import json
 import os
 import sys
+import logging
 
 import networkx as nx
 import json
 
-import logging
-
 # default logging configuration
-# needs to be on top of the code, otherwise all calls to logging.XXXX happening
+# needs to be on top of the code, otherwise all calls to logging.<something> happening
 # before the custom confifuration is loaded or in case no custom configuration is
 # given would be ignored
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
@@ -55,6 +54,7 @@ def build_export_file_path(dir_path, filename):
 ################################################################################################################################################
 
 def main():
+
     # Get commandline and configuration file options
     configuration: dict = initialise_options()
 
