@@ -36,12 +36,6 @@ def get_Github_forks(username, reponame, forks, auth=None):
 
     page = 1  # Track page number of Github API response
     while True:
-        logging.info("Finding forks of "
-              + username
-              + "/"
-              + reponame
-              + " page "
-              + str(page))
         r = None
         request_url = "https://api.github.com/repos/{}/{}/forks".format(
             username, reponame)

@@ -140,7 +140,7 @@ def initialise_options() -> dict:
             logging.critical("It should be a 40-character alphanumeric string. Please try again.")
             sys.exit(1)
         else:
-            logging.info("GitHub authentication key looks OK.")
+            logging.debug("GitHub authentication key looks OK.")
     
     #
     # Create ouput data directory `data_dir`

@@ -41,7 +41,6 @@ def get_commits(username, reponame, commits, config):
     """
     
     repo_URL = 'https://github.com/' + username + '/' + reponame
-    logging.info('fetching info at ' + repo_URL)
 
      # checks whether the export dir exists and if not creates it # TODO: this is a code snippet we use three times, we should make a function out of it
     local_dir = os.path.join(config["data_dir"],'grimoire_dumps')
