@@ -12,9 +12,47 @@
 import json
 import os
 import sys
+import logging
+
 
 import networkx as nx
 import json
+
+# initialize default logger
+# this needs to be at the top so 
+from logging.config import dictConfig
+dictConfig({
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'standard': {
+            'format': '%(asctime)s - [%(levelname)s] %(name)s [%(module)s.%(funcName)s:%(lineno)d]: %(message)s', 
+            'datefmt': '%Y-%m-%d %H:%M:%S',
+        }
+    },
+    'handlers' : {
+            'default': {
+                'level': 'INFO', 
+                'class': 'logging.StreamHandler',
+                'formatter': 'standard',
+            }
+    }, 
+    'loggers': {
+            '__main__': { # logging from this module will be logged in VERBOSE level
+                'handlers' : ['default'], 
+                'level': 'INFO', 
+                'propagate': False,
+            },
+    },
+    'root': {
+            'level': 'INFO',
+            'handlers': ['default']
+    },
+})
+# about logging: 
+#   https://gist.github.com/delicb/4540990#file-other-py-L3
+#   https://stackoverflow.com/questions/15727420/using-logging-in-multiple-modules
+
 
 # import the necessary custom functions
 try:
@@ -26,7 +64,7 @@ try:
     from build_committer_graph import build_committer_graph
     from build_committer_graph import export_committer_graph
 except ImportError as import_error:
-    print(
+    logging.error(
         f"Error importing required module(s):\n{import_error}", file=sys.stderr)
     exit(1)
 
@@ -73,7 +111,7 @@ def main():
 
         get_Github_forks(username=username, reponame=repo, forks=forks, auth=configuration["auth_token"])
 
-        print("There are " + str(forks.__len__()) +
+        logging.info("There are " + str(forks.__len__()) +
               " forks of " + username + "/" + repo)
 
         ########################################################################################################################################
@@ -84,7 +122,7 @@ def main():
 
         known_commits = list()  # compilation of all commits of all forks, without duplicates
         for fork in forks:
-            print("retrieving commits in " + fork['user'] + "/" + fork['repo'])
+            logging.info("retrieving commits in " + fork['user'] + "/" + fork['repo'])
             commits = list()  # all commits of this fork
             get_commits(
                 username=fork['user'], reponame=fork['repo'], commits=commits, config=configuration)

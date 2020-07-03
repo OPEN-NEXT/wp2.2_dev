@@ -11,11 +11,9 @@ import json
 import os
 import sys
 import unicodedata
-from json.decoder import JSONDecodeError
-from sys import stderr
-from warnings import warn
+import logging
 
-# TODO: Add usage instructions to README.txt
+from json.decoder import JSONDecodeError
 
 def initialise_options() -> dict:
     """Initialise starting options for git-mining script
@@ -64,9 +62,9 @@ def initialise_options() -> dict:
     #
 
     if (configuration["config_file"] == None) or (configuration["config_file"] == ""):
-        print("No configuration file specified.")
+        logging.critical("No configuration file specified.")
     else:
-        print("Trying to parse configuration file: \n" + configuration["config_file"])
+        logging.info("Trying to parse configuration file:" + configuration["config_file"])
         # Start an empty configuration then populate from file
         custom_config = None
         try:
@@ -74,18 +72,18 @@ def initialise_options() -> dict:
                 try:
                     custom_config = json.load(config_file)
                 except JSONDecodeError as json_error:
-                    print(f"Error parsing configuration file:\n{json_error}", file=sys.stderr)
+                    logging.critical(f"Error parsing configuration file: {json_error}")
                     sys.exit(1)
                 del config_file
         except FileNotFoundError as not_found:
-            print(f"Specified configuration file not found:\n{not_found}", file=sys.stderr)
+            logging.critical(f"Specified configuration file not found: {not_found}")
         else:
             # Override commandline options with configuration file
             for key in custom_config.keys():
                 try:
                     configuration[key] # Will throw KeyError exception if option isn't defined
                 except KeyError as key_error: # Deal with undefined option
-                    warn(message=f"{key_error} option is not supported in configuration file.", category=SyntaxWarning)
+                    logging.warning(f"{key_error} option is not supported in configuration file.")
                 else:
                     configuration[key] = custom_config[key] # Only valid options will be used propogated
 
@@ -97,11 +95,11 @@ def initialise_options() -> dict:
     # Use a list comprehension that will include items still empty or `None`
     empty_options: list = [key for key, value in configuration.items() if key != "config_file" and (value == "" or value == None)]
     if len(empty_options) > 0:
-        print("There are still required options missing:", file=sys.stderr)
+        logging.critical("There are still required options missing:")
         for missing_item in empty_options: # List missing items
-            print(missing_item, file=sys.stderr)
-            print("Please try again, exiting.", file=sys.stderr)
-            sys.exit(1)
+            logging.critical(missing_item)
+            logging.critical("Please try again, exiting.")
+        sys.exit(1)
 
     #
     # Process GitHub API token
@@ -115,11 +113,11 @@ def initialise_options() -> dict:
             configuration["auth_token"] = token_file_lines[0]
         del token_file, token_file_lines
     except FileNotFoundError as token_file_error:
-        print(f"Can't find GitHub API authentication token file.", file=sys.stderr)
-        print(token_file_error)
+        logging.critical(f"Can't find GitHub API authentication token file.")
+        logging.critical(token_file_error)
         sys.exit(1)
     except Exception as other_error:
-        print(f"Error accessing GitHub API authentication token file: \n{other_error}", file=sys.stderr)
+        logging.critical(f"Error accessing GitHub API authentication token file: {other_error}")
         sys.exit(1)
     else: 
         # Check if authentication key string looks correct
@@ -127,11 +125,11 @@ def initialise_options() -> dict:
         try:
             assert (configuration["auth_token"].isalnum() and len(configuration["auth_token"]) == 40)
         except AssertionError:
-            print("GitHub authentication key doesn't look right:\n{}".format(configuration["auth_token"]), file=stderr)
-            print("It should be a 40-character alphanumeric string. Please try again.", file=stderr)
+            logging.critical("GitHub authentication key doesn't look right: {}".format(configuration["auth_token"]))
+            logging.critical("It should be a 40-character alphanumeric string. Please try again.")
             sys.exit(1)
         else:
-            print("GitHub authentication key looks OK.")
+            logging.info("GitHub authentication key looks OK.")
     
     #
     # Create ouput data directory `data_dir`
@@ -141,13 +139,13 @@ def initialise_options() -> dict:
     try:
         assert os.path.isdir(configuration["data_dir"]), "Output directory '{}' doesn't exist.".format(configuration["data_dir"])
     except AssertionError as no_data_dir:
-        print(no_data_dir)
+        logging.error(no_data_dir)
         if configuration["create_data_dir"]:
-            print("Creating output data directory:")
-            print(os.getcwd() + "/" + configuration["data_dir"])
+            logging.info("Creating output data directory:")
+            logging.info(os.getcwd() + "/" + configuration["data_dir"])
             os.makedirs(name=configuration["data_dir"])
         else:
-            print("Option 'create_data_dir' is {}, exiting.".format(configuration["create_data_dir"]))
+            logging.critical("Option 'create_data_dir' is {}, exiting.".format(configuration["create_data_dir"]))
             sys.exit(1)
     
     #
@@ -162,14 +160,14 @@ def initialise_options() -> dict:
         log_level = configuration["log_level"].casefold()
         configuration["log_level"] = unicodedata.normalize("NFKD", log_level)
         # Create a string of acceptable log level strings to compare against
-        valid_log_levels: list = ["critical".casefold(),
-                                  "error".casefold(),
-                                  "warning".casefold(),
-                                  "info".casefold(),
-                                  "debug".casefold()]
+        valid_log_levels: dict = {"critical".casefold(): logging.CRITICAL,
+                                  "error".casefold(): logging.ERROR,
+                                  "warning".casefold(): logging.WARNING,
+                                  "info".casefold(): logging.INFO,
+                                  "debug".casefold(): logging.DEBUG}
         # Check if user-supplied option is in list of valid log levels
         if log_level in valid_log_levels:
-            pass
+            configuration["log_level"] = valid_log_levels[configuration["log_level"]]
         else:
             # Otherwise, stop execution
             raise ValueError("{} is not a valid log level.".format(configuration["log_level"]))
@@ -185,7 +183,7 @@ def initialise_options() -> dict:
     try:
         assert os.path.isfile(configuration["repo_list"]), "Error accessing repository list: {}".format(configuration["repo_list"])
     except AssertionError as no_repo_list:
-        print(no_repo_list)
+        logging.critical(no_repo_list)
         sys.exit(1)
     else:
         try:
@@ -196,7 +194,7 @@ def initialise_options() -> dict:
                     repo_list.append(row)
             del repo_file, repo_csv
         except Exception as read_csv_error: # TODO: Make Exception more specific
-            print("Error parsing repository list: \n{read_csv_error}")
+            logging.critical("Error parsing repository list: \n{read_csv_error}")
             sys.exit(1)
     # Check repository list format
     bad_rows: list = list() # Create an empty list to record list items in wrong format
@@ -204,7 +202,7 @@ def initialise_options() -> dict:
         try: # Make sure "owner" and "repo" fields consistently exist
             assert "owner" in row and "repo" in row, "Repository list CSV file needs field names 'owner' and 'row'"
         except AssertionError as fieldname_error:
-            print(fieldname_error)
+            logging.critical(fieldname_error)
             sys.exit(1)
         else:
             # Record which items don't have exactly two items, one each for "owner" and "repo", 
@@ -214,9 +212,9 @@ def initialise_options() -> dict:
     try: # If there are bad items in repository list, print them and exit
         assert len(bad_rows) == 0, "Some rows in repository list have problems: "
     except AssertionError as item_error:
-        print(item_error)
+        logging.critical(item_error)
         for bad_row in bad_rows:
-            print(bad_row.values(), file=stderr) # TODO: Make this more human-readable
+            logging.critical(bad_row.values()) # TODO: Make this more human-readable
         sys.exit(1)
             
     # TODO: Remove duplicate entries in `repo_list`

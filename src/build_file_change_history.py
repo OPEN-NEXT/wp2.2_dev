@@ -11,6 +11,7 @@
 ##########
 # Import libraries
 ##########
+import logging
 import networkx as nx
 import seaborn as sns
 from collections import defaultdict
@@ -64,7 +65,7 @@ def build_file_change_history(known_commits, file_change_history):
                 # TODO 2: detect rename events      
 
         else:
-            print("warning: commit " + commit['commit'] + " has no attribute 'files'.")
+            logging.warning("warning: commit " + commit['commit'] + " has no attribute 'files'.")
             # TODO: investigate why some commits have no attribute 'file'      
  
     
