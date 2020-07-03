@@ -12,6 +12,7 @@ import os
 import sys
 import unicodedata
 import logging
+from logging.config import dictConfig
 
 from json.decoder import JSONDecodeError
 
@@ -23,7 +24,7 @@ def initialise_options() -> dict:
         GitHub authentication token (key "auth_token"), 
         output directory for downloaded data (key "data_dir"), 
         list of repositories to mine (key "repo_list"), 
-        log level (key "log_level"), 
+        log config (key "log_config"), 
         and if output directory should be created (key "create_data_dir").
     """
     #
@@ -41,28 +42,26 @@ def initialise_options() -> dict:
                         help="Output directory for storing downloaded data.")
     parser.add_argument("-r", "--repo_list", type=str, default="repolist_example.csv", required=False, 
                         help="Path to CSV file containing list of repositories to mine.")
-    parser.add_argument("-l", "--log_level", type=str, default="error", required=False, 
-                        help = "Log level. Valid options: debug, info, warning, error (default), critical.")
     parser.add_argument("--create_data_dir", type=bool, default=True, required=False,
                         help = "If data output directory doesn't exist, create it.")
     parsed_config = parser.parse_args()
 
-    # Create dictionary to hold options
+    # Create dictionary to hold mandatory options
     configuration: dict = dict()
     # Put user supplied options into the dictionary
     configuration["config_file"] = parsed_config.config_file
     configuration["auth_token"] = parsed_config.auth_token
     configuration["data_dir"] = parsed_config.data_dir
     configuration["repo_list"] = parsed_config.repo_list
-    configuration["log_level"] = parsed_config.log_level
     configuration["create_data_dir"] = parsed_config.create_data_dir
+    configuration["log_config"] = None
 
     #
     # Apply configuration file if it is supplied
     #
 
     if (configuration["config_file"] == None) or (configuration["config_file"] == ""):
-        logging.critical("No configuration file specified.")
+        logging.info("No configuration file specified.")
     else:
         logging.info("Trying to parse configuration file:" + configuration["config_file"])
         # Start an empty configuration then populate from file
@@ -151,29 +150,14 @@ def initialise_options() -> dict:
     #
     # Handle log level option
     #
-
     # Check if user-supplied option is indeed a string
-    if isinstance(configuration["log_level"], str):
-        # Case-insensitive comparison using Python built-in functions `casefold()` and 
-        # `unicode.normalize()`. More info: 
-        # https://stackoverflow.com/a/29247821/186904
-        log_level = configuration["log_level"].casefold()
-        configuration["log_level"] = unicodedata.normalize("NFKD", log_level)
-        # Create a string of acceptable log level strings to compare against
-        valid_log_levels: dict = {"critical".casefold(): logging.CRITICAL,
-                                  "error".casefold(): logging.ERROR,
-                                  "warning".casefold(): logging.WARNING,
-                                  "info".casefold(): logging.INFO,
-                                  "debug".casefold(): logging.DEBUG}
-        # Check if user-supplied option is in list of valid log levels
-        if log_level in valid_log_levels:
-            configuration["log_level"] = valid_log_levels[configuration["log_level"]]
-        else:
-            # Otherwise, stop execution
-            raise ValueError("{} is not a valid log level.".format(configuration["log_level"]))
-    else:
-        raise TypeError("{} doesn't seem to be a valid string.".format(configuration["log_level"]))
-    del valid_log_levels, log_level
+    if "log_config" in configuration:
+        # https://docs.python.org/3/library/logging.config.html#logging-config-dictschema
+        try:
+            dictConfig(configuration["log_config"])
+        except Exception as log_config_error: # TODO: Make Exception more specific
+            logging.critical(f"Error parsing log config: {log_config_error}")
+            sys.exit(1)
 
     #
     # Process input list of repositories (`repo_list`) to mine
@@ -194,7 +178,7 @@ def initialise_options() -> dict:
                     repo_list.append(row)
             del repo_file, repo_csv
         except Exception as read_csv_error: # TODO: Make Exception more specific
-            logging.critical("Error parsing repository list: \n{read_csv_error}")
+            logging.critical(f"Error parsing repository list: {read_csv_error}")
             sys.exit(1)
     # Check repository list format
     bad_rows: list = list() # Create an empty list to record list items in wrong format

@@ -12,47 +12,17 @@
 import json
 import os
 import sys
-import logging
-
 
 import networkx as nx
 import json
 
-# initialize default logger
-# this needs to be at the top so 
-from logging.config import dictConfig
-dictConfig({
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'standard': {
-            'format': '%(asctime)s - [%(levelname)s] %(name)s [%(module)s.%(funcName)s:%(lineno)d]: %(message)s', 
-            'datefmt': '%Y-%m-%d %H:%M:%S',
-        }
-    },
-    'handlers' : {
-            'default': {
-                'level': 'INFO', 
-                'class': 'logging.StreamHandler',
-                'formatter': 'standard',
-            }
-    }, 
-    'loggers': {
-            '__main__': { # logging from this module will be logged in VERBOSE level
-                'handlers' : ['default'], 
-                'level': 'INFO', 
-                'propagate': False,
-            },
-    },
-    'root': {
-            'level': 'INFO',
-            'handlers': ['default']
-    },
-})
-# about logging: 
-#   https://gist.github.com/delicb/4540990#file-other-py-L3
-#   https://stackoverflow.com/questions/15727420/using-logging-in-multiple-modules
+import logging
 
+# default logging configuration
+# needs to be on top of the code, otherwise all calls to logging.XXXX happening
+# before the custom confifuration is loaded or in case no custom configuration is
+# given would be ignored
+logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 
 # import the necessary custom functions
 try:
