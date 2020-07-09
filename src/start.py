@@ -12,9 +12,13 @@
 import json
 import os
 import sys
+import json
+from dateutil import parser
 
 import networkx as nx
-import json
+import pandas as pd
+import numpy as np
+
 
 # import the necessary custom functions
 try:
@@ -82,19 +86,39 @@ def main():
         ########################################################################################################################################
         ########################################################################################################################################
 
-        known_commits = list()  # compilation of all commits of all forks, without duplicates
+        known_commits: list = list()  # compilation of all commits of all forks, without duplicates
+        known_commits_shas: list = list() # for easier access later
+        time_stamps: list = list() # so we can index commits per date
+
         for fork in forks:
             print("retrieving commits in " + fork['user'] + "/" + fork['repo'])
             commits = list()  # all commits of this fork
             get_commits(
                 username=fork['user'], reponame=fork['repo'], commits=commits, config=configuration)
-            known_commits_shas = [x['commit'] for x in known_commits]
             for commit in commits:
                 if not commit['commit'] in known_commits_shas:
                     known_commits.append(commit)
-    
+                    known_commits_shas.append(commit['commit'])
+                    time_stamps.append(
+                        np.datetime64(
+                            parser.parse(commit['CommitDate'])
+                        )
+                    )
+
+        # create a panda.DataFrame with the known_commits data
+        sorted_commits = pd.DataFrame(
+            list(zip(known_commits_shas, known_commits)), 
+            columns=['sha','commit_data'],
+            index=pd.DatetimeIndex(time_stamps)
+        )
+        del known_commits, known_commits_shas, time_stamps
+
         # convert commits to a JSON string for export
-        commits_JSON = json.dumps(known_commits, sort_keys=True, indent=4)
+        commits_JSON = json.dumps(
+            sorted_commits['commit_data'].values.tolist(), 
+            sort_keys=True, 
+            indent=4
+        )
     
         # save the commits to a file
         output_JSON = build_export_file_path(
@@ -103,6 +127,11 @@ def main():
         with open(output_JSON, 'w') as f:
             f.write(commits_JSON)
         del f
+
+        # filter by time window 
+        ######################################################################################
+        # Arbitrary filter after April 2020 / for a test
+        #sorted_commits = sorted_commits[sorted_commits.index > '2020-07']
 
         ########################################################################################################################################
         ########################################################################################################################################
@@ -113,7 +142,7 @@ def main():
         # recreate the 'network' view in GitHub (repo > insights > network)
         # network is supposed to be a DAG (directed acyclic graph)
         commit_history = nx.DiGraph()
-        build_commit_history(known_commits, commit_history)
+        build_commit_history(sorted_commits['commit_data'].values.tolist(), commit_history)
 
         # stringize the non string node attributes not supported by GrapML
         for node in commit_history.nodes():
@@ -136,7 +165,7 @@ def main():
 
         # network is supposed to be a DAG (directed acyclic graph)
         file_change_history = nx.DiGraph() 
-        build_file_change_history(known_commits, file_change_history)
+        build_file_change_history(sorted_commits['commit_data'].values.tolist(), file_change_history)
     
         # export the file change history as GraphML
         output_GraphML = build_export_file_path(
@@ -152,7 +181,7 @@ def main():
 
         committer_graph = nx.MultiDiGraph() 
         build_committer_graph(file_change_history, committer_graph)
-    
+
         # export the file committer graph as GraphML
         output_GraphML = build_export_file_path(
             os.path.join(configuration["data_dir"], 'committer_graphs'), 
