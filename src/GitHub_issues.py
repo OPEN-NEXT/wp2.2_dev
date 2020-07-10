@@ -14,10 +14,10 @@ from perceval.backends.core.github import GitHub
 import networkx as nx
 
 #owner: str = "OPEN-NEXT"
-owner: str = "safecast"
+owner: str = "AngelLM"
 #owner: str = "OpenROV"
 #repo: str = "wp2.2_dev"
-repo: str = "bGeigieNanoKit"
+repo: str = "Thor"
 #repo: str = "openrov-hardware"
 tokens: list = [""]
 
