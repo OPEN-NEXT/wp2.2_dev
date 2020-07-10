@@ -12,9 +12,16 @@
 import json
 import os
 import sys
+import logging
 
 import networkx as nx
 import json
+
+# default logging configuration
+# needs to be on top of the code, otherwise all calls to logging.<something> happening
+# before the custom confifuration is loaded or in case no custom configuration is
+# given would be ignored
+logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 
 # import the necessary custom functions
 try:
@@ -26,7 +33,7 @@ try:
     from build_committer_graph import build_committer_graph
     from build_committer_graph import export_committer_graph
 except ImportError as import_error:
-    print(
+    logging.error(
         f"Error importing required module(s):\n{import_error}", file=sys.stderr)
     exit(1)
 
@@ -47,6 +54,7 @@ def build_export_file_path(dir_path, filename):
 ################################################################################################################################################
 
 def main():
+
     # Get commandline and configuration file options
     configuration: dict = initialise_options()
 
@@ -54,7 +62,9 @@ def main():
     # The rest of the script acts on each item in the list of git repositories to mine
     #
 
+    logging.info(f"Start processing the {len(configuration['repo_list'])} repositories passed on")
     for repository in configuration["repo_list"]:
+        logging.info(f"--- Start processing repository {repository['owner']}/{repository['repo']} ---")
         username = repository["owner"]
         repo = repository["repo"]
 
@@ -73,8 +83,7 @@ def main():
 
         get_Github_forks(username=username, reponame=repo, forks=forks, auth=configuration["auth_token"])
 
-        print("There are " + str(forks.__len__()) +
-              " forks of " + username + "/" + repo)
+        logging.info(f"{str(forks.__len__()-1)} forks found")
 
         ########################################################################################################################################
         ########################################################################################################################################
@@ -84,7 +93,6 @@ def main():
 
         known_commits = list()  # compilation of all commits of all forks, without duplicates
         for fork in forks:
-            print("retrieving commits in " + fork['user'] + "/" + fork['repo'])
             commits = list()  # all commits of this fork
             get_commits(
                 username=fork['user'], reponame=fork['repo'], commits=commits, config=configuration)
@@ -92,7 +100,9 @@ def main():
             for commit in commits:
                 if not commit['commit'] in known_commits_shas:
                     known_commits.append(commit)
-    
+
+        logging.info(f"{str(known_commits.__len__())} commits found")
+
         # convert commits to a JSON string for export
         commits_JSON = json.dumps(known_commits, sort_keys=True, indent=4)
     
@@ -121,7 +131,9 @@ def main():
                 commit_history.nodes[node]['refs'])
             commit_history.nodes[node]['parents'] = str(
                 commit_history.nodes[node]['parents'])
-    
+
+        logging.info(f"Commit history built with {len(commit_history.nodes())} nodes and {len(commit_history.edges())} edges")
+
         # export the file commit history as GraphML
         output_GraphML = build_export_file_path(
             os.path.join(configuration["data_dir"], 'commit_histories'), 
@@ -138,6 +150,8 @@ def main():
         file_change_history = nx.DiGraph() 
         build_file_change_history(known_commits, file_change_history)
     
+        logging.info(f"File change history built with {len([c for c in nx.connected_components(file_change_history.to_undirected())])} files and {len(file_change_history.edges())} file changes")
+
         # export the file change history as GraphML
         output_GraphML = build_export_file_path(
             os.path.join(configuration["data_dir"], 'file_change_histories'), 
@@ -153,6 +167,8 @@ def main():
         committer_graph = nx.MultiDiGraph() 
         build_committer_graph(file_change_history, committer_graph)
     
+        logging.info(f"Commiter graph built with {len(committer_graph.nodes())} unique committers")
+
         # export the file committer graph as GraphML
         output_GraphML = build_export_file_path(
             os.path.join(configuration["data_dir"], 'committer_graphs'), 

@@ -11,6 +11,7 @@
 ##########
 # Import libraries
 ##########
+import logging
 import networkx as nx
 import seaborn as sns
 from collections import defaultdict
@@ -69,7 +70,8 @@ def build_file_change_history(known_commits, file_change_history):
                 else:
                     print(f"Warning: missing file edition information (key 'action') for file {filechange['file']} in commit {commit['commit']}")
         else:
-            print("warning: commit " + commit['commit'] + " has no attribute 'files'.")  
+            logging.warning("warning: commit " + commit['commit'] + " has no attribute 'files'.")
+            # TODO: investigate why some commits have no attribute 'file'      
  
     
     # Partition the unstuctured list of file changes.

@@ -7,6 +7,7 @@
 # Import `requests` library for API calls
 try:
     import requests
+    import logging
 # If library not present, throw exception
 except ImportError:
     print("Need `requests` library available")
@@ -35,12 +36,6 @@ def get_Github_forks(username, reponame, forks, auth=None):
 
     page = 1  # Track page number of Github API response
     while True:
-        print("Finding forks of "
-              + username
-              + "/"
-              + reponame
-              + " page "
-              + str(page))
         r = None
         request_url = "https://api.github.com/repos/{}/{}/forks".format(
             username, reponame)
@@ -57,8 +52,8 @@ def get_Github_forks(username, reponame, forks, auth=None):
         r.close()
 
         if "message" in j:
-            print("username: {}, repository: {}".format(username, reponame))
-            print(j['message']
+            logging.error("username: {}, repository: {}".format(username, reponame))
+            logging.error(j['message']
                   + " "
                   + j['documentation_url'])
             if str(j['message']) == "Not Found":

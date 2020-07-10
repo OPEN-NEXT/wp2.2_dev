@@ -11,6 +11,7 @@
 ##########
 
 import os
+import logging
 from sys import stderr
 from perceval.backends.core.git import Git
 from perceval.errors import RepositoryError # To handle errors with repositories
@@ -40,7 +41,6 @@ def get_commits(username, reponame, commits, config):
     """
     
     repo_URL = 'https://github.com/' + username + '/' + reponame
-    print('fetching info at ' + repo_URL)
 
      # checks whether the export dir exists and if not creates it # TODO: this is a code snippet we use three times, we should make a function out of it
     local_dir = os.path.join(config["data_dir"],'grimoire_dumps')
@@ -60,50 +60,10 @@ def get_commits(username, reponame, commits, config):
         for commit_data in repo_fetched:
             commits.append(commit_data["data"])
     except RepositoryError as repo_error:
-        print("Error with this repository: " + username + "/" + reponame, file=stderr)
+        logging.warning("Error with this repository: " + username + "/" + reponame, file=stderr)
         pass
-    
-    # Print the contents of those commits
-    # for c in repo_fetched:
-    #     print(c["data"])
-    # del c
-    
 
-    
- 
-    
-    
-    # JB 2020 05 03 - BEGIN
-    ##########
-    # Get file chamges in each commit
-    ##########
-    # commented out (not used but useful snippet for later)
-    # file_changes = []
-    # for commit in commits:
-    #     file_changes.append({
-    #         "Author": commit["Author"],
-    #         "CommitDate": commit["CommitDate"],
-    #         "commit": commit["commit"],
-    #         "files": commit["files"],
-    #         "no_files": len(commit["files"])
-    #        })
-    # JB 2020 05 03 - BEGIN
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    
-    
+        
     #
     # some code for exploring `test.json` which contains only
     # two items from the grimoirelab-toolkit Github repository
