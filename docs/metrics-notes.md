@@ -58,6 +58,12 @@ KiBiter is one component of a CHAOSS project called [GrimoireLab](https://chaoss
 
 I am also in touch with one of the main developers behind Augur, [Dr Sean Goggins](http://www.seangoggins.net/) from the University of Missouri. He said he's happy to answer questions and even take a quick look at our data.
 
+### Grafana 
+
+[grafana](https://grafana.com/) "allows you to query, visualize, alert on and understand your metrics no matter where they are stored. Create, explore, and share dashboards with your team and foster a data driven culture"
+
+![Grafana screenshot](images/Grafana_screenshot.jpg)
+
 ## Useful stuff for consideration in dashboard
 
 Here are some useful stuff (which might not necessarily be a, or a part of a, dashboard per-se) that are potential components of the dashboard we develop.
@@ -93,6 +99,10 @@ Such graphs can also give some idea about:
 Furthermore, plotting the evolution of this graph over time (from project start to now) can give some insights about the community dynamics: is it booming, stalling or declining? Is it stable or a "come-and-go" project? etc
 
 See also [this blogpost](https://reticular.hypotheses.org/1745) about using graph topology metrics and their meaning for social network analysis.
+
+See also [gource](https://gource.io/), a visualisation of interactions between developpers and the repo tree structure: 
+
+![Gource screenshot](images/Gource_screenshot.jpg)
 
 ### Design structure matrices (DSMs)
 
@@ -145,3 +155,23 @@ Some notes and observations:
 - Provide insights to guide projects
   - way to encourage projects adopting the mantra "release early, release often".
   - give guidance based on project phase (discover the phases or tie the analyses in theses phases declared by the user)
+
+### Notes from meeting 2020/07/10
+
+Possible feature 1: Interaction graphs:
+-  "replay" the history of the project (similarly to what [gource](https://gource.io/) does) 
+-  provide interactive screenshots where the user can click on nodes or edges and see some stats, for example:
+   -  what the contributor contibute to (hardware, software, whatever the meaning categories)
+   -  some kind of appreciation of the role of the user (e.g. data source or data sink, the man in the middle, peripheral developper, or whatever category we can imagine based on graph stats)
+
+Possible feature 2: appreciation of project type. We could place projects on map of archetypes based on characteristics. Distance is given by simiarity (number of common characteristics divided by number of characteristics). What  could be such characteristics?
+ - "this project seem to be heavily centred on one person"
+ - "there has been a steady increase in contributions over time"
+ - "the project started iwth a large dump so..."
+ - "not many interactions but dumps here and there, indicating the interactions happen elsewhere"
+ - "there is a contribution guide (contributing.md), a license, a readme"....
+ - high bus factor, high centrality, other CHAOS metrics...
+
+These characteristics can be also voiced as plain text. 
+
+Design rationale: modularize the dashboard, data and views.
