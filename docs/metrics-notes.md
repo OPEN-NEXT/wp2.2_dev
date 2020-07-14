@@ -175,3 +175,88 @@ Possible feature 2: appreciation of project type. We could place projects on map
 These characteristics can be also voiced as plain text. 
 
 Design rationale: modularize the dashboard, data and views.
+
+### Metrics from R.A.'s OSHD project sucess characteristics
+
+- "Documentation is complete and has broad coverage"
+   - volume of data
+     - in Bytes
+     - in numbers of files
+   - diversity of data (not only hard data but also text and images)
+- "Documentation is provided in editable formats"
+  - share of editable vs non editable files (but what is an editable file format?)
+- "Documentation is provided in open file formats"
+  - share of editable vs non editable files (but what is an open file format?)
+- "Documentation is updated often"
+  - average file update frequency
+  - file update frequency distribution
+  - highest file update frequency 
+- "Hardware has moved beyond the idea stage"
+  - the design structure matrix can be reasonnably clustered (assumes complex product)
+- "Hardware made of modular components"
+  - the design structure matrix can be reasonnably clustered (assumes complex product)
+- "number of iterations"
+  - number of commits
+  - number of filechanges
+  - number of releases
+- "Number of users who built the hardware themselves"
+  - number of "i made it"
+- "Typical skills of users"
+  - profile of file types edited by the user (e.g. 75% SolidWorks, 20% python and 5% markdown)
+- "Users of project are highly satisfied and interested"
+  - sentiment analysis over all text fields
+- "Number of people who contribute to the project"
+  - number of committers
+  - number of participants to other kinds of captured events (e.g. issue flagging, updating and commenting)
+- "Effective collaboration, co-creation and teamwork"
+  - DSM matches interaction graph
+- "Number of followers, interested people"
+  - number of likes
+  - number of forks
+  - number of downloads
+  - number of page visits
+- "Project is attractive to new contributors"
+  - evolution of people from the periphery to the core of the interaction graph over time
+- "Project adopts contributed modificatins"
+  - pull request adoption/rejection rate
+  - mean time to answer a pull request
+  - number of unanswered issues
+  - mean time to close a pull request
+  - presence of a contribution guide
+    - presence of a file named "contribute.md"
+    - presence of the string "contribution guide" or similar keyword in the text
+- "Project has contribution policy"
+    - presence of a file named "contribute.md"
+    - presence of the string "contribution guide" or similar keyword in the text
+- ""Project has well structured knowledge base ..."
+  - presence of a wiki
+  - volume of the wiki
+    - number of pages
+    - number of words
+    - number of links
+- "community is active" 
+  - commit frequency
+  - pull request frequency
+  - comment frequency 
+  - "event" frequency 
+- "Hardware design files and other documentation are published under appropriate open source license"
+  - there is a license
+    - there is a "license.md" 
+  - the license is identifiable (e.g. has an SPDX)
+  - the license is OSH compatible 
+- "Individuals other than originators have modified it"
+  - core/mutant/external profile
+- "Project has a high bus factor"
+  - bus factor of the overall project
+  - bus factor per file or module
+- "project has rapid development"
+  - data growth rate
+  - commit frequency
+  - pull request frequency
+  - comment frequency 
+  - "event" frequency 
+
+Note: it would be interesting to filter the data to produce metrics over:
+ - all time (from date 0 of the project to now)
+ - over a rolling window of x months
+ - over the last x months (I assume this would be the default setting)
