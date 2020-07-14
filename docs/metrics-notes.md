@@ -260,3 +260,35 @@ Note: it would be interesting to filter the data to produce metrics over:
  - all time (from date 0 of the project to now)
  - over a rolling window of x months
  - over the last x months (I assume this would be the default setting)
+
+### Computable metrics from CHAOSS
+
+- [Activity Dates and Times](https://chaoss.community/metric-activity-dates-and-times/)
+- [Time to First Response](https://chaoss.community/metric-time-to-first-response/)
+- [Time to Close](https://github.com/chaoss/wg-common/blob/master/focus-areas/when/time-to-close.md)
+- [Who are the contributors to a project](https://chaoss.community/metric-contributors/) (title is not well chosen)
+  - number of contributors
+  - sort contributors per first commit date
+ - [Contributor Location](https://github.com/chaoss/wg-common/blob/master/focus-areas/who/contributor-location.md) (input data may not be correct)
+ - [Organizational Diversity](https://chaoss.community/metric-organizational-diversity/) (input data may not be correct)
+ - [Issue Label Inclusivity](https://github.com/chaoss/wg-diversity-inclusion/blob/master/focus-areas/project-and-community/issue-label-inclusivity.md) (not well chosen name)
+ - [Code Changes](https://chaoss.community/metric-code-changes/)
+ - [Code Changes Lines](https://chaoss.community/metric-code-changes-lines/)
+ - [Reviews Accepted](https://chaoss.community/metric-reviews-accepted/)
+ - [Reviews Declined](https://chaoss.community/metric-reviews-declined/)
+ - [Reviews Duration](https://chaoss.community/metric-review-duration/)
+ - [Reviews](https://github.com/chaoss/wg-evolution/blob/master/metrics/Reviews.md)
+ - [New Issues](https://chaoss.community/metric-issues-new/)
+ - [Issue Resolution Duration](https://chaoss.community/metric-issue-resolution-duration/)
+ - [Issue Response Time](https://chaoss.community/metric-issue-response-time/)
+ - [Issue Age](https://chaoss.community/metric-issue-age/)
+ - [Issues Closed](https://chaoss.community/metric-issues-closed/)
+ - [Issues Active](https://chaoss.community/metric-issues-active/)
+ - [Inactive Contributors](https://github.com/chaoss/wg-evolution/blob/master/metrics/Inactive_Contributers.md)
+ - [New Contributors](https://github.com/chaoss/wg-evolution/blob/master/metrics/New_Contributors.md)
+ - [ New Contributors Closing Issues](https://chaoss.community/metric-new-contributors-closing-issues/)
+ - [Committers](https://chaoss.community/metric-committers/)
+ - [Elephant Factor](https://github.com/chaoss/wg-risk/blob/master/metrics/Elephant_Factor.md)
+ - [License Coverage](https://chaoss.community/metric-license-coverage/)(not sure it works with hardware)
+ - [License Declared](https://chaoss.community/metric-license-declared/) (not sure it works with hardware)
+ - [OSI Approved Licenses](https://chaoss.community/metric-osi-approved-licenses/)
