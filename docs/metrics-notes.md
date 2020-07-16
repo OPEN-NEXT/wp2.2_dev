@@ -23,6 +23,8 @@ Wikifactory would like to consider good practices as documented in this [fictiv 
 
 Other than CHAOSS, there is also an initiative called [All Contributors](https://github.com/all-contributors/all-contributors) that seeks to recognise the contribution from all people, not just programmers who contribute code. There is a proposed badge system, which from our perspective might allow differentiating between different types of contributions from people associated with an OSH project.
 
+Also worth mentioning is the [CII Best Practices Badge Program](https://bestpractices.coreinfrastructure.org/en) establishing a list of [Best Practices Criteria for Free/Libre and Open Source Software (FLOSS)](https://github.com/coreinfrastructure/best-practices-badge/blob/master/doc/criteria.md#sites_https). "The Best Practices Program is an open source secure development maturity model. [...] Examples of initial criteria include basic open source development practices (website, open source license, and user engagement), use of change control tools, attention to quality (automated test suite), and focus on security (secure project delivery method, use of dynamic and static analysis tools, as appropriate for the project). Consumers of the badge will be able to quickly assess which open source projects care about security-conscious development. "
+
 ### Challenges for open source hardware
 
 Applying, adding to, or modifying CHAOSS metrics to the context of open source hardware has come challenges. For example:
