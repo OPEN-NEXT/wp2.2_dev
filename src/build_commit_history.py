@@ -57,7 +57,10 @@ def build_commit_history(known_commits, commit_history):
  
         # link the commit with their parents
         for parent_sha in commit['parents']:
-            commit_history.add_edge(parent_sha[:7], commit['commit'][:7])
+
+            # if the parent is a known node (so we prevent to consider parents that are outside the considered time window)
+            if parent_sha[:7] in commit_history.nodes:
+                commit_history.add_edge(parent_sha[:7], commit['commit'][:7])
 
     # ------------------------------------------------------------
     # third pass: identify which commit belongs to which branch
@@ -91,11 +94,14 @@ def build_commit_history(known_commits, commit_history):
                 branch_names.append(refs[i])
 
                 commit_history.nodes[branch_head]['branch'] = refs[i]
-                # if the parent is a branch head, we stop here
-                if len(commit_history.nodes[parents[i][:7]]['refs']) == 0:
-                    # if branch info has already been added to the parent, we stop here as well
-                    if not 'branch' in commit_history.nodes[parents[i][:7]]:
-                        propagate_branch_name(commit_history, parents[i][:7], refs[i])
+                
+                # we only check known parents (those outside the considered time window)
+                if parents[i][:7] in commit_history.nodes:
+                    # if the parent is a branch head, we stop here
+                    if len(commit_history.nodes[parents[i][:7]]['refs']) == 0:
+                        # if branch info has already been added to the parent, we stop here as well
+                        if not 'branch' in commit_history.nodes[parents[i][:7]]:
+                            propagate_branch_name(commit_history, parents[i][:7], refs[i])
 
     # ------------------------------------------------------------
     # fourth pass: colorize
@@ -128,9 +134,11 @@ def build_commit_history(known_commits, commit_history):
 def propagate_branch_name(commit_history, commit, branch):
     commit_history.nodes[commit]['branch'] = branch
     for parent_sha in commit_history.nodes[commit]['parents']:
-        # if the parent is a branch head, we stop here
-        if not 'refs/heads/' in ''.join(commit_history.nodes[parent_sha[:7]]['refs']):
-            # if branch info has already been added to the parent, we stop here as well
-            if not 'branch' in commit_history.nodes[parent_sha[:7]]:
-                propagate_branch_name(commit_history, parent_sha[:7], branch)
+        # we only check known parents (those outside the considered time window)
+        if parent_sha[:7] in commit_history.nodes:
+            # if the parent is a branch head, we stop here
+            if not 'refs/heads/' in ''.join(commit_history.nodes[parent_sha[:7]]['refs']):
+                # if branch info has already been added to the parent, we stop here as well
+                if not 'branch' in commit_history.nodes[parent_sha[:7]]:
+                    propagate_branch_name(commit_history, parent_sha[:7], branch)
 
