@@ -27,6 +27,7 @@ Imported from [this file](https://github.com/MIE5R0/opennext/blob/master/WP2/Tas
 
 ## Possible new projects to investigate
 
+* [MNT Research GmbH](https://source.mntmn.com/MNT)
 * Go through the [Open Hardware Observatory (OHO)](https://en.oho.wiki/wiki/The_Open_Hardware_Observatory_(OHO))
 * Space-related [list of open source software and hardware](https://github.com/orbitalindex/awesome-space)
   * Hacker News [discussion](https://news.ycombinator.com/item?id=20815558)
