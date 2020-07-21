@@ -12,6 +12,7 @@
 
 import os
 import logging
+import shutil
 from sys import stderr
 from perceval.backends.core.git import Git
 from perceval.errors import RepositoryError # To handle errors with repositories
@@ -56,6 +57,10 @@ def get_commits(username, reponame, commits, config):
     # Other stuff are metadata about the perceval `fetch()` operation.
     try:
         repo_fetched = [commit for commit in git.fetch()]
+
+        # issue 33 (very ugly) band aid: delete *.pack files once downloaded by perceval
+        shutil.rmtree(os.path.join(data_dump_path, 'objects','pack'), ignore_errors=True)
+        
         # Keep just commit `data`
         for commit_data in repo_fetched:
             commits.append(commit_data["data"])
@@ -63,6 +68,7 @@ def get_commits(username, reponame, commits, config):
         logging.warning("Error with this repository: " + username + "/" + reponame, file=stderr)
         pass
 
+ 
         
     #
     # some code for exploring `test.json` which contains only
