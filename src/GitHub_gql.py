@@ -9,12 +9,99 @@
 # The goal is to eventually incorporate this into the next generation data
 # mining script for open source hardware repositories hosted on GitHub.
 
-from gql import gql, Client
-from gql.transport.requests import RequestsHTTPTransport
+from sys import stderr
+from gql import gql, Client, RequestsHTTPTransport
+
+# from gql.transport.requests import RequestsHTTPTransport
 
 from string import Template
 import sys
 
+#
+# Set basic parameters for this script
+#
+
+# GitHub API GraphQL API endpoint
+GITHUB_API_URL: str = "https://api.github.com/graphql"
+# Path to GitHub API authorisation token file
+TOKEN_PATH: str = "token"
+
+# Read GitHub API authorisation token from file
+#
+# Process GitHub API token
+#
+
+# Read GitHub authorisation token from file
+try:
+    with open(TOKEN_PATH, mode="r") as token_file:
+        token_file_lines = token_file.read().split(sep="\n")
+        # Read first line of provided token file as authentication token string
+        auth_token = token_file_lines[0]
+    del token_file, token_file_lines
+except FileNotFoundError as token_file_error:
+    print(f"Can't find GitHub API authentication token file.", file=stderr)
+    sys.exit(1)
+except Exception as other_error:
+    print(f"Error accessing GitHub API authentication token file: {other_error}", file=stderr)
+    sys.exit(1)
+else: 
+    # Check if authentication key string looks correct
+    # AFAIK the token should be exactly 40 alphanumeric characters
+    try:
+        assert (auth_token.isalnum() and len(auth_token == 40))
+    except AssertionError:
+        print("GitHub authentication key doesn't look right: {}".format(auth_token), file=stderr)
+        print("It should be a 40-character alphanumeric string. Please try again.", file=stderr)
+        sys.exit(1)
+    else:
+        print("GitHub authentication key looks OK.", file=stderr)
+
+
+# Add GitHub API authorization token header
+transport = RequestsHTTPTransport(url=GITHUB_API_URL, 
+                             headers={"Authorization": "token " + auth_token})
+
+client = Client(transport=transport, fetch_schema_from_transport=True)
+
+
+query = gql(
+""""
+query {
+    repository(owner: "github", name: "linguist") {
+        refs(first: 20, refPrefix: "refs/heads/") {
+            totalCount
+            edges {
+                node {
+                    name
+                    target {
+                        ... on Commit {
+                            history(first: 5) {
+                                edges {
+                                    node {
+                                    oid
+                                    }
+                                }
+                                pageInfo {
+                                    hasNextPage
+                                    endCursor
+                                    }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+"""
+)
+
+result = client.execute(query)
+
+print("Printing result from query:")
+print(result)
+
+pass
 
 def query_all_projects(client, tag="", sortBy="", contains="[]"):
     ret = []
