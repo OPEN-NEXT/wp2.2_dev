@@ -23,6 +23,8 @@ Wikifactory would like to consider good practices as documented in this [fictiv 
 
 Other than CHAOSS, there is also an initiative called [All Contributors](https://github.com/all-contributors/all-contributors) that seeks to recognise the contribution from all people, not just programmers who contribute code. There is a proposed badge system, which from our perspective might allow differentiating between different types of contributions from people associated with an OSH project.
 
+Also worth mentioning is the [CII Best Practices Badge Program](https://bestpractices.coreinfrastructure.org/en) establishing a list of [Best Practices Criteria for Free/Libre and Open Source Software (FLOSS)](https://github.com/coreinfrastructure/best-practices-badge/blob/master/doc/criteria.md#sites_https). "The Best Practices Program is an open source secure development maturity model. [...] Examples of initial criteria include basic open source development practices (website, open source license, and user engagement), use of change control tools, attention to quality (automated test suite), and focus on security (secure project delivery method, use of dynamic and static analysis tools, as appropriate for the project). Consumers of the badge will be able to quickly assess which open source projects care about security-conscious development. "
+
 ### Challenges for open source hardware
 
 Applying, adding to, or modifying CHAOSS metrics to the context of open source hardware has come challenges. For example:
@@ -57,3 +59,238 @@ KiBiter is one component of a CHAOSS project called [GrimoireLab](https://chaoss
 ![Augur screenshot](images/Augur_screenshot.png)
 
 I am also in touch with one of the main developers behind Augur, [Dr Sean Goggins](http://www.seangoggins.net/) from the University of Missouri. He said he's happy to answer questions and even take a quick look at our data.
+
+### Grafana 
+
+[grafana](https://grafana.com/) "allows you to query, visualize, alert on and understand your metrics no matter where they are stored. Create, explore, and share dashboards with your team and foster a data driven culture"
+
+![Grafana screenshot](images/Grafana_screenshot.jpg)
+
+## Useful stuff for consideration in dashboard
+
+Here are some useful stuff (which might not necessarily be a, or a part of a, dashboard per-se) that are potential components of the dashboard we develop.
+
+### Existing dashboard implementations
+
+Don't forget to consider existing implementations as desribed earlier in this document.
+
+### GitHub repo Insights tab
+
+* [Community profile](https://github.com/lovasoa/whitebophir/community)
+  * This provides a checklist that maps a repository to GitHub's [recommended community standards](https://opensource.guide/) (which, by the way, is itself worth looking at for our dashboard).
+  * I remember @mkampik mentioning the concept of "project stages", perhaps a checklist like this can be adapted to an open source hardware project.
+  * For example, each checklist item could represent a certain quantitative measure derived from a project's metadata (such as the bus factor), and will automatically checked off once a threshold is reached. And depending on which items are checked, a community would be put into a certain stage (that comes with a badge!).
+
+### Interaction graphs
+
+Accessing events stored such as commits or other events captured by Git based platforms (GitHub, Wikifactory) such as issues and comments, we can build interaction graphs giving an overview of collaborative activities in the project. See the very simple example below generated from the repository WP2.2_dev based on file change events.
+
+![Interaction network screenshot](images/interation_network_exampe_screenshot.png)
+
+From such networks, it is possible to generate metrics such as:
+ - Centrality index: indicates the relative importance of all nodes in a graph. High index indicates the project is centered around one or few central people.
+ - Clustering index: indicates the degree to which nodes tend to cluster
+together. An average clustering coefficient indicates contributors are clustered in subgroups of three or more people directly working on the same files. 
+ - Some interpretation of the [bus factor](https://en.wikipedia.org/wiki/Bus_factor): computed as the minimum number of team members that have to suddenly disappear for the interaction graph to be disconnected into subgraphs.
+ - Completeness: ratio between the number of edges in the graph and the number of edges the graph would have, would it be complete. This gives an average value of how many people each contributor works with.
+
+Such graphs can also give some idea about:
+- the relative contributions of people in the project and can participate to "gamification". Different kinds of contributions can be displayed (e.g. comments in issues and commits), either alternatively, side by side or integrated in a common weighed score.
+- the evolution of participants from periphery to core (see for example [this study](https://link.springer.com/chapter/10.1007/978-3-319-65151-4_21))
+
+Furthermore, plotting the evolution of this graph over time (from project start to now) can give some insights about the community dynamics: is it booming, stalling or declining? Is it stable or a "come-and-go" project? etc
+
+See also [this blogpost](https://reticular.hypotheses.org/1745) about using graph topology metrics and their meaning for social network analysis.
+
+See also [gource](https://gource.io/), a visualisation of interactions between developpers and the repo tree structure: 
+
+![Gource screenshot](images/Gource_screenshot.jpg)
+
+### Design structure matrices (DSMs)
+
+[Design structure matrices](https://en.wikipedia.org/wiki/Design_structure_matrix), also called dependency structure matrices, in short DSM, provide a graphical overview of dependencies between elements of an assembly. It allows judging on the modularity, the granularity and the complexity of a system. They are "widely known for their ability to support engineers in the management of dependencies across product and organisational architectures." [1] More broadly speaking, a DSM has potential to be a simple, compact visual representation of a complex system.
+
+Here is a simple example (from [here](https://commons.wikimedia.org/wiki/File:A_sample_Design_Structure_Matrix_(DSM).png#/media/File:A_sample_Design_Structure_Matrix_(DSM).png), [CC BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0)):
+
+![A simple DSM](https://upload.wikimedia.org/wikipedia/commons/3/36/A_sample_Design_Structure_Matrix_%28DSM%29.png)
+
+The rows and columns of this DSM show the elements of a system (A, B, C, etc.), while the "1"s are connections between elements. An obvious use case would be to visualise the dependency relationships between source code files in a software project.
+
+A more complex example (taken from [2]):
+
+![DSM example](https://www.researchgate.net/profile/Yutaka_Nomaguchi/publication/252176446/figure/fig2/AS:669312016732174@1536587828427/Design-Structure-Matrix-of-the-formula-car-project.png)
+
+Components of an assembly are represented as row and columns of a square matrix and the value in cell (n,m) represent the interaction between subcomponents n and m. From there, it is possible to use clustering algorithms and other processing techniques (partitionning, sequencing) to discover structural features that are not visible at first sight. For example:
+
+* loops (A depends on B, who depends on C, who depends on A)
+* independent modules
+* bus modules / structural elements
+
+Interactions between components are generally defined based on how much components interact with each others (whether they touch each others, are aligned to each others, exchange energy or movement, exchange information, etc.) DSMs are also generally generated manually by a system engineer who has an overview of the system. However, the wide use of product data management system with file versioning history opens the possibility to generate DSMs automatically based on co-occurrence of file changes: if two files are generally edited in a common short time frame, it may mean that they are interdependent. According to [1] who tested this technique on a Student Formula car development: "Recent work in the field has exploited product lifecycle management systems to generate DSMs via the co-occurrence of edits to engineering files. These are referred to as dynamic DSMs and results have demonstrated both the efficacy and accuracy of dynamic DSMs in representing engineering work and emergent product architectures. " 
+
+[1]: Gopsill, J., Snider, C., & Hicks, B. (2019). The emergent structures in digital engineering work: What can we learn from dynamic DSMs of near-identical systems design projects? Design Science, 5, E28. doi:10.1017/dsj.2019.20
+
+[2]: Nomaguchi, Y., Tsutsumi, D., & Fujita, K. (2007). Design process planning from a viewpoint of progressive nature of knowledge acquisition. In DS 42: Proceedings of ICED 2007, the 16th International Conference on Engineering Design, Paris, France, 28.-31.07. 2007 (pp. 679-680).
+
+Some notes and observations:
+
+1. The connections between elements clearly don't have to be "1"s, they can be weighted to represent the any quatitative measure of those connections.
+
+2. There can be *directionality* in DSMs which can show how elements of a design depend on each other.
+
+3. As mentioned earlier in this document, Gopsill et al. used DSMs to capture dependency relationships between hardware design files. However, that work used the temporal proximity of file changes to infer the directionality of dependencies. How can this directionality be derived from version control systems such as git?
+
+4. This visualisation does not have to be only for hardware designs, perhaps it can be used to show social and/or organisational structure of development communities?
+
+5. DSMs are basically a specific case of adjacency matrices, which should not be difficult to implement in Python. See [this article](https://medium.com/techmacademy/graphs-adjacency-matrix-behind-the-scenes-visual-tour-6512493912c0) and [this post](https://stackoverflow.com/q/29464252/186904) for simple examples.
+
+
+### What could be the dashboard used for
+
+- Give an idea of "what kind of project it is"
+  - insights into the technology (like GitHub bar indicating which languages are used)
+  - activity graph / participant network
+- Give an pproximate measure of what we mean with success:
+  - number of downloads / views
+  - number of commits
+  - stability of commits
+- Provide insights to guide projects
+  - way to encourage projects adopting the mantra "release early, release often".
+  - give guidance based on project phase (discover the phases or tie the analyses in theses phases declared by the user)
+
+### Notes from meeting 2020/07/10
+
+Possible feature 1: Interaction graphs:
+-  "replay" the history of the project (similarly to what [gource](https://gource.io/) does) 
+-  provide interactive screenshots where the user can click on nodes or edges and see some stats, for example:
+   -  what the contributor contibute to (hardware, software, whatever the meaning categories)
+   -  some kind of appreciation of the role of the user (e.g. data source or data sink, the man in the middle, peripheral developper, or whatever category we can imagine based on graph stats)
+
+Possible feature 2: appreciation of project type. We could place projects on map of archetypes based on characteristics. Distance is given by simiarity (number of common characteristics divided by number of characteristics). What  could be such characteristics?
+ - "this project seem to be heavily centred on one person"
+ - "there has been a steady increase in contributions over time"
+ - "the project started iwth a large dump so..."
+ - "not many interactions but dumps here and there, indicating the interactions happen elsewhere"
+ - "there is a contribution guide (contributing.md), a license, a readme"....
+ - high bus factor, high centrality, other CHAOS metrics...
+
+These characteristics can be also voiced as plain text. 
+
+Design rationale: modularize the dashboard, data and views.
+
+### Metrics from R.A.'s OSHD project sucess characteristics
+
+- "Documentation is complete and has broad coverage"
+   - volume of data
+     - in Bytes
+     - in numbers of files
+   - diversity of data (not only hard data but also text and images)
+- "Documentation is provided in editable formats"
+  - share of editable vs non editable files (but what is an editable file format?)
+- "Documentation is provided in open file formats"
+  - share of editable vs non editable files (but what is an open file format?)
+- "Documentation is updated often"
+  - average file update frequency
+  - file update frequency distribution
+  - highest file update frequency 
+- "Hardware has moved beyond the idea stage"
+  - the design structure matrix can be reasonnably clustered (assumes complex product)
+- "Hardware made of modular components"
+  - the design structure matrix can be reasonnably clustered (assumes complex product)
+- "number of iterations"
+  - number of commits
+  - number of filechanges
+  - number of releases
+- "Number of users who built the hardware themselves"
+  - number of "i made it"
+- "Typical skills of users"
+  - profile of file types edited by the user (e.g. 75% SolidWorks, 20% python and 5% markdown)
+- "Users of project are highly satisfied and interested"
+  - sentiment analysis over all text fields
+- "Number of people who contribute to the project"
+  - number of committers
+  - number of participants to other kinds of captured events (e.g. issue flagging, updating and commenting)
+- "Effective collaboration, co-creation and teamwork"
+  - DSM matches interaction graph
+- "Number of followers, interested people"
+  - number of likes
+  - number of forks
+  - number of downloads
+  - number of page visits
+- "Project is attractive to new contributors"
+  - evolution of people from the periphery to the core of the interaction graph over time
+- "Project adopts contributed modificatins"
+  - pull request adoption/rejection rate
+  - mean time to answer a pull request
+  - number of unanswered issues
+  - mean time to close a pull request
+  - presence of a contribution guide
+    - presence of a file named "contribute.md"
+    - presence of the string "contribution guide" or similar keyword in the text
+- "Project has contribution policy"
+    - presence of a file named "contribute.md"
+    - presence of the string "contribution guide" or similar keyword in the text
+- ""Project has well structured knowledge base ..."
+  - presence of a wiki
+  - volume of the wiki
+    - number of pages
+    - number of words
+    - number of links
+- "community is active" 
+  - commit frequency
+  - pull request frequency
+  - comment frequency 
+  - "event" frequency 
+- "Hardware design files and other documentation are published under appropriate open source license"
+  - there is a license
+    - there is a "license.md" 
+  - the license is identifiable (e.g. has an SPDX)
+  - the license is OSH compatible 
+- "Individuals other than originators have modified it"
+  - core/mutant/external profile
+- "Project has a high bus factor"
+  - bus factor of the overall project
+  - bus factor per file or module
+- "project has rapid development"
+  - data growth rate
+  - commit frequency
+  - pull request frequency
+  - comment frequency 
+  - "event" frequency 
+
+Note: it would be interesting to filter the data to produce metrics over:
+ - all time (from date 0 of the project to now)
+ - over a rolling window of x months
+ - over the last x months (I assume this would be the default setting)
+
+### Computable metrics from CHAOSS
+
+- [Activity Dates and Times](https://chaoss.community/metric-activity-dates-and-times/)
+- [Time to First Response](https://chaoss.community/metric-time-to-first-response/)
+- [Time to Close](https://github.com/chaoss/wg-common/blob/master/focus-areas/when/time-to-close.md)
+- [Who are the contributors to a project](https://chaoss.community/metric-contributors/) (title is not well chosen)
+  - number of contributors
+  - sort contributors per first commit date
+ - [Contributor Location](https://github.com/chaoss/wg-common/blob/master/focus-areas/who/contributor-location.md) (input data may not be correct)
+ - [Organizational Diversity](https://chaoss.community/metric-organizational-diversity/) (input data may not be correct)
+ - [Issue Label Inclusivity](https://github.com/chaoss/wg-diversity-inclusion/blob/master/focus-areas/project-and-community/issue-label-inclusivity.md) (not well chosen name)
+ - [Code Changes](https://chaoss.community/metric-code-changes/)
+ - [Code Changes Lines](https://chaoss.community/metric-code-changes-lines/)
+ - [Reviews Accepted](https://chaoss.community/metric-reviews-accepted/)
+ - [Reviews Declined](https://chaoss.community/metric-reviews-declined/)
+ - [Reviews Duration](https://chaoss.community/metric-review-duration/)
+ - [Reviews](https://github.com/chaoss/wg-evolution/blob/master/metrics/Reviews.md)
+ - [New Issues](https://chaoss.community/metric-issues-new/)
+ - [Issue Resolution Duration](https://chaoss.community/metric-issue-resolution-duration/)
+ - [Issue Response Time](https://chaoss.community/metric-issue-response-time/)
+ - [Issue Age](https://chaoss.community/metric-issue-age/)
+ - [Issues Closed](https://chaoss.community/metric-issues-closed/)
+ - [Issues Active](https://chaoss.community/metric-issues-active/)
+ - [Inactive Contributors](https://github.com/chaoss/wg-evolution/blob/master/metrics/Inactive_Contributers.md)
+ - [New Contributors](https://github.com/chaoss/wg-evolution/blob/master/metrics/New_Contributors.md)
+ - [ New Contributors Closing Issues](https://chaoss.community/metric-new-contributors-closing-issues/)
+ - [Committers](https://chaoss.community/metric-committers/)
+ - [Elephant Factor](https://github.com/chaoss/wg-risk/blob/master/metrics/Elephant_Factor.md)
+ - [License Coverage](https://chaoss.community/metric-license-coverage/)(not sure it works with hardware)
+ - [License Declared](https://chaoss.community/metric-license-declared/) (not sure it works with hardware)
+ - [OSI Approved Licenses](https://chaoss.community/metric-osi-approved-licenses/)

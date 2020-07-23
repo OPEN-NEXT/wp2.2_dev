@@ -1,0 +1,42 @@
+category,description,effort,failure risk,requirements
+low hanging fruits,"classify contributions (files, filechanges) into software and hardware languages",low,low,maintenance of file extension lists
+low hanging fruits,"classify contributions (files, filechanges) into categories ""mech/hardware/software/doc"", etc.",low,low,
+low hanging fruits,investigate some other classification of contributions,very low,very low,
+low hanging fruits,display a GitHub-like language bar,moderate,low,appropriate web framework
+low hanging fruits,display a computed number,low,very low,
+low hanging fruits,compute number of commits,very low,very low,
+low hanging fruits,compute active contributors,low,low,definition an active contributor
+low hanging fruits,compute ongoing issues,low,low,definition of an ongoing issue
+low hanging fruits,compute number of CAD files,low,low,CAD file identification based on file extensions
+low hanging fruits,investigate some other relevant number to display,very low,very low,
+low hanging fruits,"categorize the evolution of a metric into patterns such as ""steady"", ""booming"" or the like",moderate,low,a bit of beckground research
+low hanging fruits,display time series,moderate,low,appropriate web framework
+low hanging fruits,display rolling mean and best fit pattern,moderate,low,
+low hanging fruits,interact with data in the time series,moderate,moderate,appropriate web framework
+low hanging fruits,filter time series per time window,moderate,low,
+low hanging fruits,define gamification badges,low,low,
+low hanging fruits,display gamification badges,moderate,low,effort and competence in icon design
+graph visualisation,compute centrality,very low,very low,pick up the right centrality index type from graph theory
+graph visualisation,compute modularity,low,low,investigate whether clustering index is appropriate
+graph visualisation,compute profile diversity,moderate,moderate,not sure what profile diversity is
+graph visualisation,"classify commits in core, external and mutants",low,low,only relevant if there are branches
+graph visualisation,"display relative share of core, external and mutants",low,very low,
+graph visualisation,display a commiter graph,moderate,very low,appropriate web framework
+graph visualisation,filter commiter graph on a time window,low,low,
+graph visualisation,keep graph layout between two states of the committer graph (e.g. before and after filtering),high,moderate,appropriate web framework
+graph visualisation,project history replay,high,moderate,
+graph visualisation,classify contributions made by a contrbutor,low,low,
+graph visualisation,display relative share of contribution types made by a contributor,moderate,low,
+graph visualisation,display subteams,moderate,moderate,appropriate graph clustering technique
+graph visualisation,highlight elephant in the room,low,low,background research on appropriate graph theory
+graph visualisation,visualise bus factor,moderate,moderate,background research on appropriate graph theory
+graph visualisation,define a maturity index based on ,moderate,moderate,
+graph visualisation,compute and display maturity index,moderate,very low,
+graph visualisation,display explanations behind maturity index,moderate,low,
+graph visualisation,define project stage,high,high,significant background research
+graph visualisation,compute and display project stage,moderate,very low,
+expert system,define project achetypes based on rules,high,high,
+expert system,match project with archetypes,moderate,low,
+expert system,display matching between project and archetypes,moderate,very low,investigate appropriate display
+expert system,tweak archetype matching based on used inputed data,high,high,unclear now how this would look like
+expert system,display sets of rule/status/recommendation,high,low,recommendations matching each rule
