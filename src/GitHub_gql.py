@@ -9,13 +9,12 @@
 # The goal is to eventually incorporate this into the next generation data
 # mining script for open source hardware repositories hosted on GitHub.
 
-from sys import stderr
-from gql import gql, Client, RequestsHTTPTransport
-
-# from gql.transport.requests import RequestsHTTPTransport
-
-from string import Template
 import sys
+from string import Template
+from sys import stderr
+
+from gql import Client, gql
+from gql.transport.requests import RequestsHTTPTransport
 
 #
 # Set basic parameters for this script
@@ -48,7 +47,7 @@ else:
     # Check if authentication key string looks correct
     # AFAIK the token should be exactly 40 alphanumeric characters
     try:
-        assert (auth_token.isalnum() and len(auth_token == 40))
+        assert (auth_token.isalnum() and len(auth_token) == 40)
     except AssertionError:
         print("GitHub authentication key doesn't look right: {}".format(auth_token), file=stderr)
         print("It should be a 40-character alphanumeric string. Please try again.", file=stderr)
@@ -59,44 +58,51 @@ else:
 
 # Add GitHub API authorization token header
 transport = RequestsHTTPTransport(url=GITHUB_API_URL, 
-                             headers={"Authorization": "token " + auth_token})
+                                  headers={"Authorization": "token " + auth_token})
 
 client = Client(transport=transport, fetch_schema_from_transport=True)
 
 
 query = gql(
-""""
+"""
 query {
-    repository(owner: "github", name: "linguist") {
-        refs(first: 20, refPrefix: "refs/heads/") {
-            totalCount
-            edges {
-                node {
-                    name
-                    target {
-                        ... on Commit {
-                            history(first: 5) {
-                                edges {
-                                    node {
-                                    oid
-                                    }
-                                }
-                                pageInfo {
-                                    hasNextPage
-                                    endCursor
-                                    }
-                            }
-                        }
+  repository(owner: "github", name: "linguist") {
+    refs(first: 20, refPrefix: "refs/heads/") {
+      totalCount
+      edges {
+        node {
+          name
+          target {
+            ... on Commit {
+              history(first: 5) {
+                edges {
+                  node {
+                    oid
+                    author {
+                      name
                     }
+                  }
                 }
+              }
             }
+          }
         }
+      }
     }
+  }
 }
 """
 )
 
 result = client.execute(query)
+
+branches: list = []
+
+has_next_page: bool = True
+after_cursor: str = ""
+
+while has_next_page is True:
+    pass
 
 print("Printing result from query:")
 print(result)
