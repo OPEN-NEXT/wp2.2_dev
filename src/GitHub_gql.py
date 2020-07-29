@@ -9,6 +9,11 @@
 # The goal is to eventually incorporate this into the next generation data
 # mining script for open source hardware repositories hosted on GitHub.
 
+# TODO: Allow specifying time window for queries.
+# TODO: Check rate limit before running and raise Warnings and Errors as needed
+# TODO: Implement identity management
+# TODO: Consider replacing gql library with built-in requests library?????
+
 import sys
 from string import Template
 from sys import stderr
@@ -24,8 +29,11 @@ from gql.transport.requests import RequestsHTTPTransport
 GITHUB_API_URL: str = "https://api.github.com/graphql"
 # Path to GitHub API authorisation token file
 TOKEN_PATH: str = "token"
+# GitHub repository's owner
+GITHUB_REPO_OWNER: str = "OPEN-NEXT"
+# GitHub repository's name
+GITHUB_REPO_NAME: str = "wp2.2_dev"
 
-# Read GitHub API authorisation token from file
 #
 # Process GitHub API token
 #
@@ -60,14 +68,203 @@ else:
 transport = RequestsHTTPTransport(url=GITHUB_API_URL, 
                                   headers={"Authorization": "token " + auth_token})
 
+#
+# Query for repository's branches
+#
+
 client = Client(transport=transport, fetch_schema_from_transport=True)
 
+# Track if there is a next page of results
+query_has_next_page: bool = True
+# Track results page number
+query_page: int = 1
+# Create a pagination cursor
+end_cursor: str = "null" # "null" because there is no cursor for first query
+# Create empty list of branches to populate from query results
+branches: list = []
+# Create a string template for branches query
+query_branches_template = Template(
+"""
+query {
+  repository(owner: "$owner", name: "$name") {
+    refs(first: 4, refPrefix: "refs/heads/", after: $after) {
+      edges {
+        node {
+          name
+        }
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+    }
+  }
+}
+"""
+)
+
+while query_has_next_page:
+    print(f"Getting page {query_page} of branches list", file=stderr)
+    # Prepare and execute GraphQL query
+    query_branches = gql(
+        query_branches_template.substitute(owner=GITHUB_REPO_OWNER, 
+                                           name=GITHUB_REPO_NAME,
+                                           after=end_cursor)
+    )
+    results = client.execute(query_branches)["repository"]["refs"]
+    # Get names of branches from query results and apstrpend to known branches list
+    results_edges = results["edges"]
+    for edge in results_edges:
+        branch_node = edge["node"]["name"]
+        branches.append(branch_node)
+    # See if there are more pages to retrieve
+    query_has_next_page = results["pageInfo"]["hasNextPage"]
+    if query_has_next_page:
+        end_cursor = results["pageInfo"]["endCursor"]
+        end_cursor = f'"{end_cursor}"' # Add extra quotes to form correct query
+        query_page = query_page + 1
+
+# Print total number of branches
+n_branches: int = len(branches)
+print(f"Got all {n_branches} branches", file=stderr)
+
+#
+# Query for commits using branches information
+#
+
+# Track if there is a next page of results
+query_has_next_page: bool = True
+# Track results page number
+query_page: int = 1
+# Create a pagination cursor
+end_cursor: str = "null" # "null" because there is no cursor for first query
+# Create empty list of commits to populate from query results
+commits: list = []
+# Create a list of just commit `oid`s
+commit_oids: list = []
+# Create a string template for commits query
+query_commits_template = Template(
+"""
+query {
+  repository(owner: "$owner", name: "$name") {
+    refs(query: "$branch", refPrefix: "refs/heads/", first: 1) {
+      edges {
+        node {
+          target {
+            ... on Commit {
+              history(first: 100, after: $after) {
+                edges {
+                  node {
+                    oid
+                    commitUrl
+                    url
+                    messageHeadline
+                    authoredByCommitter
+                    authoredDate
+                    author {
+                      name
+                      email
+                      user {
+                        email
+                        login
+                        name
+                        twitterUsername
+                      }
+                      date
+                    }
+                    committedDate
+                    committer {
+                      name
+                      email
+                      user {
+                        email
+                        login
+                        name
+                        twitterUsername
+                      }
+                      date
+                    }
+                    parents(first: 100) {
+                      edges {
+                        node {
+                          oid
+                        }
+                      }
+                      pageInfo {
+                        hasNextPage
+                        endCursor
+                      }
+                    }
+                    
+                  }
+                }
+                pageInfo {
+                  hasNextPage
+                  endCursor
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+"""
+)
+
+# Start by looping through each branch
+for branch in branches:
+    print(f"Getting commits for the branch: {branch}", file=stderr)
+    # Within each branch, get as many pages as needed of its commits
+    while query_has_next_page:
+        print(f"    Getting page {query_page} of commits list", file=stderr)
+        # Prepare and execute GraphQL query for commits
+        query_commits = gql(
+            query_commits_template.substitute(owner=GITHUB_REPO_OWNER,
+                                            name=GITHUB_REPO_NAME,
+                                            branch=branch,
+                                            after=end_cursor)
+        )
+        results = client.execute(query_commits)["repository"]["refs"]["edges"][0]["node"]["target"]["history"]
+        # Add newly-encountered commits to list
+        for c in results["edges"]:
+            # Only add a commit to list if its not already known
+            if c["node"]["oid"] not in commit_oids:
+                commit_oids.append(c["node"]["oid"])
+                # Append relevant commit metadata to known commits list
+                commit = {"oid": c["node"]["oid"],
+                        "commit_url": c["node"]["commitUrl"],
+                        "commit_message_headline": c["node"]["messageHeadline"],
+                        "committer_name": c["node"]["committer"]["name"],
+                        "committer_email": c["node"]["committer"]["email"],
+                        "commit_date": c["node"]["committedDate"],
+                        "parent_oids": []}
+                # Append parent commit(s) oid(s) to a list in commit object
+                for parent in c["node"]["parents"]["edges"]:
+                    commit["parent_oids"].append(parent["node"]["oid"])
+                commits.append(commit)
+        # See if there are more pages to retrieve, if so will loop again
+        query_has_next_page = results["pageInfo"]["hasNextPage"]
+        if query_has_next_page:
+            # Get end cursor of current page so next loop will know where to start
+            end_cursor = results["pageInfo"]["endCursor"]
+            end_cursor = f'"{end_cursor}"' # Add extra quotes
+            query_page = query_page + 1
+    # Reset loop counters for next branch/iteration
+    query_has_next_page = True
+    query_page = 1
+    end_cursor = "null"
+
+
+
+exit(0)
 
 query = gql(
 """
 query {
   repository(owner: "github", name: "linguist") {
-    refs(first: 20, refPrefix: "refs/heads/") {
+    refs(first: 20, refPrefix: "refs/heads/", after: $after) {
       totalCount
       edges {
         node {
@@ -94,20 +291,11 @@ query {
 """
 )
 
-result = client.execute(query)
-
-branches: list = []
-
-has_next_page: bool = True
-after_cursor: str = ""
-
-while has_next_page is True:
-    pass
-
 print("Printing result from query:")
 print(result)
 
 pass
+exit(0)
 
 def query_all_projects(client, tag="", sortBy="", contains="[]"):
     ret = []
