@@ -21,9 +21,11 @@ from sys import stderr
 from gql import Client, gql
 from gql.transport.requests import RequestsHTTPTransport
 
-#
-# Set basic parameters for this script
-#
+"""
+
+Set basic parameters for this script
+
+"""
 
 # GitHub API GraphQL API endpoint
 GITHUB_API_URL: str = "https://api.github.com/graphql"
@@ -34,9 +36,12 @@ GITHUB_REPO_OWNER: str = "OPEN-NEXT"
 # GitHub repository's name
 GITHUB_REPO_NAME: str = "wp2.2_dev"
 
-#
-# Process GitHub API token
-#
+"""
+
+Read GitHub API token
+
+"""
+
 
 # Read GitHub authorisation token from file
 try:
@@ -68,9 +73,11 @@ else:
 transport = RequestsHTTPTransport(url=GITHUB_API_URL, 
                                   headers={"Authorization": "token " + auth_token})
 
-#
-# Query for repository's branches
-#
+"""
+
+Query for repository's branches
+
+"""
 
 client = Client(transport=transport, fetch_schema_from_transport=True)
 
@@ -127,9 +134,11 @@ while query_has_next_page:
 # Print total number of branches
 print(f"Number of branches: {len(branches)}", file=stderr)
 
-#
-# Query for commits using branches information
-#
+"""
+
+Query for commits using branches information
+
+"""
 
 # Track if there is a next page of results
 query_has_next_page: bool = True
