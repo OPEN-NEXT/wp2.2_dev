@@ -9,11 +9,11 @@
 # The goal is to eventually incorporate this into the next generation data
 # mining script for open source hardware repositories hosted on GitHub.
 
-# TODO: Produce at least a Git history graph from commits data
+# DONE: Produce at least a Git history graph from commits data
 # TODO: Allow specifying time window for queries.
-# TODO: Check rate limit before running and raise Warnings and Errors as needed
+# DONE: Check rate limit before running and raise Warnings and Errors as needed
 # TODO: Implement identity management
-# TODO: Consider replacing gql library with built-in requests library?????
+# DONE: Replace gql library with built-in requests library
 # TODO: Retrieve files changed for each commit via GitHub REST API
 # TODO: Use the built-in `asyncio` library to speed up requests
 
@@ -21,10 +21,9 @@ import sys
 from string import Template
 from sys import stderr
 import json
+from requests import post, get
 
 import networkx
-from gql import Client, gql
-from gql.transport.requests import RequestsHTTPTransport
 
 """
 
@@ -74,9 +73,49 @@ else:
         print("GitHub authentication key looks OK.", file=stderr)
 
 
-# Add GitHub API authorization token header
-transport = RequestsHTTPTransport(url=GITHUB_API_URL, 
-                                  headers={"Authorization": "token " + auth_token})
+"""
+
+Prepare query-related functions & parameters
+
+"""
+
+
+# Set up GitHub v3 API REST request headers
+rest_headers: dict = {"Accept": "application/vnd.github.v3+json",
+                      "Authorization": f"token {auth_token}"}
+# Set up GitHub v4 API GraphQL request headers
+graphql_headers: dict = {"Authorization": f"token {auth_token}"}
+
+# Declare a function for GraphQL queries
+def graphql_query(query: str):
+    request = post(url=GITHUB_API_URL, json={"query": query}, headers=graphql_headers)
+    if request.status_code == 200:
+        return request.json()["data"]
+    else:
+        raise Exception(f"Problem with query with return code {request.status_code}.")
+
+# Check rate limits
+def check_rate_limit():
+    query_rate_limit = """
+    {
+        rateLimit {
+            remaining
+            resetAt
+        }
+    }
+    """
+    results = graphql_query(query_rate_limit)["rateLimit"]
+    remaining = results["remaining"]
+    resetAt = results["resetAt"]
+    print(f"GitHub API queries remaining: {remaining}", file=stderr)
+    print(f"    Quota will reset at: {resetAt}", file=stderr)
+    try:
+        assert results["remaining"] >= 1000
+    except AssertionError:
+        print(f"Warning: Only {remaining} queries remaining", file=stderr)
+
+
+check_rate_limit()
 
 """
 
@@ -84,7 +123,7 @@ Query for repository's branches
 
 """
 
-client = Client(transport=transport, fetch_schema_from_transport=True)
+# client = Client(transport=transport, fetch_schema_from_transport=True)
 
 # Track if there is a next page of results
 query_has_next_page: bool = True
@@ -97,13 +136,11 @@ branches: list = []
 # Create a string template for branches query
 query_branches_template = Template(
 """
-query {
+{
   repository(owner: "$owner", name: "$name") {
     refs(first: 100, refPrefix: "refs/heads/", after: $after) {
-      edges {
-        node {
-          name
-        }
+      nodes {
+        name
       }
       pageInfo {
         hasNextPage
@@ -118,17 +155,13 @@ query {
 while query_has_next_page:
     print(f"Getting page {query_page} of branches list", file=stderr)
     # Prepare and execute GraphQL query
-    query_branches = gql(
-        query_branches_template.substitute(owner=GITHUB_REPO_OWNER, 
-                                           name=GITHUB_REPO_NAME,
-                                           after=end_cursor)
-    )
-    results = client.execute(query_branches)["repository"]["refs"]
-    # Get names of branches from query results and apstrpend to known branches list
-    results_edges = results["edges"]
-    for edge in results_edges:
-        branch_node = edge["node"]["name"]
-        branches.append(branch_node)
+    query_branches = query_branches_template.substitute(owner=GITHUB_REPO_OWNER, 
+                                                        name=GITHUB_REPO_NAME, 
+                                                        after=end_cursor)
+    results = graphql_query(query_branches)["repository"]["refs"]
+    # Get names of branches from query results and append to known branches list
+    for node in results["nodes"]:
+        branches.append(node["name"])
     # See if there are more pages to retrieve
     query_has_next_page = results["pageInfo"]["hasNextPage"]
     if query_has_next_page:
@@ -138,6 +171,8 @@ while query_has_next_page:
 
 # Print total number of branches
 print(f"Number of branches: {len(branches)}", file=stderr)
+
+#exit(0)
 
 """
 
@@ -158,63 +193,56 @@ commit_oids: list = []
 # Create a string template for commits query
 query_commits_template = Template(
 """
-query {
+{
   repository(owner: "$owner", name: "$name") {
     refs(query: "$branch", refPrefix: "refs/heads/", first: 1) {
-      edges {
-        node {
-          target {
-            ... on Commit {
-              history(first: 100, after: $after) {
-                edges {
-                  node {
+      nodes {
+        target {
+          ... on Commit {
+            history(first: 100, after: $after) {
+              nodes {
+                oid
+                commitUrl
+                url
+                messageHeadline
+                authoredByCommitter
+                authoredDate
+                author {
+                  name
+                  email
+                  user {
+                    email
+                    login
+                    name
+                    twitterUsername
+                  }
+                  date
+                }
+                committedDate
+                committer {
+                  name
+                  email
+                  user {
+                    email
+                    login
+                    name
+                    twitterUsername
+                  }
+                  date
+                }
+                parents(first: 100) {
+                  nodes {
                     oid
-                    commitUrl
-                    url
-                    messageHeadline
-                    authoredByCommitter
-                    authoredDate
-                    author {
-                      name
-                      email
-                      user {
-                        email
-                        login
-                        name
-                        twitterUsername
-                      }
-                      date
-                    }
-                    committedDate
-                    committer {
-                      name
-                      email
-                      user {
-                        email
-                        login
-                        name
-                        twitterUsername
-                      }
-                      date
-                    }
-                    parents(first: 100) {
-                      edges {
-                        node {
-                          oid
-                        }
-                      }
-                      pageInfo {
-                        hasNextPage
-                        endCursor
-                      }
-                    }
-                    
+                  }
+                  pageInfo {
+                    hasNextPage
+                    endCursor
                   }
                 }
-                pageInfo {
-                  hasNextPage
-                  endCursor
-                }
+              }
+              pageInfo {
+                hasNextPage
+                endCursor
               }
             }
           }
@@ -223,6 +251,7 @@ query {
     }
   }
 }
+
 """
 )
 
@@ -233,29 +262,27 @@ for branch in branches:
     while query_has_next_page:
         print(f"    Getting page {query_page} of commits list", file=stderr)
         # Prepare and execute GraphQL query for commits
-        query_commits = gql(
-            query_commits_template.substitute(owner=GITHUB_REPO_OWNER,
-                                            name=GITHUB_REPO_NAME,
-                                            branch=branch,
-                                            after=end_cursor)
-        )
-        results = client.execute(query_commits)["repository"]["refs"]["edges"][0]["node"]["target"]["history"]
+        query_commits = query_commits_template.substitute(owner=GITHUB_REPO_OWNER,
+                                                          name=GITHUB_REPO_NAME,
+                                                          branch=branch,
+                                                          after=end_cursor)
+        results = graphql_query(query_commits)["repository"]["refs"]["nodes"][0]["target"]["history"]
         # Add newly-encountered commits to list
-        for c in results["edges"]:
+        for c in results["nodes"]:
             # Only add a commit to list if its not already known
-            if c["node"]["oid"] not in commit_oids:
-                commit_oids.append(c["node"]["oid"])
+            if c["oid"] not in commit_oids:
+                commit_oids.append(c["oid"])
                 # Append relevant commit metadata to known commits list
-                commit = {"oid": c["node"]["oid"],
-                        "commit_url": c["node"]["commitUrl"],
-                        "commit_message_headline": c["node"]["messageHeadline"],
-                        "committer_name": c["node"]["committer"]["name"],
-                        "committer_email": c["node"]["committer"]["email"],
-                        "commit_date": c["node"]["committedDate"],
+                commit = {"oid": c["oid"],
+                        "commit_url": c["commitUrl"],
+                        "commit_message_headline": c["messageHeadline"],
+                        "committer_name": c["committer"]["name"],
+                        "committer_email": c["committer"]["email"],
+                        "commit_date": c["committedDate"],
                         "parent_oids": []}
                 # Append parent commit(s) oid(s) to a list in commit object
-                for parent in c["node"]["parents"]["edges"]:
-                    commit["parent_oids"].append(parent["node"]["oid"])
+                for parent in c["parents"]["nodes"]:
+                    commit["parent_oids"].append(parent["oid"])
                 commits.append(commit)
         # See if there are more pages to retrieve, if so will loop again
         query_has_next_page = results["pageInfo"]["hasNextPage"]
