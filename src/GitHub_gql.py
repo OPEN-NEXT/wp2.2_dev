@@ -9,15 +9,20 @@
 # The goal is to eventually incorporate this into the next generation data
 # mining script for open source hardware repositories hosted on GitHub.
 
+# TODO: Produce at least a Git history graph from commits data
 # TODO: Allow specifying time window for queries.
 # TODO: Check rate limit before running and raise Warnings and Errors as needed
 # TODO: Implement identity management
 # TODO: Consider replacing gql library with built-in requests library?????
+# TODO: Retrieve files changed for each commit via GitHub REST API
+# TODO: Use the built-in `asyncio` library to speed up requests
 
 import sys
 from string import Template
 from sys import stderr
+import json
 
+import networkx
 from gql import Client, gql
 from gql.transport.requests import RequestsHTTPTransport
 
@@ -94,7 +99,7 @@ query_branches_template = Template(
 """
 query {
   repository(owner: "$owner", name: "$name") {
-    refs(first: 4, refPrefix: "refs/heads/", after: $after) {
+    refs(first: 100, refPrefix: "refs/heads/", after: $after) {
       edges {
         node {
           name
@@ -267,5 +272,55 @@ for branch in branches:
 # Print total number of commits
 print(f"Total commits in repository {GITHUB_REPO_OWNER}/{GITHUB_REPO_NAME}: {len(commit_oids)}",
       file=stderr)
+
+"""
+
+Produce Git commit history graph
+
+"""
+
+# Initialise an empty NetworkX directed graph
+commit_history_graph = networkx.DiGraph(name=f"{GITHUB_REPO_OWNER}/{GITHUB_REPO_NAME} commit history")
+
+# Add each commit as a node
+commit_history_graph.add_nodes_from(commit_oids)
+
+for commit in commits:
+    # Add commit metadata to corresponding node's attributes
+    for key in commit.keys():
+        # NetworkX GraphML export doesn't support lists as attributes
+        # so skip those (e.g. "parent_oids") for now
+        if isinstance(commit[key], list):
+            # TODO: Add log entry here.
+            pass
+            #print(f"{key} is a list which is unsupported when exporting to GraphML.", file=stderr)
+        else:
+            # Append all other attributes
+            commit_history_graph.nodes[commit["oid"]][key] = commit[key]            
+    # Add directed edges with parentage metadata of each commit
+    # Only process commits with at least one parent
+    if len(commit["parent_oids"]) > 0:
+        # Go through each parent and add edge to graph
+        for parent_oid in commit["parent_oids"]:
+            commit_history_graph.add_edge(commit["oid"], parent_oid)
+
+# Export GraphML
+output_filename: str = f"{GITHUB_REPO_OWNER}-{GITHUB_REPO_NAME}_commit_history.GraphML"
+networkx.write_graphml(commit_history_graph, output_filename)
+
+# Export visjs visualisation
+# load the visjs template into a string
+with open('visjs_template.html', 'r') as f:
+    html_string = f.read()
+# generate a string with js code including networkx data to concatenate with the visjs template
+js_string = []
+js_string.append("<script type='text/javascript'>\r\n")
+js_string.append("imported_data = ")
+js_string.append(json.dumps(networkx.node_link_data(commit_history_graph), sort_keys=True, indent=4))
+js_string.append("\r\n</script>\r\n")
+# Export HTML file
+with open(f"{GITHUB_REPO_OWNER}-{GITHUB_REPO_NAME}_commit_history.html", 'w') as f:
+    f.write(''.join(js_string) + html_string)
+del f
 
 exit(0)
