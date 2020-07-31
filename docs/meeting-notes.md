@@ -42,3 +42,22 @@ Developing a python module/library would make more sense because:
 - it is more interesting for UBA to develop an open source contained module
 
 However the decision should be discussed at WIF internally. Decision on technologies are generally pending. The wish list needs to be refined first.
+
+# 2020-07-31
+
+We had a look at the assessment of the feature's relevance and decided on the following:
+- We implement a base of low hanging fruits for the M18 deadline. M18 is Feb 28th but due to the internal review process in OpenNext, a pre-release should be planned for Jan 31st.
+- A second wave of development will be dedicated to original features. The expert system-like features seemed to be more original than the graph-like ones, but are also more risky. 
+
+Consequently, until M18, we dedicate:
+- approx. 80% of our time in the development of the M18 release
+- approx. 20% refining concepts of original features, their feasibiltiy and getting a better idea of user requirements
+
+To-do's for mext meeting:
+- Based on the assesment of features relatively to relevance and developent effort, JB develops a new dashboard design mockup
+- MK asks community team at WIF for a list of a few projects that represent differnt types of projects, so UBA has a few reference data to play with the GraphQL API
+
+About software architecture:
+- we go for an open source package, not for a separated server. 
+- consequently, we will need interface requirements from WIF at some point. This is pending for now, the time for the M18 mockup to be agreed upon.
+
