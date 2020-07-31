@@ -3,7 +3,7 @@ low hanging fruits,"classify contributions (files, filechanges) into software an
 low hanging fruits,"classify contributions (files, filechanges) into categories ""mech/hardware/software/doc"", etc.",low,low,,,high,high,high
 low hanging fruits,investigate some other classification of contributions,very low,very low,,,medium,medium,low
 low hanging fruits,display a GithLab- and GitHub-like language bar,medium,low,appropriate web framework,,low,medium,high
-low hanging fruits,display a computed number,low,very low,,,,low,high
+low hanging fruits,display a computed number,low,very low,,,high,low,high
 low hanging fruits,compute number of commits,very low,very low,,,high,high,medium
 low hanging fruits,compute active contributors,low,low,definition an active contributor,,high,high,medium
 low hanging fruits,compute ongoing issues,low,low,definition of an ongoing issue,,high,high,low
@@ -23,8 +23,8 @@ graph visualisation,"classify commits in core, external and mutants",low,low,onl
 graph visualisation,"display relative share of core, external and mutants",low,very low,,,high,medium,high
 graph visualisation,display a commiter graph,medium,very low,appropriate web framework,,medium,high,high
 graph visualisation,filter commiter graph on a time window,low,low,,,medium,medium,medium
-graph visualisation,keep graph layout between two states of the committer graph (e.g. before and after filtering),high,medium,appropriate web framework,,,medium,medium
-graph visualisation,project history replay,high,medium,,,,medium,low
+graph visualisation,keep graph layout between two states of the committer graph (e.g. before and after filtering),high,medium,appropriate web framework,,low,medium,medium
+graph visualisation,project history replay,high,medium,,,low,medium,low
 graph visualisation,classify contributions made by a contrbutor,low,low,,,high,high,medium
 graph visualisation,display relative share of contribution types made by a contributor,medium,low,,,high,low,medium
 graph visualisation,display subteams,medium,medium,appropriate graph clustering technique,,high,low,low
