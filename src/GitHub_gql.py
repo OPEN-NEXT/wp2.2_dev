@@ -14,16 +14,16 @@
 # DONE: Check rate limit before running and raise Warnings and Errors as needed
 # TODO: Implement identity management
 # DONE: Replace gql library with built-in requests library
-# TODO: Retrieve files changed for each commit via GitHub REST API
+# DONE: Retrieve files changed for each commit via GitHub REST API
 # TODO: Use the built-in `asyncio` library to speed up requests
 
+import json
 import sys
 from string import Template
 from sys import stderr
-import json
-from requests import post, get
 
 import networkx
+import requests
 
 """
 
@@ -88,7 +88,7 @@ graphql_headers: dict = {"Authorization": f"token {auth_token}"}
 
 # Declare a function for GraphQL queries
 def graphql_query(query: str):
-    request = post(url=GITHUB_API_URL, json={"query": query}, headers=graphql_headers)
+    request = requests.post(url=GITHUB_API_URL, json={"query": query}, headers=graphql_headers)
     if request.status_code == 200:
         return request.json()["data"]
     else:
@@ -122,8 +122,6 @@ check_rate_limit()
 Query for repository's branches
 
 """
-
-# client = Client(transport=transport, fetch_schema_from_transport=True)
 
 # Track if there is a next page of results
 query_has_next_page: bool = True
@@ -172,8 +170,6 @@ while query_has_next_page:
 # Print total number of branches
 print(f"Number of branches: {len(branches)}", file=stderr)
 
-#exit(0)
-
 """
 
 Query for commits using branches information
@@ -199,12 +195,13 @@ query_commits_template = Template(
       nodes {
         target {
           ... on Commit {
-            history(first: 100, after: $after) {
+            history(first: 100, after: $after, since: null, until: null) {
               nodes {
                 oid
                 commitUrl
                 url
                 messageHeadline
+                changedFiles
                 authoredByCommitter
                 authoredDate
                 author {
@@ -279,7 +276,9 @@ for branch in branches:
                         "committer_name": c["committer"]["name"],
                         "committer_email": c["committer"]["email"],
                         "commit_date": c["committedDate"],
-                        "parent_oids": []}
+                        "parent_oids": [],
+                        "changed_files": c["changedFiles"],
+                        "file_list": []}
                 # Append parent commit(s) oid(s) to a list in commit object
                 for parent in c["parents"]["nodes"]:
                     commit["parent_oids"].append(parent["oid"])
@@ -299,6 +298,45 @@ for branch in branches:
 # Print total number of commits
 print(f"Total commits in repository {GITHUB_REPO_OWNER}/{GITHUB_REPO_NAME}: {len(commit_oids)}",
       file=stderr)
+
+
+"""
+
+Retrieve file change metadata for commits
+
+"""
+
+# According to the following post, the GitHub GraphQL API does not support retrieving 
+# a commit's list of changed files, so we will need to use the REST API for now:
+# https://github.community/t/graphql-api-get-list-of-files-related-to-commit/14047
+
+# Set up a counter to track progress
+query_counter: int = 0
+# Go through each commit and retrieve its list of changed files
+print("Retrieving file change list for each commit...", file=stderr)
+#n_commits: int = len(commits)
+for i in range(len(commits)):
+    commit_oid: str = commits[i]["oid"]
+    rest_request_url = f"https://api.github.com/repos/OPEN-NEXT/wp2.2_dev/commits/{commit_oid}"
+    results = requests.get(url=rest_request_url,
+                           headers=rest_headers).json()
+    file_list: list = results["files"]
+    try:
+        # The number of files from REST API should equal that from the GraphQL API
+        assert len(file_list) == commits[i]["changed_files"]
+    except AssertionError:
+        # If not, raise warning (maybe error and exit?)
+        warning_message = f"Commit {commit_oid}'s changed files are not all accounted for."
+        raise Warning(warning_message)
+    else:
+        # Add changed files list to commit history
+        commits[i]["file_list"] = file_list
+    
+    # Regularly update on queries' progress
+    if query_counter%20 == 0:
+        # This progress indicator is just a first draft
+        print(f"Progress: {query_counter}/{len(commits)} commits processed")
+    query_counter += 1
 
 """
 
@@ -349,5 +387,3 @@ js_string.append("\r\n</script>\r\n")
 with open(f"{GITHUB_REPO_OWNER}-{GITHUB_REPO_NAME}_commit_history.html", 'w') as f:
     f.write(''.join(js_string) + html_string)
 del f
-
-exit(0)
