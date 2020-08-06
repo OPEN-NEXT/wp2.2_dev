@@ -21,6 +21,7 @@ import json
 import sys
 from string import Template
 from sys import stderr
+import itertools
 
 import networkx
 import requests
@@ -162,6 +163,7 @@ while query_has_next_page:
         branches.append(node["name"])
     # See if there are more pages to retrieve
     query_has_next_page = results["pageInfo"]["hasNextPage"]
+    # If so, prepare for next loop iteration
     if query_has_next_page:
         end_cursor = results["pageInfo"]["endCursor"]
         end_cursor = f'"{end_cursor}"' # Add extra quotes to form correct query
@@ -288,9 +290,9 @@ for branch in branches:
         if query_has_next_page:
             # Get end cursor of current page so next loop will know where to start
             end_cursor = results["pageInfo"]["endCursor"]
-            end_cursor = f'"{end_cursor}"' # Add extra quotes
+            end_cursor = f'"{end_cursor}"' # Add extra quotes to form correct query
             query_page = query_page + 1
-    # Reset loop counters for next branch/iteration
+    # Reset for loop counters for next branch/iteration
     query_has_next_page = True
     query_page = 1
     end_cursor = "null"
@@ -317,7 +319,7 @@ print("Retrieving file change list for each commit...", file=stderr)
 #n_commits: int = len(commits)
 for i in range(len(commits)):
     commit_oid: str = commits[i]["oid"]
-    rest_request_url = f"https://api.github.com/repos/OPEN-NEXT/wp2.2_dev/commits/{commit_oid}"
+    rest_request_url = f"https://api.github.com/repos/{GITHUB_REPO_OWNER}/{GITHUB_REPO_NAME}/commits/{commit_oid}"
     results = requests.get(url=rest_request_url,
                            headers=rest_headers).json()
     file_list: list = results["files"]
@@ -335,7 +337,7 @@ for i in range(len(commits)):
     # Regularly update on queries' progress
     if query_counter%20 == 0:
         # This progress indicator is just a first draft
-        print(f"Progress: {query_counter}/{len(commits)} commits processed")
+        print(f"Progress: {query_counter}/{len(commits)} commits processed", file=stderr)
     query_counter += 1
 
 """
@@ -387,3 +389,125 @@ js_string.append("\r\n</script>\r\n")
 with open(f"{GITHUB_REPO_OWNER}-{GITHUB_REPO_NAME}_commit_history.html", 'w') as f:
     f.write(''.join(js_string) + html_string)
 del f
+
+"""
+
+Fetch GitHub repository's issues and participants
+
+"""
+
+# Track if there is a next page of results
+query_has_next_page: bool = True
+# Track results page number
+query_page: int = 1
+# Create a pagination cursor
+end_cursor: str = "null" # "null" because there is no cursor for first query
+# Initialise an empty list of issues
+issues: list = []
+# Create a string template for issues query
+query_issues_template = Template(
+"""
+{
+  repository(owner: "$owner", name: "$name") {
+    issues(first: 100, after: $after, orderBy: {field: CREATED_AT, direction: DESC}) {
+      nodes {
+        number
+        title
+        author {
+          login
+        }
+        participants(first: 100) {
+          nodes {
+            name
+            login
+            email
+            twitterUsername
+            url
+          }
+          pageInfo {
+            hasNextPage
+            endCursor
+          }
+        }
+        url
+      }
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+    }
+  }
+}
+"""
+)
+# Create string template for issue participants query in case there are more than
+# 100 participants in an issue which would need another page of results
+query_participants_template = Template(
+"""
+{
+  repository(owner: "$owner", name: "$name") {
+    issue(number: $number) {
+      participants(first: 100, after: $after) {
+        nodes {
+          name
+          login
+          email
+          twitterUsername
+          url
+        }
+        pageInfo {
+          hasNextPage
+          endCursor
+        }
+      }
+    }
+  }
+}
+"""
+)
+
+print(f"Retrieving {GITHUB_REPO_OWNER}/{GITHUB_REPO_NAME}'s issues metadata...", file=stderr)
+
+while query_has_next_page:
+    print(f"    Getting page {query_page} of issues")
+    # Prepare and execute GraphQL query for commits
+    query_issues = query_issues_template.substitute(owner=GITHUB_REPO_OWNER,
+                                                      name=GITHUB_REPO_NAME,
+                                                      after=end_cursor)
+    results = graphql_query(query_issues)["repository"]["issues"]
+    # Add newly-encountered issues to list
+    for i in results["nodes"]:
+        issue = {"number": i["number"],
+                 "title": i["title"],
+                 "author": i["author"]["login"],
+                 "participants": i["participants"]["nodes"],
+                 "url": i["url"]}
+        # Paginate through list of participants and add more as needed
+        participants_has_next_page: bool = i["participants"]["pageInfo"]["hasNextPage"]
+        participants_page: int = 2
+        participants_end_cursor: str = f"{i['participants']['pageInfo']['endCursor']}"
+        participants_end_cursor = f'"{participants_end_cursor}"'
+        issue_number: int = i["number"]
+        while participants_has_next_page:
+            
+            print(f"        Getting page {participants_page} of participants list in issue {issue_number}", file=stderr)
+            query_participants = query_participants_template.substitute(owner=GITHUB_REPO_OWNER,
+                                                                        name=GITHUB_REPO_NAME,
+                                                                        number=i["number"],
+                                                                        after=participants_end_cursor)
+            participants_results = graphql_query(query_participants)["repository"]["issue"]["participants"]
+            # Add each participant to existing list
+            for p in participants_results["nodes"]:
+                issue["participants"].append(p)
+            participants_has_next_page = participants_results["pageInfo"]["hasNextPage"]
+            participants_end_cursor = participants_results['pageInfo']['endCursor']
+            participants_end_cursor = f'"{participants_end_cursor}"' # Add extra quotes to form correct query
+            participants_page += 1
+        # Finally, add this issue to list
+        issues.append(issue)
+    # Prepare for next iteration of loop if there's another page of issues
+    query_has_next_page = results["pageInfo"]["hasNextPage"]
+    if query_has_next_page:
+        end_cursor = results["pageInfo"]["endCursor"]
+        end_cursor = f'"{end_cursor}"' # Add extra quotes to form correct query
+        query_page += 1
