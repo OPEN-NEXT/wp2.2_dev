@@ -1,7 +1,6 @@
-#! [license info here]
-
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+# SPDX-License-Identifier: AGPL-3.0-or-later
 
 ##########
 # generates a network where each node is a committer and edges weights are the number of files they commonly edited
