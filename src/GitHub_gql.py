@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-License-Identifier: AGPL-3.0-or-later
 
 # This script is an initial exploration of using GitHub's version 4 GraphQL
 # API to fetch the commit history of a given repository and construct a 
