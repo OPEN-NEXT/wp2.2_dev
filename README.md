@@ -14,4 +14,4 @@ Github API personal access token file:
 
 ## License
 
-[GNU GPLv3 or later © 2020 Pen-Yuan Hsing](../LICENSE)
+[GNU AGPLv3 or later © 2020 Pen-Yuan Hsing and Jérémy Bonvoisin](../LICENSE)
