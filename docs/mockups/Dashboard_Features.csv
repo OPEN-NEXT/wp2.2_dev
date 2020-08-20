@@ -18,18 +18,18 @@ low hanging fruits,define gamification badges,low,low,,high,medium,high,high
 low hanging fruits,display gamification badges,medium,low,effort and competence in icon design,high,high,high,high
 graph visualisation,compute centrality,very low,very low,pick up the right centrality index type from graph theory,high,high,high,medium
 graph visualisation,compute modularity,low,low,investigate whether clustering index is appropriate,high,high,medium,medium
-graph visualisation,compute profile diversity,medium,medium,define different profile types,,medium,medium,low
+graph visualisation,compute profile diversity,medium,medium,define different profile types,medium,medium,medium,low
 graph visualisation,"classify commits in core, external and mutants",low,low,only relevant if there are branches,high,medium,low,high
 graph visualisation,"display relative share of core, external and mutants",low,very low,,high,high,medium,high
 graph visualisation,display a commiter graph,medium,very low,appropriate web framework,medium,medium,high,high
 graph visualisation,filter commiter graph on a time window,low,low,,low,medium,medium,medium
-graph visualisation,keep graph layout between two states of the committer graph (e.g. before and after filtering),high,medium,appropriate web framework,,low,medium,medium
+graph visualisation,keep graph layout between two states of the committer graph (e.g. before and after filtering),high,medium,appropriate web framework,low,low,medium,medium
 graph visualisation,project history replay,high,medium,,low,low,medium,low
-graph visualisation,classify contributions made by a contrbutor,low,low,,,high,high,medium
-graph visualisation,display relative share of contribution types made by a contributor,medium,low,,,high,low,medium
-graph visualisation,display subteams,medium,medium,appropriate graph clustering technique,,high,low,low
-graph visualisation,highlight elephant in the room,low,low,background research on appropriate graph theory,,medium,high,low
-graph visualisation,visualise bus factor,medium,medium,background research on appropriate graph theory,,medium,high,medium
+graph visualisation,classify contributions made by a contrbutor,low,low,,medium,high,high,medium
+graph visualisation,display relative share of contribution types made by a contributor,medium,low,,medium,high,low,medium
+graph visualisation,display subteams,medium,medium,appropriate graph clustering technique,low,high,low,low
+graph visualisation,highlight elephant in the room,low,low,background research on appropriate graph theory,medium,medium,high,low
+graph visualisation,visualise bus factor,medium,medium,background research on appropriate graph theory,medium,medium,high,medium
 graph visualisation,define a maturity index based on ,medium,medium,define maturity index,high,medium,low,high
 graph visualisation,compute and display maturity index,medium,very low,,high,medium,medium,high
 graph visualisation,display explanations behind maturity index,medium,low,,high,high,medium,medium
@@ -37,7 +37,7 @@ graph visualisation,define project stage,high,high,significant background resear
 graph visualisation,compute and display project stage,medium,very low,,high,high,low,medium
 graph visualisation,show other projects with similar graph characteristics,high,medium,define how to measure similarity,high,medium,medium,high
 expert system,define project achetypes based on rules,high,high,,high,medium,medium,medium
-expert system,match project with archetypes,medium,low,,,medium,medium,medium
-expert system,display matching between project and archetypes,medium,very low,investigate appropriate display,,medium,medium,medium
-expert system,tweak archetype matching based on used inputed data,high,high,unclear now how this would look like,,medium,low,low
-expert system,display sets of rule/status/recommendation,high,low,recommendations matching each rule,,,low,low
+expert system,match project with archetypes,medium,low,,high,medium,medium,medium
+expert system,display matching between project and archetypes,medium,very low,investigate appropriate display,high,medium,medium,medium
+expert system,tweak archetype matching based on used inputed data,high,high,unclear now how this would look like,high,medium,low,low
+expert system,display sets of rule/status/recommendation,high,low,recommendations matching each rule,medium,medium,low,low
