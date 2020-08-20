@@ -1,5 +1,5 @@
 
-# 2020-07-24
+# Minutes 2020-07-24
 
 ## Feature selection processing
 - each of us four (Max, Pen, Rafaella and Jérémy) assess the relevance of each features in the "wish list" (dashboard features list) prior to next Wednesday. 
@@ -43,7 +43,7 @@ Developing a python module/library would make more sense because:
 
 However the decision should be discussed at WIF internally. Decision on technologies are generally pending. The wish list needs to be refined first.
 
-# 2020-07-31
+# Minutes 2020-07-31
 
 We had a look at the assessment of the feature's relevance and decided on the following:
 - We implement a base of low hanging fruits for the M18 deadline. M18 is Feb 28th but due to the internal review process in OpenNext, a pre-release should be planned for Jan 31st.
@@ -61,7 +61,7 @@ About software architecture:
 - we go for an open source package, not for a separated server. 
 - consequently, we will need interface requirements from WIF at some point. This is pending for now, the time for the M18 mockup to be agreed upon.
 
-# 2020-08-12
+# Minutes 2020-08-12
 
 At 11:00 CEST with Sonika, @jbon, @moedn, and @penyuan.
 
@@ -108,3 +108,22 @@ For this meeting, work package (WP) 2.2 gave a summary of progress on dashboard 
         * Or have the crawler look for manifest files, which also implies that a project wants to be found
         * @jbon: Of course there's the risk at the DIN SPEC effort might fail
 * Would be good to hear from Sonika too at next meeting so let's plan that, @penyuan will email everyone (let me know if I missed someone!)
+
+# Preparation notes 2020/08/21
+
+Agenda:
+ - look at the [new mockup](mockups/M18.svg) and decide on a list of features for M18
+ - review to-do-s from last meeting
+ - discuss the propositions below
+ - AOB
+
+Process of selecting features for mockup M18:
+  - converted relevance rankings high, medium, low into 3, 2, 1. 
+  - computed relevance ranking (averaged ranking from WIF and UBA with 1:1 weighing)
+  - computed an overall ranking relevance * easiness to implement
+  - filtered all features ranked >= 6
+
+Propositions to discuss:
+- Involvement of WIF for M18 deliverable: implement the prototype in their platform already, so they frontload the efforts they will have to do later to implement the software developed by UoB and will have more chances to participate and give feedback.
+- From now on, PYH takes over the responsibility of organizing the weekly meetings with WIF, including keeping trace of the decisions and leading the agenda and discussions.
+
