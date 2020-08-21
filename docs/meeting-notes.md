@@ -126,4 +126,18 @@ Process of selecting features for mockup M18:
 Propositions to discuss:
 - Involvement of WIF for M18 deliverable: implement the prototype in their platform already, so they frontload the efforts they will have to do later to implement the software developed by UoB and will have more chances to participate and give feedback.
 - From now on, PYH takes over the responsibility of organizing the weekly meetings with WIF, including keeping trace of the decisions and leading the agenda and discussions.
+- 
+# Meeting notes 2020/08/21
 
+Process of agreeing on the features to be implemented for M18:
+- We had a look at the [new mockup](mockups/M18.svg) resulting from the feature selection process described in the preparation notes above
+- Features were discussed one by one. Some features were eventually amended and some other related features added as "nice to have" 
+- We had a veto round where each of us could remove a feature that finally seems not so relevant.
+- We had a look at features which were on the edge of the arbitrary selection threshold. Each of us had the possibility to reintegrate these borderline features in the dashboard. 
+
+Final agreement:
+- We agree on the dashboard features as described in [new mockup](mockups/M18.svg) as of commit 3b25c3c and in [the list of selected features for M18](mockups/selectedFeaturesM18.csv)
+- We agree that what we deliver in M18 is a functional dashboard prototype implemented in WIF. 
+
+Remaining action items from last meeting: 
+- MK asks community team at WIF for a list of a few projects that represent differnt types of projects, so UBA has a few reference data to play with the GraphQL API
