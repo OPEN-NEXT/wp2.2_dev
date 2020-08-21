@@ -61,7 +61,7 @@ About software architecture:
 - we go for an open source package, not for a separated server. 
 - consequently, we will need interface requirements from WIF at some point. This is pending for now, the time for the M18 mockup to be agreed upon.
 
-# Minutes 2020-08-12
+# Inter-WP meeting notes 2020-08-12
 
 At 11:00 CEST with Sonika, @jbon, @moedn, and @penyuan.
 
@@ -141,3 +141,28 @@ Final agreement:
 
 Remaining action items from last meeting: 
 - MK asks community team at WIF for a list of a few projects that represent differnt types of projects, so UBA has a few reference data to play with the GraphQL API
+
+# Inter-WP meeting notes 2020-08-21T13:00+02:00
+
+With Sonika, @jbon, and @penyuan.
+
+Today Sonika talked about their discussions with Wikifactory. They are planning to work on four main things:
+
+* Community management - It is hard to find and attract collaborators and motivate them to contribute.
+    * Develop skill based ontology in Wikibase (which will be open source) for matching contributors to projects, will be implemented by Wikifactory
+    * Wikifactory can already consider a new contributor's interests in matching with tags e.g. Arduino, robotics, etc.
+* Documentation and guidelines for product development
+    * Will work with Grenoble people to develop good practices as part of those guidelines
+    * Wikifactory has template for new projects, so maybe add documentation and development guidelines to those templates
+    * With these guidelines, make projects aware of open source tools during PLM process
+* Interoperability
+    * It is currently hard to work with other platforms like GitLab, GitHub or Google Drive
+    * So we want to develop import/export tools to aid interoperability
+    * @penyuan: I suggest making these tools independent/stand-alone
+* Collaborative production engineering & manufacturing
+    * Develop a Manufacturer List with archetypes, capabilities, and location so that open source hardware developers can be referred to them
+    * Product Metadata Information (like tolerances, material, etc.) in CAD files will be used to recommend manufacturers
+* @moe is developing Wikibase ontology based on Open Know How and preparing to set up the instance
+* Sonika: We came up with 15 points to work on based on most mentioned issues from user stories
+* @penyuan: We are meeting with Wikifactory today, and will try to narrow down which features we want to implement for the first dashboard draft.
+    * Once we have this draft, we will circulate it among Sonika and Moe for feedback.
