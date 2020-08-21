@@ -131,13 +131,14 @@ Propositions to discuss:
 
 Process of agreeing on the features to be implemented for M18:
 - We had a look at the [new mockup](mockups/M18.svg) resulting from the feature selection process described in the preparation notes above
-- Features were discussed one by one. Some features were eventually amended and some other related features added as "nice to have" 
-- We had a veto round where each of us could remove a feature that finally seems not so relevant.
-- We had a look at features which were on the edge of the arbitrary selection threshold. Each of us had the possibility to reintegrate these borderline features in the dashboard. 
+- Features were discussed one by one. Some features were eventually amended and some other related features added as "nice to have"
+  - For example, nice to haves include a view of how metrics change over time, graph visualisation, or metrics based on Sonika and Wikifactory's discussions outlined below in "Inter-WP meeting notes 2020-08-21T13:00+02:00" below.
+- We had a veto round where each of us could remove a feature that finally seems not so relevant. We removed the component showing number of CAD files in the repository, because it is not so useful on its own, and can be incorporated into the language bar.
+- We had a look at features which were on the edge of the arbitrary selection threshold. Each of us had the possibility to reintegrate these borderline features in the dashboard.
 
 Final agreement:
 - We agree on the dashboard features as described in [new mockup](mockups/M18.svg) as of commit 3b25c3c and in [the list of selected features for M18](mockups/selectedFeaturesM18.csv)
-- We agree that what we deliver in M18 is a functional dashboard prototype implemented in WIF. 
+- We agree that what we deliver in M18 is a functional dashboard prototype implemented in WIF.
 
 Remaining action items from last meeting: 
 - MK asks community team at WIF for a list of a few projects that represent differnt types of projects, so UBA has a few reference data to play with the GraphQL API
