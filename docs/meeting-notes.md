@@ -167,3 +167,38 @@ Today Sonika talked about their discussions with Wikifactory. They are planning 
 * Sonika: We came up with 15 points to work on based on most mentioned issues from user stories
 * @penyuan: We are meeting with Wikifactory today, and will try to narrow down which features we want to implement for the first dashboard draft.
     * Once we have this draft, we will circulate it among Sonika and Moe for feedback.
+
+# Dashboard meeting 2020-09-04T11:00+02:00
+
+With Elies, @mkampik, and @penyuan
+
+* @jbon couldn't make it today
+* Update on month-18 (M18) dashboard
+    * The rationales for the design are:
+        * Features prioritised (a combination of user-need and technical low-hanging fruits) by @jbon, @mkampik, @rafaellaantoniou, and @penyuan
+            * Spreadsheet of feature selection process can be seen [here](https://github.com/OPEN-NEXT/wp2.2_dev/tree/docs/docs/mockups)
+        * They tie at least partially into needs identified from Sonika's user stories
+        * They can be built as a demonstrator tied into Wikifactory project
+* As for finding representative projects on Wikifactory, @mkampik suggested that we use the Wikifactory [Discover page](https://wikifactory.com/discover) to filter for projects with many contributions. In particular, [Project CAROLA](http://viralresponse.io/+carola/project-carola-alpha) is likely the most decentralised one where 12 contributors have made contributions (in contrast with centralised projects with only 1-2 contributors). The rest can come from the Wikifactory API.
+* We discussed the challenges around version control when dealing with large binary files such as CAD files.
+    * This is one reason Wikifactory didn't just use git
+    * Instead, Wikifactory adds an abstraction around the binary files such as a tree history of file changes, but you don't pull the actual files all the time when handling the data/metadata (Wikifactory still keeps all versions of binary files)
+    * There is a system called Git-LFS designed to solve the problem of version-controlling large files, but so far it seems to be mainly used for handling large data science datasets, and the barrier to adoption seems to be bandwidth costs. @mkampik found [this relevant article](https://medium.com/@megastep/github-s-large-file-storage-is-no-panacea-for-open-source-quite-the-opposite-12c0e16a9a91).
+* Summary of previous meeting with Sonika, i.e. the four things they derived from user stories:
+    * Community management - i.e. contributor attraction, retention, and motivation
+        * It's focused on defining an open source hardware skills ontology in Wikibase to aid skill-based matching on Wikifactory
+        * Both Elies and @penyuan mentioned that a contributor is often more motivated by the topic of the project rather than matching skills
+    * Documentation and guidelines for new projects
+        * Wikifactory will develop new templates for new projects at different stages with appropriate guides
+        * The folks are Grenoble are involved since their research focus is on design re-use
+    * Interoperability
+        * To overcome vendor lock-in of proprietary platforms such as GitHub, Google Docs, etc.
+        * Wikifactory will help implement a modular solution beginning with file import/export, and eventually issues and user mapping, and ideally sync and mirror functions
+    * Collaborative production engineering & manufacturing
+        * Implement in Wikibase a list of willing and able fablabs and manufacturers along with their capabilities and locations so they can be suggested to projects on e.g. Wikifactory
+
+Next meeting(s):
+
+* @penyuan is setting up a meeting with @moedn and Sonika to look at technical aspects of hooking dashboard up to the Wikibase instance
+* Between Elies, @mkampik, @jbon, and @penyuan: 2020-09-18 at 09:00 BST/10:00 CEST
+* With Elies, @jbon, and @penyuan: 2020-09-11 afternoon (@penyuan will find a time)
