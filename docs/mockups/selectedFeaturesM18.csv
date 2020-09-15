@@ -1,0 +1,16 @@
+must have,Display a GitLab- and GitHub-like language bar
+must have,"Language bar: classify contributions (files, filechanges) into categories ""mech/hardware/software/doc"", etc."
+must have,"Language bar: classify contributions (files, filechanges) into software and hardware languages"
+must have,Language bar: Numbers can be displayed in absolute or relative terms
+must have,Compute and display the number of commits
+must have,Compute and display the number of active contributors
+must have,Compute and display the number of ongoing issues
+must have,Compute and display centrality
+must have,Compute and display modularity
+must have,"Classify commits or contributions in core, external and mutants"
+must have,"Define, grant and display gamification badges"
+nice to have,Illustrate centrality with a graph
+nice to have,Illustrate modularity with a graph
+nice to have,Offer a comparison of the metrics with project/product type average
+nice to have,See evolutoin of values over time
+nice to have,Tooltips to learn more about the displayed metrics
