@@ -409,6 +409,12 @@ query_issues_template = Template(
 """
 {
   repository(owner: "$owner", name: "$name") {
+    licenseInfo {
+      spdxId
+      name
+      nickname
+      pseudoLicense
+    }
     issues(first: 100, after: $after, orderBy: {field: CREATED_AT, direction: DESC}) {
       nodes {
         number
