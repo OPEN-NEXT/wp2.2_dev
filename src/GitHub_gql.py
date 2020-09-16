@@ -430,6 +430,7 @@ query_issues_template = Template(
           }
         }
         url
+        closed
       }
       pageInfo {
         hasNextPage
@@ -481,7 +482,8 @@ while query_has_next_page:
                  "title": i["title"],
                  "author": i["author"]["login"],
                  "participants": i["participants"]["nodes"],
-                 "url": i["url"]}
+                 "url": i["url"],
+                 "closed": i["closed"]}
         # Paginate through list of participants and add more as needed
         participants_has_next_page: bool = i["participants"]["pageInfo"]["hasNextPage"]
         participants_page: int = 2
@@ -511,3 +513,6 @@ while query_has_next_page:
         end_cursor = results["pageInfo"]["endCursor"]
         end_cursor = f'"{end_cursor}"' # Add extra quotes to form correct query
         query_page += 1
+
+# The following `exit()` is just here to allow a break point to aid debugging
+exit(0)
