@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://creativecommons.org/ns#"
@@ -15,7 +13,7 @@
    viewBox="0 0 297 210"
    version="1.1"
    id="svg8"
-   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   inkscape:version="1.0.1 (3bc2e813f5, 2020-09-07)"
    sodipodi:docname="archetypes.svg"
    inkscape:export-filename="C:\Users\jb2971\Documents\L_GitRepos\wp2.2_dev\docs\mockups\archetypes.png"
    inkscape:export-xdpi="199.8"
@@ -164,19 +162,21 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.175"
-     inkscape:cx="-252.54551"
-     inkscape:cy="499.65518"
+     inkscape:zoom="0.49879309"
+     inkscape:cx="60.127289"
+     inkscape:cy="339.8681"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1920"
-     inkscape:window-height="1001"
-     inkscape:window-x="-9"
-     inkscape:window-y="-9"
+     inkscape:window-width="1366"
+     inkscape:window-height="704"
+     inkscape:window-x="0"
+     inkscape:window-y="27"
      inkscape:window-maximized="1"
      showguides="false"
-     inkscape:guide-bbox="true">
+     inkscape:guide-bbox="true"
+     inkscape:document-rotation="0"
+     inkscape:snap-page="true">
     <sodipodi:guide
        position="-35.552167,-19.052241"
        orientation="0,1"
@@ -201,8 +201,25 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
+        <cc:license
+           rdf:resource="http://creativecommons.org/licenses/by-sa/4.0/" />
       </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/licenses/by-sa/4.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Notice" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#Attribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+        <cc:requires
+           rdf:resource="http://creativecommons.org/ns#ShareAlike" />
+      </cc:License>
     </rdf:RDF>
   </metadata>
   <g
@@ -210,9 +227,16 @@
      inkscape:groupmode="layer"
      id="layer1"
      transform="translate(0,-87)">
+    <rect
+       style="fill:#ffffff;stroke-width:0.264583"
+       id="rect144"
+       width="297"
+       height="210"
+       x="0"
+       y="87" />
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:6.3499999px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       style="font-style:normal;font-weight:normal;font-size:6.35px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
        x="0.26726955"
        y="78.908066"
        id="text817"><tspan
@@ -220,7 +244,7 @@
          id="tspan815"
          x="0.26726955"
          y="78.908066"
-         style="stroke-width:0.26458332">Expert system-like</tspan></text>
+         style="stroke-width:0.264583">Expert system-like</tspan></text>
     <path
        style="fill:none;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Lend)"
        d="m -34.817821,102.82475 c 0,0 -9.45047,26.18469 36.3486535,26.19246"
@@ -229,81 +253,81 @@
        sodipodi:nodetypes="cc" />
     <text
        xml:space="preserve"
-       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
        x="-51.659782"
        y="87.893158"
        id="text1151"><tspan
          sodipodi:role="line"
          x="-51.659782"
          y="87.893158"
-         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic';stroke-width:0.26458332"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic';stroke-width:0.264583"
          id="tspan1153">Evaluartion of the</tspan><tspan
          sodipodi:role="line"
          x="-51.659782"
          y="93.184822"
-         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic';stroke-width:0.26458332"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic';stroke-width:0.264583"
          id="tspan3255">project type based</tspan><tspan
          sodipodi:role="line"
          x="-51.659782"
          y="98.476486"
-         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic';stroke-width:0.26458332"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic';stroke-width:0.264583"
          id="tspan3257">on set of rules</tspan></text>
     <text
        xml:space="preserve"
-       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
        x="-82.113388"
        y="170.35707"
        id="text1151-1"><tspan
          sodipodi:role="line"
          x="-82.113388"
          y="170.35707"
-         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic';stroke-width:0.26458332"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic';stroke-width:0.264583"
          id="tspan1153-2">For each criterion, </tspan><tspan
          sodipodi:role="line"
          x="-82.113388"
          y="175.64874"
-         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic';stroke-width:0.26458332"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic';stroke-width:0.264583"
          id="tspan3672">a metric and a</tspan><tspan
          sodipodi:role="line"
          x="-82.113388"
          y="180.9404"
-         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic';stroke-width:0.26458332"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic';stroke-width:0.264583"
          id="tspan3674">recommendation is </tspan><tspan
          sodipodi:role="line"
          x="-82.113388"
          y="186.23207"
-         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic';stroke-width:0.26458332"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic';stroke-width:0.264583"
          id="tspan3676">displayed</tspan></text>
     <text
        xml:space="preserve"
-       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic';letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
        x="313.1033"
        y="123.77831"
        id="text1151-1-5"><tspan
          sodipodi:role="line"
          x="313.1033"
          y="123.77831"
-         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic';stroke-width:0.26458332"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic';stroke-width:0.264583"
          id="tspan6772">The user can tell</tspan><tspan
          sodipodi:role="line"
          x="313.1033"
          y="129.06996"
-         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic';stroke-width:0.26458332"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic';stroke-width:0.264583"
          id="tspan4386">what they are aiming</tspan><tspan
          sodipodi:role="line"
          x="313.1033"
          y="134.36163"
-         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic';stroke-width:0.26458332"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic';stroke-width:0.264583"
          id="tspan4390">for to tailor the</tspan><tspan
          sodipodi:role="line"
          x="313.1033"
          y="139.65331"
-         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic';stroke-width:0.26458332"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic';stroke-width:0.264583"
          id="tspan4394">hints given by the</tspan><tspan
          sodipodi:role="line"
          x="313.1033"
          y="144.94496"
-         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic';stroke-width:0.26458332"
+         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;font-family:sans-serif;-inkscape-font-specification:'sans-serif Italic';stroke-width:0.264583"
          id="tspan4396">expert system</tspan></text>
     <path
        style="fill:none;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Lend-4-0)"
@@ -383,7 +407,7 @@
        y="155.00316" />
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:5.05640602px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.21068357"
+       style="font-style:normal;font-weight:normal;font-size:5.05641px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.210684"
        x="77.250763"
        y="108.02636"
        id="text2918"><tspan
@@ -391,10 +415,10 @@
          id="tspan2916"
          x="77.250763"
          y="108.02636"
-         style="fill:#ffffff;fill-opacity:1;stroke-width:0.21068357">78%</tspan></text>
+         style="fill:#ffffff;fill-opacity:1;stroke-width:0.210684">78%</tspan></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:5.05640602px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.21068357"
+       style="font-style:normal;font-weight:normal;font-size:5.05641px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.210684"
        x="43.211739"
        y="121.62715"
        id="text2918-1"><tspan
@@ -402,10 +426,10 @@
          id="tspan2916-4"
          x="43.211739"
          y="121.62715"
-         style="fill:#ffffff;fill-opacity:1;stroke-width:0.21068357">47%</tspan></text>
+         style="fill:#ffffff;fill-opacity:1;stroke-width:0.210684">47%</tspan></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:5.05640602px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.21068357"
+       style="font-style:normal;font-weight:normal;font-size:5.05641px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.210684"
        x="25.121819"
        y="135.23286"
        id="text2918-7"><tspan
@@ -413,10 +437,10 @@
          id="tspan2916-1"
          x="25.121819"
          y="135.23286"
-         style="fill:#ffffff;fill-opacity:1;stroke-width:0.21068357">27%</tspan></text>
+         style="fill:#ffffff;fill-opacity:1;stroke-width:0.210684">27%</tspan></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:5.05640602px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.21068357"
+       style="font-style:normal;font-weight:normal;font-size:5.05641px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.210684"
        x="20.865368"
        y="148.83492"
        id="text2918-0"><tspan
@@ -424,10 +448,10 @@
          id="tspan2916-6"
          x="20.865368"
          y="148.83492"
-         style="fill:#ffffff;fill-opacity:1;stroke-width:0.21068357">12%</tspan></text>
+         style="fill:#ffffff;fill-opacity:1;stroke-width:0.210684">12%</tspan></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:5.05640602px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.21068357"
+       style="font-style:normal;font-weight:normal;font-size:5.05641px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.210684"
        x="15.429835"
        y="162.43449"
        id="text2918-3"><tspan
@@ -435,10 +459,10 @@
          id="tspan2916-0"
          x="15.429835"
          y="162.43449"
-         style="fill:#ffffff;fill-opacity:1;stroke-width:0.21068357">3%</tspan></text>
+         style="fill:#ffffff;fill-opacity:1;stroke-width:0.210684">3%</tspan></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:5.05640602px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.21068357"
+       style="font-style:normal;font-weight:normal;font-size:5.05641px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.210684"
        x="119.87835"
        y="107.51651"
        id="text2988"><tspan
@@ -446,10 +470,10 @@
          id="tspan2986"
          x="119.87835"
          y="107.51651"
-         style="stroke-width:0.21068357">Project type 1</tspan></text>
+         style="stroke-width:0.210684">Project type 1</tspan></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:5.05640602px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.21068357"
+       style="font-style:normal;font-weight:normal;font-size:5.05641px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.210684"
        x="119.87835"
        y="121.11855"
        id="text2988-8"><tspan
@@ -457,10 +481,10 @@
          id="tspan2986-6"
          x="119.87835"
          y="121.11855"
-         style="stroke-width:0.21068357">Project type 2</tspan></text>
+         style="stroke-width:0.210684">Project type 2</tspan></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:5.05640602px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.21068357"
+       style="font-style:normal;font-weight:normal;font-size:5.05641px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.210684"
        x="119.87835"
        y="134.72057"
        id="text2988-83"><tspan
@@ -468,10 +492,10 @@
          id="tspan2986-9"
          x="119.87835"
          y="134.72057"
-         style="stroke-width:0.21068357">Project type 3</tspan></text>
+         style="stroke-width:0.210684">Project type 3</tspan></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:5.05640602px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.21068357"
+       style="font-style:normal;font-weight:normal;font-size:5.05641px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.210684"
        x="119.87835"
        y="148.3226"
        id="text2988-5"><tspan
@@ -479,10 +503,10 @@
          id="tspan2986-2"
          x="119.87835"
          y="148.3226"
-         style="stroke-width:0.21068357">Project type 4</tspan></text>
+         style="stroke-width:0.210684">Project type 4</tspan></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:5.05640602px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.21068357"
+       style="font-style:normal;font-weight:normal;font-size:5.05641px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.210684"
        x="119.87835"
        y="161.92465"
        id="text2988-4"><tspan
@@ -490,7 +514,7 @@
          id="tspan2986-8"
          x="119.87835"
          y="161.92465"
-         style="stroke-width:0.21068357">Project type 5</tspan></text>
+         style="stroke-width:0.210684">Project type 5</tspan></text>
     <image
        y="104.1813"
        x="109.95406"
@@ -566,7 +590,7 @@
        y="175.474" />
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:6.3499999px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       style="font-style:normal;font-weight:normal;font-size:6.35px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
        x="15.345833"
        y="184.65271"
        id="text3431"><tspan
@@ -574,10 +598,10 @@
          id="tspan3429"
          x="15.345833"
          y="184.65271"
-         style="stroke-width:0.26458332">criterion 1</tspan></text>
+         style="stroke-width:0.264583">criterion 1</tspan></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:6.3499999px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       style="font-style:normal;font-weight:normal;font-size:6.35px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
        x="110.97385"
        y="184.045"
        id="text3435"><tspan
@@ -585,10 +609,10 @@
          id="tspan3433"
          x="110.97385"
          y="184.045"
-         style="stroke-width:0.26458332">project status 1</tspan></text>
+         style="stroke-width:0.264583">project status 1</tspan></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:6.3499999px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       style="font-style:normal;font-weight:normal;font-size:6.35px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
        x="207.20674"
        y="184.74107"
        id="text3439"><tspan
@@ -596,10 +620,10 @@
          id="tspan3437"
          x="207.20674"
          y="184.74107"
-         style="stroke-width:0.26458332">recommendation 1</tspan></text>
+         style="stroke-width:0.264583">recommendation 1</tspan></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:5.05640602px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.21068357"
+       style="font-style:normal;font-weight:normal;font-size:5.05641px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.210684"
        x="10.398135"
        y="97.270485"
        id="text3443"><tspan
@@ -607,7 +631,7 @@
          id="tspan3441"
          x="10.398135"
          y="97.270485"
-         style="stroke-width:0.21068357">Your project is:</tspan></text>
+         style="stroke-width:0.210684">Your project is:</tspan></text>
     <rect
        style="opacity:1;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.5;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        id="rect3445"
@@ -687,7 +711,7 @@
        y="158.59079" />
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:5.05640602px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.21068357"
+       style="font-style:normal;font-weight:normal;font-size:5.05641px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.210684"
        x="192.65793"
        y="97.341606"
        id="text3443-5"><tspan
@@ -695,10 +719,10 @@
          id="tspan3441-8"
          x="192.65793"
          y="97.341606"
-         style="stroke-width:0.21068357">You are aiming for:</tspan></text>
+         style="stroke-width:0.210684">You are aiming for:</tspan></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:5.05640602px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.21068357"
+       style="font-style:normal;font-weight:normal;font-size:5.05641px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.210684"
        x="212.21056"
        y="107.28799"
        id="text2988-7"><tspan
@@ -706,10 +730,10 @@
          id="tspan2986-81"
          x="212.21056"
          y="107.28799"
-         style="stroke-width:0.21068357">Objctive 1</tspan></text>
+         style="stroke-width:0.210684">Objctive 1</tspan></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:5.05640602px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.21068357"
+       style="font-style:normal;font-weight:normal;font-size:5.05641px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.210684"
        x="212.21056"
        y="120.89005"
        id="text2988-8-7"><tspan
@@ -717,10 +741,10 @@
          id="tspan2986-6-1"
          x="212.21056"
          y="120.89005"
-         style="stroke-width:0.21068357">Objective 2</tspan></text>
+         style="stroke-width:0.210684">Objective 2</tspan></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:5.05640602px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.21068357"
+       style="font-style:normal;font-weight:normal;font-size:5.05641px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.210684"
        x="212.21056"
        y="134.49205"
        id="text2988-83-4"><tspan
@@ -728,10 +752,10 @@
          id="tspan2986-9-7"
          x="212.21056"
          y="134.49205"
-         style="stroke-width:0.21068357">Objective 3</tspan></text>
+         style="stroke-width:0.210684">Objective 3</tspan></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:5.05640602px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.21068357"
+       style="font-style:normal;font-weight:normal;font-size:5.05641px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.210684"
        x="212.21056"
        y="148.0941"
        id="text2988-5-6"><tspan
@@ -739,10 +763,10 @@
          id="tspan2986-2-7"
          x="212.21056"
          y="148.0941"
-         style="stroke-width:0.21068357">Objective 4</tspan></text>
+         style="stroke-width:0.210684">Objective 4</tspan></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:5.05640602px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.21068357"
+       style="font-style:normal;font-weight:normal;font-size:5.05641px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.210684"
        x="212.21056"
        y="161.69615"
        id="text2988-4-1"><tspan
@@ -750,21 +774,21 @@
          id="tspan2986-8-0"
          x="212.21056"
          y="161.69615"
-         style="stroke-width:0.21068357">Objective 5</tspan></text>
+         style="stroke-width:0.210684">Objective 5</tspan></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:6.3499999px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       style="font-style:normal;font-weight:normal;font-size:6.35px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
        x="15.097598"
        y="197.98067"
        id="text3431-0"><tspan
          sodipodi:role="line"
          x="15.097598"
          y="197.98067"
-         style="stroke-width:0.26458332"
+         style="stroke-width:0.264583"
          id="tspan3646">contribution dynamics</tspan></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:6.3499999px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       style="font-style:normal;font-weight:normal;font-size:6.35px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
        x="110.72561"
        y="197.37296"
        id="text3435-5"><tspan
@@ -772,15 +796,15 @@
          id="tspan3433-5"
          x="110.72561"
          y="197.37296"
-         style="stroke-width:0.26458332">steady increase in </tspan><tspan
+         style="stroke-width:0.264583">steady increase in </tspan><tspan
          sodipodi:role="line"
          x="110.72561"
          y="205.31046"
-         style="stroke-width:0.26458332"
+         style="stroke-width:0.264583"
          id="tspan3648">contributions over time</tspan></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:6.3499999px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       style="font-style:normal;font-weight:normal;font-size:6.35px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
        x="206.95853"
        y="198.06903"
        id="text3439-4"><tspan
@@ -788,7 +812,7 @@
          id="tspan3437-5"
          x="206.95853"
          y="198.06903"
-         style="stroke-width:0.26458332">go ahead!</tspan></text>
+         style="stroke-width:0.264583">go ahead!</tspan></text>
     <path
        style="fill:none;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#Arrow1Lend-2)"
        d="m -33.99803,175.81243 c 0,0 14.069249,-5.35312 38.7540805,11.49263"
@@ -807,16 +831,17 @@
     <flowRoot
        xml:space="preserve"
        id="flowRoot4823"
-       style="fill:black;fill-opacity:1;stroke:none;font-family:sans-serif;font-style:normal;font-weight:normal;font-size:24px;line-height:1.25;letter-spacing:0px;word-spacing:0px"><flowRegion
+       style="font-style:normal;font-weight:normal;font-size:24px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none"><flowRegion
          id="flowRegion4825"><rect
            id="rect4827"
            width="91.428574"
            height="898.57141"
            x="-708.57141"
            y="-79.156357" /></flowRegion><flowPara
-         id="flowPara4829" /></flowRoot>    <text
+         id="flowPara4829" /></flowRoot>
+    <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:6.3499999px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       style="font-style:normal;font-weight:normal;font-size:6.35px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
        x="-181.18555"
        y="275.33902"
        id="text817-2"><tspan
@@ -824,10 +849,10 @@
          id="tspan815-3"
          x="-181.18555"
          y="275.33902"
-         style="stroke-width:0.26458332">Alternative visualisation: spider web</tspan></text>
+         style="stroke-width:0.264583">Alternative visualisation: spider web</tspan></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:6.3499999px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       style="font-style:normal;font-weight:normal;font-size:6.35px;line-height:1.25;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
        x="-41.5774"
        y="344.24701"
        id="text4851"><tspan
@@ -835,41 +860,41 @@
          id="tspan4849"
          x="-41.5774"
          y="344.24701"
-         style="stroke-width:0.26458332">Examples of characteristics:</tspan><tspan
+         style="stroke-width:0.264583">Examples of characteristics:</tspan><tspan
          sodipodi:role="line"
          x="-41.5774"
          y="352.18451"
-         style="stroke-width:0.26458332"
+         style="stroke-width:0.264583"
          id="tspan4855"> - a project seem to be heavily centred on one person (centrality index close to   </tspan><tspan
          sodipodi:role="line"
          x="-41.5774"
          y="360.12201"
-         style="stroke-width:0.26458332"
+         style="stroke-width:0.264583"
          id="tspan4869"> - steady increase in contributions over time</tspan><tspan
          sodipodi:role="line"
          x="-41.5774"
          y="368.05951"
-         style="stroke-width:0.26458332"
+         style="stroke-width:0.264583"
          id="tspan4859"> - the project started iwth a large dump </tspan><tspan
          sodipodi:role="line"
          x="-41.5774"
          y="375.99701"
-         style="stroke-width:0.26458332"
+         style="stroke-width:0.264583"
          id="tspan4875"> - not many interactions but dumps here and there</tspan><tspan
          sodipodi:role="line"
          x="-41.5774"
          y="383.93451"
-         style="stroke-width:0.26458332"
+         style="stroke-width:0.264583"
          id="tspan4861"> - there is a contribution guide (contributing.md), a license, a readme</tspan><tspan
          sodipodi:role="line"
          x="-41.5774"
          y="391.87201"
-         style="stroke-width:0.26458332"
+         style="stroke-width:0.264583"
          id="tspan4863"> - high bus factor, </tspan><tspan
          sodipodi:role="line"
          x="-41.5774"
          y="399.80951"
-         style="stroke-width:0.26458332"
+         style="stroke-width:0.264583"
          id="tspan4877"> - ...</tspan></text>
   </g>
 </svg>
