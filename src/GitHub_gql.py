@@ -16,6 +16,7 @@
 # DONE: Replace gql library with built-in requests library
 # DONE: Retrieve files changed for each commit via GitHub REST API
 # TODO: Use the built-in `asyncio` library to speed up requests
+# TODO: Save downloaded data so that future runs only gets new data
 
 import json
 import sys
@@ -37,9 +38,11 @@ GITHUB_API_URL: str = "https://api.github.com/graphql"
 # Path to GitHub API authorisation token file
 TOKEN_PATH: str = "token"
 # GitHub repository's owner
-GITHUB_REPO_OWNER: str = "OPEN-NEXT"
+GITHUB_REPO_OWNER: str = "Safecast"
+#GITHUB_REPO_OWNER: str = "AngelLM"
 # GitHub repository's name
-GITHUB_REPO_NAME: str = "wp2.2_dev"
+GITHUB_REPO_NAME: str = "bGeigieNanoKit"
+#GITHUB_REPO_NAME: str = "Thor"
 
 """
 
@@ -436,6 +439,7 @@ query_issues_template = Template(
           }
         }
         url
+        createdAt
         closed
       }
       pageInfo {
