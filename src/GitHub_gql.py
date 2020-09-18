@@ -493,6 +493,7 @@ while query_has_next_page:
                  "author": i["author"]["login"],
                  "participants": i["participants"]["nodes"],
                  "url": i["url"],
+                 "createdAt": i["createdAt"],
                  "closed": i["closed"]}
         # Paginate through list of participants and add more as needed
         participants_has_next_page: bool = i["participants"]["pageInfo"]["hasNextPage"]
@@ -524,5 +525,22 @@ while query_has_next_page:
         end_cursor = f'"{end_cursor}"' # Add extra quotes to form correct query
         query_page += 1
 
-# The following `exit()` is just here to allow a break point to aid debugging
+# Just to have a breakpoint
+print("Finished getting issues")
+
+"""
+
+Export commits and issues to JSON
+
+"""
+
+# Export commit history
+with open("commit_history.json", mode="w") as export_file:
+    json.dump(commits, export_file)
+# Export issues
+with open("issues.json", mode="w") as export_file:
+    json.dump(issues, export_file)
+
+print("Commits and issues exported to JSON file")
+
 exit(0)
