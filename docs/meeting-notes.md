@@ -226,6 +226,7 @@ With @moedn (Moe), @GoSFhg (Sonika), and @penyuan (Pen). We started with a great
 * In the [month-18 (M18) mockup](https://github.com/OPEN-NEXT/wp2.2_dev/blob/docs/docs/mockups/M18.svg) of the dashboard, the lower-left section is a series of "achievement" badges for the project.
   * The badges could be split into two types: auto-generated and self-reported. The former category could be based on thresholds such as a certain number of contributors, having certaing files in the repository such as a LICENSE file. The latter could be self-reporting on things like "we've reached prototype stage". Interestingly, there could be different levels of the same badge. For example, there can be a silver DIN SPEC 3105 badge where you self-report to be spec-compliant, and a gold level one once you are official certified.
   * A lot of @GoSFhg's work on user stories and deriving the four categories of tasks might usefully inform the design of these badges.
+  * [Issue #14](https://github.com/OPEN-NEXT/OSHI/issues/14) in OPEN-NEXT/OSHI is related to this.
   * **TODO:** @penyuan will draft an intial, relatively short list of possible badges and circulate to everyone for input.
 * BTW, using [Plotly/Dash](https://plotly.com/) for the dashboard frontend sounded OK to everyone at this meeting (at least with no major objections!).
 * Going forward, we should keep an eye on the developments in OPEN-NEXT/OSHI so that our efforts are coordinated.
