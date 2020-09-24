@@ -231,3 +231,20 @@ With @moedn (Moe), @GoSFhg (Sonika), and @penyuan (Pen). We started with a great
   * **TODO:** @penyuan will draft an intial, relatively short list of possible badges and circulate to everyone for input.
 * BTW, using [Plotly/Dash](https://plotly.com/) for the dashboard frontend sounded OK to everyone at this meeting (at least with no major objections!).
 * Going forward, we should keep an eye on the developments in OPEN-NEXT/OSHI so that our efforts are coordinated.
+
+## Dashboard meeting 2020-09-18T11:00+02:00
+
+With @elies30, @mkampik, and @penyuan. @penyuan gave an update on dashboard work including a summary of the recent meeting with @moedn and @GoSFhg on 2020-09-16. This entry refers to those notes.
+
+* @mkampik mentioned that the [RDF data model](https://en.wikipedia.org/wiki/Resource_Description_Framework) will be used in the Wikibase instance. Need to keep this in mind.
+* @mkampik: Rather than keeping the dashboard's data mining code for e.g. version controls histories and issues separate, could we contribute that into the OSHI crawler?
+  * @penyuan has opened an issue here: https://github.com/OPEN-NEXT/OSHI/issues/25
+* We also discussed the important point @moedn made regarding mining user data to build the network graph and personal data/GDPR concerns. @elies30 noted that a compromise version where the nodes do not reveal identifiable user information, some important user-facing functionality would be lost such as identifying the important players in the project, though, of course, you can still get a sense of how a project is organised via a visual inspection of the graph. I've emailed @meherahassan about this, and will be sure to keep everyone updated on this issue.
+* I deployed a tiny, back-of-the-envelope demo of using the Python Dash library to show interactive metrics from a GitHub repository using the beginner, gratis tier of PythonAnywhere (any suggestions of other/better hosting providers?): https://psaltyi.pythonanywhere.com/
+* From what I've read, Dash web apps such as this can be embedded into other webpages via iframes. See these two discussions:
+  * https://community.plotly.com/t/embedding-dash-into-webpage/10645/11
+  * https://community.plotly.com/t/embed-dash-plot-into-web-page/5337
+  * **UPDATE:** According to @moedn embedding via iframes should be just fine.
+* @penyuan mentioned that we need to figure out a permanent way of hosting the dashboard once a production version is made. Though this was towards the end of the meeting and we didn't really get to discuss it.
+* People seem generally receptive to brainstorming a list of badges.
+  * **UPDATE:** An issue has been opened for this, please chime in: https://github.com/OPEN-NEXT/wp2.2_dev/issues/39
