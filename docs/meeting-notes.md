@@ -1,5 +1,7 @@
 # Open!Next work package 2.2 (WP2.2) meeting notes
 
+Note: Sometimes GitHub usernames are used instead of colloqiual names, e.g. @jbon instead of Jérémy.
+
 ## Minutes 2020-07-24
 
 ### Feature selection processing
@@ -248,3 +250,45 @@ With @elies30, @mkampik, and @penyuan. @penyuan gave an update on dashboard work
 * @penyuan mentioned that we need to figure out a permanent way of hosting the dashboard once a production version is made. Though this was towards the end of the meeting and we didn't really get to discuss it.
 * People seem generally receptive to brainstorming a list of badges.
   * **UPDATE:** An issue has been opened for this, please chime in: https://github.com/OPEN-NEXT/wp2.2_dev/issues/39
+
+## dashboard meeting 2020-10-23T10:00+01
+
+With @elies30, @jbon, @mkampik, and @penyuan, and Andres from Wikifactory.
+
+* Not all of us were present in recent meetings, so quick recap first: 
+    * Architectural diagram of how @penyuan proposed fitting the WP2.2 dashboard into WP3.3's work with Franhofer/Wikimedia on the OSH data crawler and Wikibase instance: https://picat.drycat.fr/gallery#zsta3v3z/DkP25p6J.png,CcMPnIKK/Yx6Rw35P.svg (link expires 2020-11-29)
+        * @penyuan would like to keep the dashboard's frontend and backend separate, especially considering that Wikifactory will develop their own frontend.
+        * Backend would be things like mining metadata via GitHub and Wikifactory's APIs and two-way communication of data with the Wikibase instance (which stores other data on each OSH project)
+          * Andres can help with ensuring good API support from Wikifactory.
+        * Frontend is the user-facing web-based dashboard per the month 18 (M18) mockup that is currently being implemented using the Python-based Dash library. A tiny demo is up using PythonAnywere's free of charge beginner plan: https://psaltyi.pythonanywhere.com/
+            * Note that even if the frontend might look simple, it's partly because lots of work is going into the backend plumbing
+            * The frontend would be purely presentation with little to no data-mining or processing (that's what the backend would do)
+        * A Dash dashboard can be embedded into a Mediawiki page via iframes which @moedn says should be fine.
+    * There is a GitHub issue for coming up with an initial set of badges for the M18 dashboard: https://github.com/OPEN-NEXT/wp2.2_dev/issues/39
+* @moedn has just shared lots of information on the Wikibase ontology (did everyone get the announcement email? Tell @penyuan if you'd like to see it)
+    * There is now a (relatively) complete draft of the whole ontology with a reserved section for the dashboard's metadata
+    * An OSHI GitHub issue has been opened where discussion started with @moedn on exactly which metadata items would be needed in the ontology
+        * https://github.com/OPEN-NEXT/OSHI/issues/33
+    * @moedn also raised the possibility of combining our backend efforts with the OSH crawler as suggested by @mkampik last time
+        * https://github.com/OPEN-NEXT/OSHI/issues/25
+    * @penyuan will meet individually with @moedn possibly followed by another with Wikimedia DE engineers to work out more details
+        * First meeting next Tuesday 2020-11-03 -> @mkampik will also join
+* WP3.3 will have someone develop a "skills ontology" to classify the types of skills typically seen in an open source hardware project.
+  * @Elies30 made the great point that we should thoughtfully design how this knowledge would be applied. For example, skill-based matching might or might not be useful unless that's truly something a prospective contributor desires. Maybe they are picking projects to work on based on topic or skills they want to learn instead of skills they already have, etc.
+* @moedn previously mentioned the need to consider the GDPR
+    * @penyuan has met with @meherahassan about this
+        * @meherahassan's work is focused on the context of interviewing people, but neither of us sees an obvious problem
+        * @meherahassan also briefly spoke to @MIE5R0 about this and again there doesn't seem to be a super-obvious concern
+        * @mkampik will reach out to their legal person about this pending @penyuan providing a short blurb describing the concerns. (*update*: @penyuan sent it on 2020-11-05)
+* @penyuan discovered that some data science projects hosted on GitHub uses GitHub's continuous integration (CI) service - called [GitHub Actions](https://github.com/features/actions) - to periodically scrape data and commit them into their respective repositories
+    * Here is a discussion thread about this technique: https://news.ycombinator.com/item?id=24732943
+    * Equivalent available on GitLab, too.
+    * This doesn't look overly complicated since it (naively) looks like a "simple" matter of telling GitHub Actions to regularly run our data-mining script?
+    * Are @mkampik or @jbon familiar with this? Any feedback on how easy/hard this is and its feasibility?
+    * Will probably need to run the script once to get initial, large set of data (which might take a long time to run), then have GitHub Actions take care of incremental updates (hopefully this would mean the CI runs would be individually quicker???)
+    * I'll discuss this with @moedn to see if this is a good idea and if it can work as part of or in conjunction with the crawler. What do you think?
+    * @jbon asked a great question about storage limits for GitHub repositories -> We took a look and it shouldn't be a problem for a long time
+* Question for @jbon: Was there a plan for hosting the dashboard when conceiving of Open!Next?
+  * Answer: Not really. Though we might be able to host with WP3.3/Open Source Ecology.
+  * @mkampik: And Wikifactory will host their own implementation of the dashboard. And who knows, maybe hosting customised instances of the dashboard can be another thing for Wikifactory to offer!
+* Glad @jbon will still remain with Open!Next as an advisory board member! Looking forward to @jbon's input going forward.
