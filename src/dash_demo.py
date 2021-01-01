@@ -7,7 +7,7 @@ import json
 # BEGIN: Import dash-related libraries
 
 import dash
-import pandas as pd
+import pandas
 from dash.dependencies import Input, Output, State, ClientsideFunction
 import dash_core_components as dcc
 import dash_html_components as html
@@ -36,8 +36,8 @@ print("Files loaded.")
 
 # Convert data to Pandas dataframes
 
-commits_df = pd.DataFrame(commits)
-issues_df = pd.DataFrame(issues)
+commits_df = pandas.DataFrame(commits)
+issues_df = pandas.DataFrame(issues)
 
 # Get number of open and closed isses
 # Using method here: 
@@ -52,19 +52,19 @@ n_commits = len(commits_df)
 # Get number of unique committers
 # Method: 
 # https://www.geeksforgeeks.org/how-to-count-distinct-values-of-a-pandas-dataframe-column/
-n_committers = len(pd.unique(commits_df["committer_email"]))
+n_committers = len(pandas.unique(commits_df["committer_email"]))
 
 # Make sure timestamps are in Pandas format
 # Method: 
 # https://stackoverflow.com/q/29626543/186904
-commits_df["commit_date"] = pd.to_datetime(commits_df["commit_date"])
-issues_df["createdAt"] = pd.to_datetime(issues_df["createdAt"])
+commits_df["commit_date"] = pandas.to_datetime(commits_df["commit_date"])
+issues_df["createdAt"] = pandas.to_datetime(issues_df["createdAt"])
 
 # Add year columns to dataframes
 # Method: 
 # https://stackoverflow.com/a/25149272/186904
-commits_df["commit_date_year"] = pd.DatetimeIndex(commits_df["commit_date"]).year
-issues_df["createdAt_year"] = pd.DatetimeIndex(issues_df["createdAt"]).year
+commits_df["commit_date_year"] = pandas.DatetimeIndex(commits_df["commit_date"]).year
+issues_df["createdAt_year"] = pandas.DatetimeIndex(issues_df["createdAt"]).year
 
 
 
@@ -181,7 +181,7 @@ def show_n_issues(selected_year):
 )
 def show_n_commiters(selected_year):
     filtered_commits = commits_df[commits_df["commit_date_year"] <= selected_year]
-    n_committers = len(pd.unique(filtered_commits["committer_email"]))
+    n_committers = len(pandas.unique(filtered_commits["committer_email"]))
     return f"{n_committers}"
 
 # Start Dash app server
