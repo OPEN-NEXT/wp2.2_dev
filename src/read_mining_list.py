@@ -5,7 +5,7 @@
 # Import external modules
 import pandas
 
-def read_repo_list(path: str = "../data/OSH-repos.csv") -> pandas.core.frame.DataFrame:
+def read_repo_list(path: str = "../data/OSH-repos-GitHub-test.csv") -> pandas.core.frame.DataFrame:
     """
     docstring
     """
