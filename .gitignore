@@ -11,8 +11,8 @@ token
 .config
 
 # Input data and config files
-*.json
-*.csv
+#*.json
+#*.csv
 
 # Visual Studio Code files
 .vscode/
