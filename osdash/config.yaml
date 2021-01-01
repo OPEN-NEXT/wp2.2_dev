@@ -1,0 +1,7 @@
+# Configuration file for package
+
+
+repo_list: ../data/OSH-repos.csv
+data_dir: ../data
+GitHub_token: token
+# create_data_dir: True
