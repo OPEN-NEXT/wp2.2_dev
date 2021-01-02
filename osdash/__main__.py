@@ -10,18 +10,27 @@ that contain the actual plumbing.
 """
 
 # Python Standard Library import(s)
+import sys
 
 # External import(s)
 
 # Internal import(s)
+import preprocess
 
 # High-level `main()` that spells out data-mining logic
+
 def main():
     """
     docstring
     """
+    print(f"Start of main() in __main__.py")
+    # Read configuration file
+    configuration: dict = preprocess.read_config()
+
     # Run pre-processor that reads list of repositories to mine and existing data
     #staging_data = 
+
+    sys.exit(0)
 
 if __name__ == "__main__":
     main()
