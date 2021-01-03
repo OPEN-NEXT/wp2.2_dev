@@ -14,7 +14,7 @@ import sys
 import yaml
 
 # Default options
-DEFAULT_REPO_LIST: str = os.path.join(os.path.dirname(__file__), os.pardir, os.pardir, "input")
+DEFAULT_REPO_LIST: str = os.path.join(os.path.dirname(__file__), os.pardir, os.pardir, "input/OSH-repos.csv")
 DEFAULT_DATA_DIR: str = os.path.join(os.path.dirname(__file__), os.pardir, os.pardir, "data")
 
 # Function to process commandline and configuration file options
