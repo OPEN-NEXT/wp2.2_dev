@@ -47,7 +47,7 @@ def main():
     # Retrieve version control data from repositories
     #
 
-    miner.mine()
+    miner.mine(staged_data)
 
     print(f"foobar")
 
