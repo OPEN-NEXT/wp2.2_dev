@@ -13,9 +13,13 @@ that contain the actual plumbing.
 import sys
 
 # External import(s)
+import pandas
 
 # Internal import(s)
-import preprocess
+if __name__ == "__main__": 
+    import preprocess
+else:
+    from . preprocess import read_config, stage_data
 
 # High-level `main()` that spells out data-mining logic
 
@@ -24,11 +28,22 @@ def main():
     docstring
     """
     print(f"Start of main() in __main__.py")
+
+    #
     # Read configuration file
+    #
+
     configuration: dict = preprocess.read_config()
 
-    # Run pre-processor that reads list of repositories to mine and existing data
-    #staging_data = 
+    #
+    # Stage existing data
+    #
+
+    # This includes reading from list of repositories to mine
+
+    staged_data: pandas.core.frame.DataFrame = preprocess.stage_data(configuration["repo_list"])
+
+    print(f"foobar")
 
     sys.exit(0)
 
