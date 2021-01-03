@@ -24,12 +24,12 @@ import urllib
 import numpy
 import pandas
 
-# Define the required columns of input CSV file
-REQUIRED_COLUMNS: list = [
-    "project",
-    "repo_url",
-    "repo_platform"
-]
+# Define the required columns of input CSV file being explicit about data type
+REQUIRED_COLUMNS: dict = {
+    "project": str,
+    "repo_url": str,
+    "repo_platform": str
+}
 
 def read_repo_list(path: str) -> pandas.core.frame.DataFrame:
     """
@@ -40,27 +40,32 @@ def read_repo_list(path: str) -> pandas.core.frame.DataFrame:
     # Import list of repositories to mine
     #
 
+    # Get a list of the names of the required columns
+    column_names: list = list(REQUIRED_COLUMNS.keys())
+
     # Only proceed if CSV file exists
     if not os.path.exists(path): 
         print(f"ERROR: Can't find CSV at: {path}", file=sys.stderr)
         exit(1)
     
-    # Import data into Pandas dataframe
-    repo_list: pandas.core.frame.DataFrame = pandas.read_csv(path)
+    # Import data into Pandas dataframe using `dtype=REQUIRED_COLUMNS` to be
+    # explicit about expected data types for columns
+    repo_list: pandas.core.frame.DataFrame = pandas.read_csv(path, 
+    dtype=REQUIRED_COLUMNS)
 
     #
     # Validate and clean imported data
     #
 
     # Check if the required CSV headers are present
-    for header in REQUIRED_COLUMNS: 
+    for header in column_names: 
         if not (header in repo_list.columns.values): 
             # Stop execution if a required header is missing
             print(f"ERROR: Required column heading '{header}' not in {path}", file=sys.stderr)
             exit(1)
 
     # Keep only the required columns
-    repo_list = repo_list[REQUIRED_COLUMNS]
+    repo_list = repo_list[column_names]
     
     # Drop rows with empty cells including those with empty strings
     # Reference: https://stackoverflow.com/a/29314880/
