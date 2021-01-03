@@ -40,7 +40,7 @@ def read_config() -> dict:
         description="Mines metadata from GitHub repositories given a list.")
     parser.add_argument("-c", "--config_file", type=str, required=False,
                         help="Path to configuration file. Will override corresponding --auth and --repolist options.")
-    parser.add_argument("-a", "--GitHub_token", type=str, required=False,
+    parser.add_argument("-t", "--GitHub_token", type=str, required=False,
                         help="Path to GitHub personal authentication token file.")
     parser.add_argument("-d", "--data_dir", type=str, required=False,
                         help="Output directory for storing downloaded data.")
