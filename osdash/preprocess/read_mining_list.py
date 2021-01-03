@@ -50,6 +50,7 @@ def read_repo_list(path: str) -> pandas.core.frame.DataFrame:
     
     # Import data into Pandas dataframe using `dtype=REQUIRED_COLUMNS` to be
     # explicit about expected data types for columns
+    # Reference: https://cmdlinetips.com/2018/09/how-to-change-data-type-for-one-or-more-columns-in-pandas-dataframe/
     repo_list: pandas.core.frame.DataFrame = pandas.read_csv(path, 
     dtype=REQUIRED_COLUMNS)
 
