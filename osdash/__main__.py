@@ -18,10 +18,12 @@ import pandas
 # Internal import(s)
 if __name__ == "__main__": 
     import preprocess
+    import miner
 else:
     from . preprocess import read_config, stage_data
+    from . miner import mine
 
-# High-level `main()` that spells out data-mining logic
+# High-level `main()` that spells out high-level data-mining logic
 
 def main():
     """
@@ -36,12 +38,16 @@ def main():
     configuration: dict = preprocess.read_config()
 
     #
-    # Stage existing data
+    # Read repositories list and stage existing data
     #
 
-    # This includes reading from list of repositories to mine
-
     staged_data: pandas.core.frame.DataFrame = preprocess.stage_data(configuration["repo_list"])
+
+    #
+    # Retrieve version control data from repositories
+    #
+
+    miner.mine()
 
     print(f"foobar")
 
