@@ -46,7 +46,7 @@ def read_repo_list(path: str) -> pandas.core.frame.DataFrame:
     # Only proceed if CSV file exists
     if not os.path.exists(path): 
         print(f"ERROR: Can't find CSV at: {path}", file=sys.stderr)
-        exit(1)
+        sys.exit(1)
     
     # Import data into Pandas dataframe using `dtype=REQUIRED_COLUMNS` to be
     # explicit about expected data types for columns
@@ -63,7 +63,7 @@ def read_repo_list(path: str) -> pandas.core.frame.DataFrame:
         if not (header in repo_list.columns.values): 
             # Stop execution if a required header is missing
             print(f"ERROR: Required column heading '{header}' not in {path}", file=sys.stderr)
-            exit(1)
+            sys.exit(1)
 
     # Keep only the required columns
     repo_list = repo_list[column_names]
@@ -88,7 +88,7 @@ def read_repo_list(path: str) -> pandas.core.frame.DataFrame:
         if not all([getattr(tokens, attr) for attr in min_url_attributes]): 
             # Stop execution if an URL doesn't look right
             print(f"ERROR: {url} does not appear to be a useable URL", file=sys.stderr)
-            exit(1)
+            sys.exit(1)
         else: 
             pass
 
