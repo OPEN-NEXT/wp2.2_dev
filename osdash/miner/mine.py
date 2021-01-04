@@ -2,6 +2,12 @@
 # -*- coding: utf-8 -*-
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
+"""[summary]
+
+Returns:
+    [type]: [description]
+"""
+
 # Python Standard Library imports
 import json
 import sys
@@ -15,11 +21,43 @@ else:
 # External imports
 import pandas
 
+# Path to example JSON file with staged data for debugging
 STAGED_DATA: str = "./staged_data-example.json"
 
-def mine(staged_data):
+def mine(staged_data: pandas.core.frame.DataFrame) -> pandas.core.frame.DataFrame:
+    """[summary]
+
+    Args:
+        staged_data ([type]): [description]
+
+    Returns:
+        [type]: [description]
+    """
+
+    #
+    # Split staged data based on adapter type
+    #
+
+    # For now, this means GitHub and Wikifactory
+
+    # Get GitHub repos
+    GitHub_repos: pandas.core.frame.DataFrame = staged_data[staged_data["repo_platform"] == "GitHub"]
+    mined_GitHub_data: pandas.core.frame.DataFrame = GitHub(GitHub_repos)
+
+
+    # Get Wikifactory repos
+    Wikifactory_repos: pandas.core.frame.DataFrame = staged_data[staged_data["repo_platform"] == "Wikifactory"]
+    mined_Wikifactory_data: pandas.core.frame.DataFrame = Wikifactory(Wikifactory_repos)
+
+    #
+    # Combine mined data
+    #
+
     mined_data: pandas.core.frame.DataFrame = staged_data
     return mined_data
+
+# main() is for when running this script on its own, probably for debugging
+# Uses the example staged JSON file
 
 def main():
     with open(STAGED_DATA) as json_file: 

@@ -2,8 +2,16 @@
 # -*- coding: utf-8 -*-
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
-def GitHub(parameter_list):
+# Python Standard Library imports
+
+# External imports
+import pandas
+
+def GitHub(repo_list: pandas.core.frame.DataFrame) -> pandas.core.frame.DataFrame:
     """
     docstring
     """
-    print(f"This is the GitHub adapter")
+    print(f"Begin GitHub adapter")
+    mined_data: pandas.core.frame.DataFrame = repo_list
+
+    return mined_data

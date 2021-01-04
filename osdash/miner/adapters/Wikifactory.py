@@ -2,8 +2,16 @@
 # -*- coding: utf-8 -*-
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
-def Wikifactory():
+# Python Standard Library imports
+
+# External imports
+import pandas
+
+def Wikifactory(repo_list: pandas.core.frame.DataFrame) -> pandas.core.frame.DataFrame:
     """
     docstring
     """
-    print(f"This is the Wikifactory adapter")
+    print(f"Begin Wikifactory adapter")
+    mined_data: pandas.core.frame.DataFrame = repo_list
+
+    return mined_data
