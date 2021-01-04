@@ -7,7 +7,7 @@
 # External imports
 import pandas
 
-def GitHub(repo_list: pandas.core.frame.DataFrame) -> pandas.core.frame.DataFrame:
+def GitHub(repo_list: pandas.core.frame.DataFrame, token: str) -> pandas.core.frame.DataFrame:
     """
     docstring
     """
@@ -25,6 +25,9 @@ def GitHub(repo_list: pandas.core.frame.DataFrame) -> pandas.core.frame.DataFram
         # access items in each row
         # Reference: https://medium.com/@rinu.gour123/python-namedtuple-working-and-benefits-of-namedtuple-in-python-276d679b2e9c
         print(f"Processing: " + getattr(repo, "repo_url"))
+        print(token)
+        #
+        # print(f"Last mined at: " + getattr(repo, "last_mined"))
     mined_data: pandas.core.frame.DataFrame = repo_list
 
     return mined_data
