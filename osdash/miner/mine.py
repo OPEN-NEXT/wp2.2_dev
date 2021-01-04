@@ -10,6 +10,7 @@ Returns:
 
 # Python Standard Library imports
 import json
+import os
 import sys
 
 # Internal imports
@@ -24,7 +25,7 @@ import pandas
 # Path to example JSON file with staged data for debugging
 STAGED_DATA: str = "./staged_data-example.json"
 
-def mine(staged_data: pandas.core.frame.DataFrame) -> pandas.core.frame.DataFrame:
+def mine(staged_data: pandas.core.frame.DataFrame, GitHub_token: str) -> pandas.core.frame.DataFrame:
     """[summary]
 
     Args:
@@ -42,7 +43,7 @@ def mine(staged_data: pandas.core.frame.DataFrame) -> pandas.core.frame.DataFram
 
     # Get GitHub repos
     GitHub_repos: pandas.core.frame.DataFrame = staged_data[staged_data["repo_platform"] == "GitHub"]
-    mined_GitHub_data: pandas.core.frame.DataFrame = GitHub(GitHub_repos)
+    mined_GitHub_data: pandas.core.frame.DataFrame = GitHub(GitHub_repos, GitHub_token)
 
 
     # Get Wikifactory repos
@@ -69,8 +70,9 @@ def main():
     with open(STAGED_DATA) as json_file: 
         loaded_json = json.load(json_file)
         loaded_json: str = json.dumps(loaded_json)
+    GITHUB_TOKEN: str = os.environ["GITHUB_TOKEN"]
     staged_data: pandas.core.frame.DataFrame = pandas.read_json(loaded_json, orient="columns")
-    mined_data: pandas.core.frame.DataFrame = mine(staged_data)
+    mined_data: pandas.core.frame.DataFrame = mine(staged_data, GITHUB_TOKEN)
     print(mined_data)
 
 if __name__ == "__main__": 
