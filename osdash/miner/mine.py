@@ -56,7 +56,10 @@ def mine(staged_data: pandas.core.frame.DataFrame) -> pandas.core.frame.DataFram
     # Initialise an empty DataFrame to hold mined results
     mined_data: pandas.core.frame.DataFrame = pandas.DataFrame(columns=["project", "repo_platform", "repo_url", "last_mined"])
     # Then add each mined result via `pandas.concat()`
-    mined_data = pandas.concat([mined_data, mined_GitHub_data, mined_Wikifactory_data], ignore_index=True, copy=False)
+    mined_data = pandas.concat([mined_data, 
+                                mined_GitHub_data, 
+                                mined_Wikifactory_data], 
+                               ignore_index=True, copy=False)
     return mined_data
 
 # main() is for when running this script on its own, probably for debugging
