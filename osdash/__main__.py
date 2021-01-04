@@ -17,8 +17,8 @@ import pandas
 
 # Internal import(s)
 if __name__ == "__main__": 
-    import preprocess
-    import miner
+    from preprocess import read_config, stage_data
+    from miner import mine
 else:
     from . preprocess import read_config, stage_data
     from . miner import mine
@@ -35,19 +35,19 @@ def main():
     # Read configuration file
     #
 
-    configuration: dict = preprocess.read_config()
+    configuration: dict = read_config()
 
     #
     # Read repositories list and stage existing data
     #
 
-    staged_data: pandas.core.frame.DataFrame = preprocess.stage_data(configuration["repo_list"])
+    staged_data: pandas.core.frame.DataFrame = stage_data(configuration["repo_list"])
 
     #
     # Retrieve version control data from repositories
     #
 
-    miner.mine(staged_data)
+    mined_data: pandas.core.frame.DataFrame = mine(staged_data)
 
     print(f"foobar")
 
