@@ -53,7 +53,8 @@ def mine(staged_data: pandas.core.frame.DataFrame) -> pandas.core.frame.DataFram
     # Combine mined data
     #
 
-    mined_data: pandas.core.frame.DataFrame = staged_data
+    mined_data: pandas.core.frame.DataFrame = pandas.DataFrame(columns=["project", "repo_platform", "repo_url", "last_mined"])
+    mined_data = mined_data.append(mined_GitHub_data).append(mined_Wikifactory_data)
     return mined_data
 
 # main() is for when running this script on its own, probably for debugging
