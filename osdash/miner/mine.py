@@ -15,9 +15,12 @@ import sys
 
 # Internal imports
 if __name__ == "__main__":
-    from adapters import GitHub, Wikifactory
+    # from adapters import GitHub, Wikifactory
+    from GitHub import GitHub
+    from Wikifactory import Wikifactory
 else:
-    from . adapters import GitHub, Wikifactory
+    from . GitHub import GitHub
+    from . Wikifactory import Wikifactory
 
 # External imports
 import pandas
