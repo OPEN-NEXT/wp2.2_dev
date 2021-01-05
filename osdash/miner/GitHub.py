@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 # Python Standard Library imports
+import datetime
 import json
 import os
 import sys
@@ -23,6 +24,10 @@ REST_URL: str = "https://api.github.com/"
 GRAPHQL_URL: str = "https://api.github.com/graphql"
 # GitHub API query success response code
 SUCCESS_CODE: int = 200
+# Requested results per page for each API response
+PER_PAGE: int = 50
+# Set search depth when getting list of changed files in commits
+COMMIT_FILE_DEPTH: int = 3
 
 #
 # Define query-making functions
@@ -47,17 +52,23 @@ def make_query(query: str, token: str):
     if (REST_URL in query) and (not GRAPHQL_URL in query):
         print(f"Looks like a REST query...")
         rest_headers: dict = get_headers(api="REST", token=token)
-        request = requests.get(url=query,
-                               headers=rest_headers).json()
+        query_response: requests.models.Response = requests.get(url=query,
+                               headers=rest_headers)
+        if query_response.status_code == SUCCESS_CODE:
+            return query_response
+        else:
+            raise Exception(f"Problem with query with return code {query_response.status_code}.")
     # Basic potato check if query looks like GraphQL
     elif ("{" in query) and ("}" in query):
         print(f"Looks like a GraphQL query...")
         graphql_headers: dict = get_headers(api="GraphQL", token=token)
-        request = requests.post(url=GRAPHQL_URL, json={"query": query}, headers=graphql_headers)
-        if request.status_code == SUCCESS_CODE:
-            return request.json()["data"]
+        query_response: requests.models.Response = requests.post(url=GRAPHQL_URL, 
+                                                          json={"query": query}, 
+                                                          headers=graphql_headers)
+        if query_response.status_code == SUCCESS_CODE:
+            return query_response
         else:
-            raise Exception(f"Problem with query with return code {request.status_code}.")
+            raise Exception(f"Problem with query with return code {query_response.status_code}.")
     else:
         print(f"ERROR: Query does not look like REST or GraphQL...", file=sys.stderr)
 
@@ -71,12 +82,13 @@ def parse_url(url: str) -> dict:
     """
     parsed_url: urllib.parse.ParseResult = urllib.parse.urlparse(url)
     repo: dict = {
-        # parsed_url[2] is the path component of a `urlparse()`ed URL,
-        # split it by "/" where first half would be "owner", second part
-        # would be "name". E.g. https://github.com/octocat/Hello-World/ would
-        # have owner "octocat" and name "Hello-World"
-        "owner": parsed_url[2].split(sep="/")[0],
-        "name": parsed_url[2].split(sep="/")[1]
+        # Get the path component of a `urlparse()`ed URL which looks like
+        # "/octocat/Hello-World", then split it by "/" where first part would 
+        # be "owner", second part would be "name". 
+        # E.g. https://github.com/octocat/Hello-World would have owner 
+        # "octocat" and name "Hello-World".
+        "owner": getattr(parsed_url, "path").split(sep="/")[1],
+        "name": getattr(parsed_url, "path").split(sep="/")[2]
     }
     return repo
 
@@ -90,7 +102,7 @@ def check_rate_limit(token):
         }
     }
     """
-    results = make_query(query=query_rate_limit, token=token)["rateLimit"]
+    results = make_query(query=query_rate_limit, token=token)["rateLimit"].json()
     remaining = results["remaining"]
     resetAt = results["resetAt"]
     print(f"GitHub API queries remaining: {remaining}", file=sys.stderr)
@@ -126,16 +138,16 @@ def get_branches(repo: dict, token: str):
     """
     {
     repository(owner: "$owner", name: "$name") {
-        refs(first: 100, refPrefix: "refs/heads/", after: $after) {
-        nodes {
-            name
+        refs(first: $per_page, refPrefix: "refs/heads/", after: $after) {
+            nodes {
+                    name
+                }
+            pageInfo {
+                    hasNextPage
+                    endCursor
+                }
+            }
         }
-        pageInfo {
-            hasNextPage
-            endCursor
-        }
-        }
-    }
     }
     """
     )
@@ -145,8 +157,9 @@ def get_branches(repo: dict, token: str):
         # Prepare and execute GraphQL query
         query_branches = query_branches_template.substitute(owner=repo["owner"], 
                                                             name=repo["name"], 
+                                                            per_page=PER_PAGE,
                                                             after=end_cursor)
-        results = make_query(query=query_branches, token=token)["repository"]["refs"]
+        results = make_query(query=query_branches, token=token).json()["repository"]["refs"]
         # Get names of branches from query results and append to known branches list
         for node in results["nodes"]:
             branches.append(node["name"])
@@ -159,22 +172,46 @@ def get_branches(repo: dict, token: str):
             query_page = query_page + 1
 
     # Print total number of branches
-    print(f"Number of branches: {len(branches)}", file=stderr)
+    print(f"Number of branches: {len(branches)}", file=sys.stderr)
 
     # Format into ForgeFed model
 
-    pass
+    return branches
 
 # Get commits
-def get_commits():
+def get_commits(repo: dict, since: str, token: str):
     """
     Use REST API
+    `repo` is a dictionary with two keys "owner" and "name" which are parsed 
+    from the repository's full URL with `parse_url()`
     """
     # Fetch data
 
+    # Construct query string
+    query_string: str = f"{REST_URL}'repos/'{repo["owner"]}'/'{repo["name"]}'/commits'"
+    # Start with first page
+    page: int = 1
+    # Append pagination parameters to query
+    query_string: str = f"{query_string}?per_page={PER_PAGE}&page={page}"
+    # Initialise an empty list to hold query results
+    commits: list = list()
+    
+    # Send queries as long as there are more pages of results
+    get_next_page: bool = True
+    while get_next_page: 
+        response: requests.models.Response = make_query(query=query_string, token=token)
+        # See if there is a next page of results
+        if 'rel="next"' in response.headers["Link"]:
+            pass
+        else: 
+            get_next_page = False # Stops further queries
+        # Add results from this loop iteration to commits list
+        commits.extend(response.json())
+
+
     # Format into ForgeFed model
     
-    pass
+    return commits
 
 # Get commit file changes
 def get_file_changes():
@@ -222,20 +259,33 @@ def GitHub(repo_list: pandas.core.frame.DataFrame, token: str) -> pandas.core.fr
         print(f"Processing: " + getattr(repo, "repo_url"))
         repo_url: str = str(getattr(repo, "repo_url"))
         # Get "owner" and "repo" components from this repository's URL
-        repo: dict = parse_url(url=repo_url)
+        repo_url_components: dict = parse_url(url=repo_url)
         # If there is no `last_mined` timestamp, then this `repo_url` has not 
         # been mined before. If so, set `last_mined` to some arbitrarily early
         # time: 
         last_mined: str = getattr(repo, "last_mined")
         if last_mined == None:
-            last_mined: str = "1970-01-01T00:00:00.0+00:00"
+            last_mined: str = "1970-01-01T00:00:00Z"
         else:
             pass
+        # Get current timestamp to record as last mined time in exported data
+        # The `datetime.timezone.utc` argument tells now() to use UTC timezone
+        # (or use datetime.datetime.utcnow())
+        timestamp_object: datetime.datetime = datetime.datetime.now(datetime.timezone.utc)
+        date_now: str = str(timestamp_object.date())
+        time_now: str = str(timestamp_object.time())
+        timestamp_now: str = str(date_now + "T" + time_now + "Z")
+
+        # Check remaining API quota
+        check_rate_limit(token=token)
 
         # Get branches
-        branches = get_branches(repo=repo_url, token=token)
+        branches: list = get_branches(repo=repo_url_components, token=token)
+        print(f"This repository's branches: ")
+        print(branches)
 
         # Get commits
+        commits = get_commits(repo=repo_url_components, since=last_mined, token=token)
 
         # Get commit file changes
 
