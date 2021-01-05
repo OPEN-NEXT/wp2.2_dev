@@ -47,7 +47,7 @@ def main():
     # Retrieve version control data from repositories
     #
 
-    mined_data: pandas.core.frame.DataFrame = mine(staged_data)
+    mined_data: pandas.core.frame.DataFrame = mine(staged_data, GitHub_token=configuration["GitHub_token"])
 
     print(f"foobar")
 
