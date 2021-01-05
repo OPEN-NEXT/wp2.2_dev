@@ -203,25 +203,24 @@ def get_commits_3(repo: dict, since: str, token: str):
     while get_next_page: 
         response: requests.models.Response = make_query(query=query_string, token=token)
         # See if there is a next page of results
-        try:
-            'rel="next"' in response.headers["Link"]
-        except KeyError:
+        if not ("Link" in response.headers):
             # If there's only one page of results, then there is no "Link" item
             # in the response header, so don't go to next page and save results.
             get_next_page = False
             # Add results from this loop iteration to commits list
             commits.extend(response.json())
-        else:
+        elif 'rel="next"' in response.headers["Link"]:
             # If there are multiple pages of results, then there will be
             # "rel=next" in the response header "Link". So increment page
             # counter and save current result.
-            if 'rel="next"' in response.headers["Link"]:
-                page = page + 1
-                query_string: str = f"{query_string}?per_page={PER_PAGE}&page={page}"
-            else: 
-                # Stop if the response header's "Link" section doesn't show a 
-                # next page.
-                get_next_page = False
+            page = page + 1
+            query_string: str = f"{query_string}?per_page={PER_PAGE}&page={page}"
+            # Add results from this loop iteration to commits list
+            commits.extend(response.json())
+        else: 
+            # Stop if the response header's "Link" section doesn't show a 
+            # next page.
+            get_next_page = False
             # Add results from this loop iteration to commits list
             commits.extend(response.json())
 
@@ -308,7 +307,7 @@ def GitHub(repo_list: pandas.core.frame.DataFrame, token: str) -> pandas.core.fr
         print(branches)
 
         # Get commits
-        commits = get_commits(repo=repo_url_components, since=last_mined, token=token)
+        commits = get_commits_3(repo=repo_url_components, since=last_mined, token=token)
 
         # Get commit file changes
 
