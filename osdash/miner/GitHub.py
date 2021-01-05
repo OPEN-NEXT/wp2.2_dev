@@ -25,7 +25,7 @@ GRAPHQL_URL: str = "https://api.github.com/graphql"
 # GitHub API query success response code
 SUCCESS_CODE: int = 200
 # Requested results per page for each API response
-PER_PAGE: int = 50
+PER_PAGE: int = 100
 # Set search depth when getting list of changed files in commits
 COMMIT_FILE_DEPTH: int = 3
 
@@ -102,7 +102,7 @@ def check_rate_limit(token):
         }
     }
     """
-    results = make_query(query=query_rate_limit, token=token)["rateLimit"].json()
+    results = make_query(query=query_rate_limit, token=token).json()["data"]["rateLimit"]
     remaining = results["remaining"]
     resetAt = results["resetAt"]
     print(f"GitHub API queries remaining: {remaining}", file=sys.stderr)
@@ -159,7 +159,7 @@ def get_branches(repo: dict, token: str):
                                                             name=repo["name"], 
                                                             per_page=PER_PAGE,
                                                             after=end_cursor)
-        results = make_query(query=query_branches, token=token).json()["repository"]["refs"]
+        results = make_query(query=query_branches, token=token).json()["data"]["repository"]["refs"]
         # Get names of branches from query results and append to known branches list
         for node in results["nodes"]:
             branches.append(node["name"])
@@ -178,17 +178,19 @@ def get_branches(repo: dict, token: str):
 
     return branches
 
-# Get commits
-def get_commits(repo: dict, since: str, token: str):
+# Get commits via REST API
+def get_commits_3(repo: dict, since: str, token: str):
     """
-    Use REST API
+    Use GitHub's v3 REST API
     `repo` is a dictionary with two keys "owner" and "name" which are parsed 
     from the repository's full URL with `parse_url()`
+
+    NOTE: THE REST API ONLY RETURNS COMMITS FROM THE DEFAULT BRANCH
     """
     # Fetch data
 
     # Construct query string
-    query_string: str = f"{REST_URL}'repos/'{repo["owner"]}'/'{repo["name"]}'/commits'"
+    query_string: str = str(f"{REST_URL}" + "repos/" + f'{repo["owner"]}' + "/" + f'{repo["name"]}' + "/commits")
     # Start with first page
     page: int = 1
     # Append pagination parameters to query
@@ -201,17 +203,38 @@ def get_commits(repo: dict, since: str, token: str):
     while get_next_page: 
         response: requests.models.Response = make_query(query=query_string, token=token)
         # See if there is a next page of results
-        if 'rel="next"' in response.headers["Link"]:
-            pass
-        else: 
-            get_next_page = False # Stops further queries
-        # Add results from this loop iteration to commits list
-        commits.extend(response.json())
-
+        try:
+            'rel="next"' in response.headers["Link"]
+        except KeyError:
+            # If there's only one page of results, then there is no "Link" item
+            # in the response header, so don't go to next page and save results.
+            get_next_page = False
+            # Add results from this loop iteration to commits list
+            commits.extend(response.json())
+        else:
+            # If there are multiple pages of results, then there will be
+            # "rel=next" in the response header "Link". So increment page
+            # counter and save current result.
+            if 'rel="next"' in response.headers["Link"]:
+                page = page + 1
+                query_string: str = f"{query_string}?per_page={PER_PAGE}&page={page}"
+            else: 
+                # Stop if the response header's "Link" section doesn't show a 
+                # next page.
+                get_next_page = False
+            # Add results from this loop iteration to commits list
+            commits.extend(response.json())
 
     # Format into ForgeFed model
     
     return commits
+
+# Get commits from GraphQL API
+def get_commits_4(repo: dict, since: str, token: str):
+    """
+    Use GitHub's v4 GraphQL API
+    """
+    pass
 
 # Get commit file changes
 def get_file_changes():
