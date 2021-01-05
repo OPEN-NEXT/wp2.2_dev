@@ -6,6 +6,7 @@
 import json
 import os
 import sys
+import urllib.parse
 from string import Template
 
 # External imports
@@ -60,6 +61,25 @@ def make_query(query: str, token: str):
     else:
         print(f"ERROR: Query does not look like REST or GraphQL...", file=sys.stderr)
 
+# Parse GitHub URL to get its "owner" and "name" components
+def parse_url(url: str) -> dict:
+    """
+    For example, given `url="https://github.com/octocat/Hello-World/"`, it 
+    would be parsed by `urllib.parse.urlparse()` into components, of which the
+    path component can be split into the "owner" and "name", i.e. "octocat" and
+    "Hello-World".
+    """
+    parsed_url: urllib.parse.ParseResult = urllib.parse.urlparse(url)
+    repo: dict = {
+        # parsed_url[2] is the path component of a `urlparse()`ed URL,
+        # split it by "/" where first half would be "owner", second part
+        # would be "name". E.g. https://github.com/octocat/Hello-World/ would
+        # have owner "octocat" and name "Hello-World"
+        "owner": parsed_url[2].split(sep="/")[0],
+        "name": parsed_url[2].split(sep="/")[1]
+    }
+    return repo
+
 # Check rate limits
 def check_rate_limit(token):
     query_rate_limit = """
@@ -85,11 +105,61 @@ def check_rate_limit(token):
 #
 
 # Get branches
-def get_branches():
+def get_branches(repo: dict, token: str):
     """
     Use GraphQL API
+    `repo` is a dictionary with two keys "owner" and "name" which are parsed 
+    from the repository's full URL with `parse_url()`
     """
     # Fetch data
+
+    # Track if there is a next page of results
+    query_has_next_page: bool = True
+    # Track results page number
+    query_page: int = 1
+    # Create a pagination cursor
+    end_cursor: str = "null" # "null" because there is no cursor for first query
+    # Create empty list of branches to populate from query results
+    branches: list = []
+    # Create a string template for branches query
+    query_branches_template = Template(
+    """
+    {
+    repository(owner: "$owner", name: "$name") {
+        refs(first: 100, refPrefix: "refs/heads/", after: $after) {
+        nodes {
+            name
+        }
+        pageInfo {
+            hasNextPage
+            endCursor
+        }
+        }
+    }
+    }
+    """
+    )
+
+    while query_has_next_page:
+        print(f"Getting page {query_page} of branches list", file=sys.stderr)
+        # Prepare and execute GraphQL query
+        query_branches = query_branches_template.substitute(owner=repo["owner"], 
+                                                            name=repo["name"], 
+                                                            after=end_cursor)
+        results = make_query(query=query_branches, token=token)["repository"]["refs"]
+        # Get names of branches from query results and append to known branches list
+        for node in results["nodes"]:
+            branches.append(node["name"])
+        # See if there are more pages to retrieve
+        query_has_next_page = results["pageInfo"]["hasNextPage"]
+        # If so, prepare for next loop iteration
+        if query_has_next_page:
+            end_cursor = results["pageInfo"]["endCursor"]
+            end_cursor = f'"{end_cursor}"' # Add extra quotes to form correct query
+            query_page = query_page + 1
+
+    # Print total number of branches
+    print(f"Number of branches: {len(branches)}", file=stderr)
 
     # Format into ForgeFed model
 
@@ -150,7 +220,9 @@ def GitHub(repo_list: pandas.core.frame.DataFrame, token: str) -> pandas.core.fr
         # access items in each row
         # Reference: https://medium.com/@rinu.gour123/python-namedtuple-working-and-benefits-of-namedtuple-in-python-276d679b2e9c
         print(f"Processing: " + getattr(repo, "repo_url"))
-        print(token)
+        repo_url: str = str(getattr(repo, "repo_url"))
+        # Get "owner" and "repo" components from this repository's URL
+        repo: dict = parse_url(url=repo_url)
         # If there is no `last_mined` timestamp, then this `repo_url` has not 
         # been mined before. If so, set `last_mined` to some arbitrarily early
         # time: 
@@ -159,6 +231,17 @@ def GitHub(repo_list: pandas.core.frame.DataFrame, token: str) -> pandas.core.fr
             last_mined: str = "1970-01-01T00:00:00.0+00:00"
         else:
             pass
+
+        # Get branches
+        branches = get_branches(repo=repo_url, token=token)
+
+        # Get commits
+
+        # Get commit file changes
+
+        # Get issues
+
+        # Combine results
 
     mined_data: pandas.core.frame.DataFrame = repo_list
 
