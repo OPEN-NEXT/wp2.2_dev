@@ -7,7 +7,7 @@
 # External imports
 import pandas
 
-def Wikifactory(repo_list: pandas.core.frame.DataFrame) -> pandas.core.frame.DataFrame:
+def Wikifactory(repo_list: pandas.core.frame.DataFrame) -> dict:
     """
     docstring
     """
@@ -26,5 +26,7 @@ def Wikifactory(repo_list: pandas.core.frame.DataFrame) -> pandas.core.frame.Dat
         # Reference: https://medium.com/@rinu.gour123/python-namedtuple-working-and-benefits-of-namedtuple-in-python-276d679b2e9c
         print(f"Processing: " + getattr(repo, "repo_url"))
     mined_data: pandas.core.frame.DataFrame = repo_list
+
+    mined_data = mined_data.to_dict("records")
 
     return mined_data
