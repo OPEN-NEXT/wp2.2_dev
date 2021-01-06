@@ -46,24 +46,29 @@ def mine(staged_data: pandas.core.frame.DataFrame, GitHub_token: str) -> pandas.
 
     # Get GitHub repos
     GitHub_repos: pandas.core.frame.DataFrame = staged_data[staged_data["repo_platform"] == "GitHub"]
-    mined_GitHub_data: pandas.core.frame.DataFrame = GitHub(GitHub_repos, GitHub_token)
+    mined_GitHub_data: dict = GitHub(GitHub_repos, GitHub_token)
 
 
     # Get Wikifactory repos
     Wikifactory_repos: pandas.core.frame.DataFrame = staged_data[staged_data["repo_platform"] == "Wikifactory"]
-    mined_Wikifactory_data: pandas.core.frame.DataFrame = Wikifactory(Wikifactory_repos)
+    mined_Wikifactory_data: dict = Wikifactory(Wikifactory_repos)
 
     #
     # Combine mined data
     #
 
     # Initialise an empty DataFrame to hold mined results
-    mined_data: pandas.core.frame.DataFrame = pandas.DataFrame(columns=["project", "repo_platform", "repo_url", "last_mined"])
+    #mined_data: pandas.core.frame.DataFrame = pandas.DataFrame(columns=["project", "repo_platform", "repo_url", "last_mined"])
+    # Initialise an empty list to hold mined results
+    mined_data: list = []
     # Then add each mined result via `pandas.concat()`
-    mined_data = pandas.concat([mined_data, 
-                                mined_GitHub_data, 
-                                mined_Wikifactory_data], 
-                               ignore_index=True, copy=False)
+    # mined_data = pandas.concat([mined_data, 
+    #                             mined_GitHub_data, 
+    #                             mined_Wikifactory_data], 
+    #                            ignore_index=True, copy=False)
+    mined_data.extend(mined_GitHub_data)
+    mined_data.extend(mined_Wikifactory_data)
+
     return mined_data
 
 # main() is for when running this script on its own, probably for debugging
