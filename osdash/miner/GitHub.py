@@ -363,12 +363,12 @@ def get_commits_4(repo: dict, branches: list, since: str, token: str):
             print(f"    Getting page {query_page} of commits list", file=sys.stderr)
             # Prepare and execute GraphQL query for commits
             query_commits = query_commits_template.substitute(owner=repo["owner"],
-                                                            name=repo["name"],
-                                                            branch=branch,
-                                                            per_page=PER_PAGE,
-                                                            after=end_cursor,
-                                                            since_time=since,
-                                                            tree=tree_depth)
+                                                              name=repo["name"],
+                                                              branch=branch,
+                                                              per_page=PER_PAGE,
+                                                              after=end_cursor,
+                                                              since_time=since,
+                                                              tree=tree_depth)
             results = make_query(query_commits, token=token).json()["data"]["repository"]["refs"]["nodes"][0]["target"]["history"]
             # Add newly-encountered commits to list
             for c in results["nodes"]:
