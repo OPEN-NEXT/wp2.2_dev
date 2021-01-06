@@ -4,16 +4,13 @@
 
 # Python Standard Library imports
 import datetime
-import json
 import math
-import os
 import sys
 import urllib.parse
 import string
 import time
 
 # External imports
-import numpy
 import pandas
 import requests
 
