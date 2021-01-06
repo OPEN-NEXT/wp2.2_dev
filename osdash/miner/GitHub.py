@@ -577,7 +577,7 @@ def GitHub(repo_list: pandas.core.frame.DataFrame, token: str) -> dict:
 
     # Create empty DataFrame to hold mined data
     #mined_data: pandas.core.frame.DataFrame = repo_list[["repo_url", "last_mined"]]
-    # Create column indicating if there was error when 
+    # Create column indicating if there was error when making query
     repo_list["error"] = bool(False)
 
     # 
