@@ -291,7 +291,7 @@ def get_commits_4(repo: dict, branches: list, since: str, token: str):
                 nodes {
                     target {
                         ... on Commit {
-                            history(first: $per_page, after: $after, since: $since_time, until: null) {
+                            history(first: $per_page, after: $after, since: "$since_time", until: null) {
                                 nodes {
                                     oid
                                     commitUrl
@@ -429,15 +429,144 @@ def get_file_changes():
     pass
 
 # Get issues
-def get_issues():
+def get_issues(repo: dict, since: str, token: str):
     """
     Use GraphQL API
     """
     # Fetch data
 
-    # Format into ForgeFed model
-    
-    pass
+    # Track if there is a next page of results
+    query_has_next_page: bool = True
+    # Track results page number
+    query_page: int = 1
+    # Create a pagination cursor
+    end_cursor: str = "null" # "null" because there is no cursor for first query
+    # Initialise an empty list of issues
+    issues: list = []
+    # Create a string template for issues query
+    query_issues_template = string.Template(
+    """
+    {
+        repository(owner: "$owner", name: "$name") {
+            licenseInfo {
+                spdxId
+                name
+                nickname
+                pseudoLicense
+            }
+            issues(first: $per_page, after: $after, filterBy: {since: "$since_time"}, orderBy: {field: CREATED_AT, direction: DESC}) {
+                nodes {
+                    number
+                    title
+                    author {
+                        login
+                    }
+                    participants(first: $per_page) {
+                        nodes {
+                            name
+                            login
+                            email
+                            twitterUsername
+                            url
+                        }
+                        pageInfo {
+                            hasNextPage
+                            endCursor
+                        }
+                    }
+                    url
+                    createdAt
+                    closed
+                }
+                pageInfo {
+                    hasNextPage
+                    endCursor
+                }
+            }
+        }
+    }
+    """
+    )
+    # Create string template for issue participants query in case there are more than
+    # 100 participants in an issue which would need another page of results
+    query_participants_template = string.Template(
+    """
+    {
+        repository(owner: "$owner", name: "$name") {
+            issue(number: $number) {
+                participants(first: $per_page, after: $after) {
+                    nodes {
+                        name
+                        login
+                        email
+                        twitterUsername
+                        url
+                    }
+                    pageInfo {
+                        hasNextPage
+                        endCursor
+                    }
+                }
+            }
+        }
+    }
+    """
+    )
+
+    print(f"Retrieving {repo['owner']}/{repo['name']}'s issues metadata...", file=sys.stderr)
+
+    while query_has_next_page:
+        print(f"    Getting page {query_page} of issues")
+        # Prepare and execute GraphQL query for commits
+        query_issues = query_issues_template.substitute(owner=repo["owner"],
+                                                        name=repo["name"],
+                                                        per_page=PER_PAGE,
+                                                        after=end_cursor,
+                                                        since_time=since)
+        results = make_query(query_issues, token=token).json()["data"]["repository"]["issues"]
+        # Add newly-encountered issues to list
+        for i in results["nodes"]:
+            issue = {"number": i["number"],
+                    "title": i["title"],
+                    "author": i["author"]["login"],
+                    "participants": i["participants"]["nodes"],
+                    "url": i["url"],
+                    "createdAt": i["createdAt"],
+                    "closed": i["closed"]}
+            # Paginate through list of participants and add more as needed
+            participants_has_next_page: bool = i["participants"]["pageInfo"]["hasNextPage"]
+            participants_page: int = 2
+            participants_end_cursor: str = f"{i['participants']['pageInfo']['endCursor']}"
+            participants_end_cursor = f'"{participants_end_cursor}"'
+            issue_number: int = i["number"]
+            while participants_has_next_page:
+                
+                print(f"        Getting page {participants_page} of participants list in issue {issue_number}", file=sys.tderr)
+                query_participants = query_participants_template.substitute(owner=repo["owner"],
+                                                                            name=repo["name"],
+                                                                            number=i["number"],
+                                                                            per_page=PER_PAGE,
+                                                                            after=participants_end_cursor)
+                participants_results = make_query(query_participants, token=token).json()["data"]["repository"]["issue"]["participants"]
+                # Add each participant to existing list
+                for p in participants_results["nodes"]:
+                    issue["participants"].append(p)
+                participants_has_next_page = participants_results["pageInfo"]["hasNextPage"]
+                participants_end_cursor = participants_results['pageInfo']['endCursor']
+                participants_end_cursor = f'"{participants_end_cursor}"' # Add extra quotes to form correct query
+                participants_page += 1
+            # Finally, add this issue to list
+            issues.append(issue)
+        # Prepare for next iteration of loop if there's another page of issues
+        query_has_next_page = results["pageInfo"]["hasNextPage"]
+        if query_has_next_page:
+            end_cursor = results["pageInfo"]["endCursor"]
+            end_cursor = f'"{end_cursor}"' # Add extra quotes to form correct query
+            query_page += 1
+
+    # Just to have a breakpoint
+    print("Finished getting issues")
+    return issues
 
 #
 # Main logic for making GitHub queries
@@ -494,7 +623,7 @@ def GitHub(repo_list: pandas.core.frame.DataFrame, token: str) -> dict:
         # been mined before. If so, set `last_mined` to some arbitrarily early
         # time: 
         if math.isnan(last_mined): # If there's not last mined time it will be `nan`
-            last_mined: str = '"1970-01-01T00:00:00Z"'
+            last_mined: str = "1970-01-01T00:00:00Z"
         else:
             pass
 
@@ -523,7 +652,7 @@ def GitHub(repo_list: pandas.core.frame.DataFrame, token: str) -> dict:
                 #repo_list.loc[(repo_list["repo_url"] == repo_url), "commits"] = commits
                 repo["commits"] = commits
             except GitHubAPIError:
-                print(f"There has been an error with querying this repository.")
+                print(f"There has been an error querying commits this repository.")
                 repo_error = True
                 #repo_list.loc[(repo_list["repo_url"] == repo_url), "error"] = True
                 repo["error"] = True
@@ -532,6 +661,16 @@ def GitHub(repo_list: pandas.core.frame.DataFrame, token: str) -> dict:
             pass
 
         # Get issues
+        if repo_error == False: 
+            try: 
+                issues = get_issues(repo=repo_url_components, since=last_mined, token=token)
+                repo["issues"] = issues
+            except GitHubAPIError: 
+                print(f"There has been an error querying issues in this repository.")
+                repo_error = True
+                repo["error"] = True
+        else:
+            pass
 
         # Combine results
         if repo_error == False: 
