@@ -32,7 +32,7 @@ RETRY_CODES: list = [429, 500, 502, 503, 504]
 # Initial retry wait time in seconds
 RETRY_WAIT: int = 10
 # Numbers of times to retry before fail
-RETRIES: int = 3
+RETRIES: int = 5
 # Requested results per page for each API response
 PER_PAGE: int = 100
 # Set search depth when getting list of changed files in commits
