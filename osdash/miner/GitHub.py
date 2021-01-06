@@ -5,12 +5,15 @@
 # Python Standard Library imports
 import datetime
 import json
+import math
 import os
 import sys
 import urllib.parse
-from string import Template
+import string
+import time
 
 # External imports
+import numpy
 import pandas
 import requests
 
@@ -24,6 +27,12 @@ REST_URL: str = "https://api.github.com/"
 GRAPHQL_URL: str = "https://api.github.com/graphql"
 # GitHub API query success response code
 SUCCESS_CODE: int = 200
+# GitHub API query response codes when retry will be attempted
+RETRY_CODES: list = [429, 500, 502, 503, 504]
+# Initial retry wait time in seconds
+RETRY_WAIT: int = 10
+# Numbers of times to retry before fail
+RETRIES: int = 3
 # Requested results per page for each API response
 PER_PAGE: int = 100
 # Set search depth when getting list of changed files in commits
@@ -46,29 +55,55 @@ def get_headers(api: str, token: str) -> dict:
         print(f"ERROR: Please specify API type 'REST' or 'GraphQL'", file=sys.stderr)
         sys.exit(1)
 
+# Define a custom exception for when queries fail repeatedly
+class GitHubAPIError(Exception): 
+    pass
+
 # Function for making queries
 def make_query(query: str, token: str): 
+    # retry_strategy = requests.packages.urllib3.util.retry.Retry(total=3, 
+    #                                                             status_forcelist=[429,500,502,503,504],
+    #                                                             backoff_factor=0.5)
+    # adapter = requests.adapters.HTTPAdapter(max_retries=retry_strategy)
+    # http_session = requests.Session()
+    # http_session.mount("https://", adapter)
     # See if it is a REST query
     if (REST_URL in query) and (not GRAPHQL_URL in query):
         print(f"Looks like a REST query...")
         rest_headers: dict = get_headers(api="REST", token=token)
+        # query_response = http_session.get(url=query, headers=rest_headers)
         query_response: requests.models.Response = requests.get(url=query,
-                               headers=rest_headers)
+                                                                headers=rest_headers)
         if query_response.status_code == SUCCESS_CODE:
             return query_response
         else:
-            raise Exception(f"Problem with query with return code {query_response.status_code}.")
+            raise GitHubAPIError(f"Problem with query with return code {query_response.status_code}.")
     # Basic potato check if query looks like GraphQL
     elif ("{" in query) and ("}" in query):
         print(f"Looks like a GraphQL query...")
         graphql_headers: dict = get_headers(api="GraphQL", token=token)
-        query_response: requests.models.Response = requests.post(url=GRAPHQL_URL, 
-                                                          json={"query": query}, 
-                                                          headers=graphql_headers)
-        if query_response.status_code == SUCCESS_CODE:
-            return query_response
-        else:
-            raise Exception(f"Problem with query with return code {query_response.status_code}.")
+        # query_response = http_session.get(url=GRAPHQL_URL, 
+        #                                   json={"query": query},
+        #                                   headers=graphql_headers)
+        query_success: bool = False
+        retries: int = 0
+        while not query_success:    
+            query_response: requests.models.Response = requests.post(url=GRAPHQL_URL, 
+                                                            json={"query": query}, 
+                                                            headers=graphql_headers)
+            if query_response.status_code == SUCCESS_CODE:
+                query_success = True
+                return query_response
+            elif (query_response.status_code in RETRY_CODES):
+                response_code: int = query_response.status_code
+                if retries < RETRIES:
+                    print(f"Status code {response_code} - Retrying in {RETRY_WAIT} seconds.", file=sys.stderr)
+                    time.sleep(RETRY_WAIT)
+                    retries += 1
+                else:
+                    raise GitHubAPIError(f"Retried {retries} times. Problem with query with return code {query_response.status_code}.")
+            else:
+                raise GitHubAPIError(f"Problem with query with return code {query_response.status_code}.")
     else:
         print(f"ERROR: Query does not look like REST or GraphQL...", file=sys.stderr)
 
@@ -134,7 +169,7 @@ def get_branches(repo: dict, token: str):
     # Create empty list of branches to populate from query results
     branches: list = []
     # Create a string template for branches query
-    query_branches_template = Template(
+    query_branches_template = string.Template(
     """
     {
     repository(owner: "$owner", name: "$name") {
@@ -199,6 +234,10 @@ def get_commits_3(repo: dict, since: str, token: str):
     commits: list = list()
     
     # Send queries as long as there are more pages of results
+    # References: 
+    # https://stackoverflow.com/q/17777845/186904
+    # https://stackoverflow.com/q/56206038/186904
+    # https://docs.github.com/en/free-pro-team@latest/rest/guides/traversing-with-pagination
     get_next_page: bool = True
     while get_next_page: 
         response: requests.models.Response = make_query(query=query_string, token=token)
@@ -229,11 +268,154 @@ def get_commits_3(repo: dict, since: str, token: str):
     return commits
 
 # Get commits from GraphQL API
-def get_commits_4(repo: dict, since: str, token: str):
+def get_commits_4(repo: dict, branches: list, since: str, token: str):
     """
     Use GitHub's v4 GraphQL API
     """
-    pass
+    # Track if there is a next page of results
+    query_has_next_page: bool = True
+    # Track results page number
+    query_page: int = 1
+    # Create a pagination cursor
+    end_cursor: str = "null" # "null" because there is no cursor for first query
+    # Create empty list of commits to populate from query results
+    commits: list = []
+    # Create a list of just commit `oid`s which are the commit SHAs
+    commit_oids: list = []
+    # Create a string template for commits query
+    query_commits_template = string.Template(
+    """
+    {
+        repository(owner: "$owner", name: "$name") {
+            refs(query: "$branch", refPrefix: "refs/heads/", first: 1) {
+                nodes {
+                    target {
+                        ... on Commit {
+                            history(first: $per_page, after: $after, since: $since_time, until: null) {
+                                nodes {
+                                    oid
+                                    commitUrl
+                                    url
+                                    messageHeadline
+                                    authoredByCommitter
+                                    authoredDate
+                                    author {
+                                        name
+                                        email
+                                        user {
+                                            email
+                                            login
+                                            name
+                                            twitterUsername
+                                        }
+                                        date
+                                    }
+                                    committedDate
+                                    committer {
+                                        name
+                                        email
+                                        user {
+                                            email
+                                            login
+                                            name
+                                            twitterUsername
+                                        }
+                                        date
+                                    }
+                                    parents(first: 100) {
+                                        nodes {
+                                            oid
+                                        }
+                                        pageInfo {
+                                            hasNextPage
+                                        endCursor
+                                        }
+                                    }
+                                    changedFiles
+                                    $tree
+                                }
+                                pageInfo {
+                                    hasNextPage
+                                    endCursor
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    """
+    )
+    # Create a string for `$tree` in the search query. This is based on the
+    # recursive depth to search for/list changed files in a commit determined
+    # by `COMMIT_FILE_DEPTH` (TODO: Implement this).
+    tree_depth: str = """
+                                tree {
+                                    entries {
+                                        name
+                                    }
+                                }
+    """
+
+    # Start by looping through each branch
+    for branch in branches:
+        print(f"Getting commits for the branch: {branch}", file=sys.stderr)
+        # Within each branch, get as many pages as needed of its commits
+        while query_has_next_page:
+            print(f"    Getting page {query_page} of commits list", file=sys.stderr)
+            # Prepare and execute GraphQL query for commits
+            query_commits = query_commits_template.substitute(owner=repo["owner"],
+                                                            name=repo["name"],
+                                                            branch=branch,
+                                                            per_page=PER_PAGE,
+                                                            after=end_cursor,
+                                                            since_time=since,
+                                                            tree=tree_depth)
+            results = make_query(query_commits, token=token).json()["data"]["repository"]["refs"]["nodes"][0]["target"]["history"]
+            # Add newly-encountered commits to list
+            for c in results["nodes"]:
+                # For some reason, sometimes the results include empty items, 
+                # skip them for now.
+                if c == None: 
+                    pass
+                # Only add a commit to list if its not already known
+                elif c["oid"] not in commit_oids:
+                    commit_oids.append(c["oid"])
+                    # Append relevant commit metadata to known commits list
+                    commit = {"oid": c["oid"],
+                            "commit_url": c["commitUrl"],
+                            "commit_message_headline": c["messageHeadline"],
+                            "committer_name": c["committer"]["name"],
+                            "committer_email": c["committer"]["email"],
+                            "commit_date": c["committedDate"],
+                            "parent_oids": [],
+                            "changed_files": c["changedFiles"],
+                            "file_list": []}
+                    # Append parent commit(s) oid(s) to a list in commit object
+                    for parent in c["parents"]["nodes"]:
+                        commit["parent_oids"].append(parent["oid"])
+                    # Append changed file(s) names to a list in commit object
+                    # TODO: This needs to be expanded once there's more depth here.
+                    for f in c["tree"]["entries"]:
+                        commit["file_list"].append(f["name"])
+                    commits.append(commit)
+            # See if there are more pages to retrieve, if so will loop again
+            query_has_next_page = results["pageInfo"]["hasNextPage"]
+            if query_has_next_page:
+                # Get end cursor of current page so next loop will know where to start
+                end_cursor = results["pageInfo"]["endCursor"]
+                end_cursor = f'"{end_cursor}"' # Add extra quotes to form correct query
+                query_page = query_page + 1
+        # Reset for loop counters for next branch/iteration
+        query_has_next_page = True
+        query_page = 1
+        end_cursor = "null"
+
+    # Print total number of commits
+    print(f"Total commits in repository {repo['owner']}/{repo['name']}: {len(commit_oids)}", file=sys.stderr)
+
+    return commits
 
 # Get commit file changes
 def get_file_changes():
@@ -261,35 +443,45 @@ def get_issues():
 # Main logic for making GitHub queries
 #
 
-def GitHub(repo_list: pandas.core.frame.DataFrame, token: str) -> pandas.core.frame.DataFrame:
+def GitHub(repo_list: pandas.core.frame.DataFrame, token: str) -> dict:
     """
     docstring
     """
     print(f"Begin GitHub adapter")
 
     # Create empty DataFrame to hold mined data
-    mined_data: pandas.core.frame.DataFrame = repo_list[["repo_url", "last_mined"]]
+    #mined_data: pandas.core.frame.DataFrame = repo_list[["repo_url", "last_mined"]]
+    # Create column indicating if there was error when 
+    repo_list["error"] = bool(False)
+
+    # 
+    # repo_list["branches"] = numpy.nan
+    # repo_list["commits"] = numpy.nan
+    # repo_list["issues"] = numpy.nan
+
+    # 
+    repo_list = repo_list.to_dict("records")
 
     # For each repository (row) in `repo_list`, mine data at its URL
     # Use itertuples() because it seems to be much faster than iterrows()
     # Reference: https://stackoverflow.com/a/10739432/186904
     # TODO: Consider using Pandas's apply() instead: https://stackoverflow.com/a/30566899/186904
-    for repo in repo_list.itertuples(): 
+    for repo in repo_list: 
+        # Track if there has been an API query error for this repository
+        repo_error: bool = False
         # Since itertuples() returns data of namedtuple type, use getattr() to 
         # access items in each row
         # Reference: https://medium.com/@rinu.gour123/python-namedtuple-working-and-benefits-of-namedtuple-in-python-276d679b2e9c
-        print(f"Processing: " + getattr(repo, "repo_url"))
-        repo_url: str = str(getattr(repo, "repo_url"))
+        #print(f"Processing: " + getattr(repo, "repo_url"))
+        print(f"Processing: " + repo["repo_url"])
+        #repo_url: str = str(getattr(repo, "repo_url"))
+        repo_url: str = repo["repo_url"]
         # Get "owner" and "repo" components from this repository's URL
         repo_url_components: dict = parse_url(url=repo_url)
-        # If there is no `last_mined` timestamp, then this `repo_url` has not 
-        # been mined before. If so, set `last_mined` to some arbitrarily early
-        # time: 
-        last_mined: str = getattr(repo, "last_mined")
-        if last_mined == None:
-            last_mined: str = "1970-01-01T00:00:00Z"
-        else:
-            pass
+
+        
+        #last_mined: str = getattr(repo, "last_mined")
+        last_mined: str = repo["last_mined"]
         # Get current timestamp to record as last mined time in exported data
         # The `datetime.timezone.utc` argument tells now() to use UTC timezone
         # (or use datetime.datetime.utcnow())
@@ -298,23 +490,53 @@ def GitHub(repo_list: pandas.core.frame.DataFrame, token: str) -> pandas.core.fr
         time_now: str = str(timestamp_object.time())
         timestamp_now: str = str(date_now + "T" + time_now + "Z")
 
+        # If there is no `last_mined` timestamp, then this `repo_url` has not 
+        # been mined before. If so, set `last_mined` to some arbitrarily early
+        # time: 
+        if math.isnan(last_mined): # If there's not last mined time it will be `nan`
+            last_mined: str = '"1970-01-01T00:00:00Z"'
+        else:
+            pass
+
         # Check remaining API quota
         check_rate_limit(token=token)
 
         # Get branches
-        branches: list = get_branches(repo=repo_url_components, token=token)
-        print(f"This repository's branches: ")
-        print(branches)
+        try:
+            branches: list = get_branches(repo=repo_url_components, token=token)
+            print(f"This repository's branches: ")
+            print(branches)
+            #repo_list.loc[(repo_list["repo_url"] == repo_url), "branches"] = branches
+            repo["branches"] = branches
+        except GitHubAPIError:
+            print(f"There has been an error with querying this repository.")
+            repo_error = True
+            #repo_list.loc[(repo_list["repo_url"] == repo_url), "error"] = True
+            repo["error"] = True
+            pass
 
         # Get commits
-        commits = get_commits_3(repo=repo_url_components, since=last_mined, token=token)
-
-        # Get commit file changes
+        if repo_error == False: 
+            try:
+                # commits = get_commits_3(repo=repo_url_components, since=last_mined, token=token)
+                commits = get_commits_4(repo=repo_url_components, branches=branches, since=last_mined, token=token)
+                #repo_list.loc[(repo_list["repo_url"] == repo_url), "commits"] = commits
+                repo["commits"] = commits
+            except GitHubAPIError:
+                print(f"There has been an error with querying this repository.")
+                repo_error = True
+                #repo_list.loc[(repo_list["repo_url"] == repo_url), "error"] = True
+                repo["error"] = True
+                pass
+        else: 
+            pass
 
         # Get issues
 
         # Combine results
+        if repo_error == False: 
+            repo["last_mined"] = timestamp_now
 
-    mined_data: pandas.core.frame.DataFrame = repo_list
+    # repo_list: pandas.core.frame.DataFrame = repo_list
 
-    return mined_data
+    return repo_list
