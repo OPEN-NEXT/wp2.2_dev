@@ -86,8 +86,8 @@ def make_query(query: str, token: str):
         retries: int = 0
         while not query_success:    
             query_response: requests.models.Response = requests.post(url=GRAPHQL_URL, 
-                                                            json={"query": query}, 
-                                                            headers=graphql_headers)
+                                                                     json={"query": query}, 
+                                                                     headers=graphql_headers)
             if query_response.status_code == SUCCESS_CODE:
                 query_success = True
                 return query_response
@@ -381,14 +381,14 @@ def get_commits_4(repo: dict, branches: list, since: str, token: str):
                     commit_oids.append(c["oid"])
                     # Append relevant commit metadata to known commits list
                     commit = {"oid": c["oid"],
-                            "commit_url": c["commitUrl"],
-                            "commit_message_headline": c["messageHeadline"],
-                            "committer_name": c["committer"]["name"],
-                            "committer_email": c["committer"]["email"],
-                            "commit_date": c["committedDate"],
-                            "parent_oids": [],
-                            "changed_files": c["changedFiles"],
-                            "file_list": []}
+                              "commit_url": c["commitUrl"],
+                              "commit_message_headline": c["messageHeadline"],
+                              "committer_name": c["committer"]["name"],
+                              "committer_email": c["committer"]["email"],
+                              "commit_date": c["committedDate"],
+                              "parent_oids": [],
+                              "changed_files": c["changedFiles"],
+                              "file_list": []}
                     # Append parent commit(s) oid(s) to a list in commit object
                     for parent in c["parents"]["nodes"]:
                         commit["parent_oids"].append(parent["oid"])
