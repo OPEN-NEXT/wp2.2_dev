@@ -199,7 +199,23 @@ def get_project_data(repo: dict):
     )
 
     print(f"Retrieving {repo['space']}/{repo['slug']}'s issues metadata...", file=sys.stderr)
-    
+
+    # Start with one query for project metadata, contributions, and issues. 
+    # After that, loop through each to see if it `hasNextPage` then run 
+    # specific queries as needed.
+
+    # Create starting query
+    contributions_query: str = contributions_fragement.substitute(contributions_after="")
+    tracker_query: str = tracker_fragment.substitute(issues_after="")
+    query: str = main_query.substitute(space=repo["space"],
+                                       slug=repo["slug"],
+                                       contributions_fragement=contributions_query,
+                                       tracker_fragment=tracker_query)
+
+    # Make starting query
+    response = make_query(query=query).json()
+
+    return response
 
 
 def Wikifactory(repo_list: pandas.core.frame.DataFrame) -> dict:
