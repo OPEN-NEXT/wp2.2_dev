@@ -82,23 +82,33 @@ def make_query(query: str, token: str):
         #                                   headers=graphql_headers)
         query_success: bool = False
         retries: int = 0
-        while not query_success:    
-            query_response: requests.models.Response = requests.post(url=GRAPHQL_URL, 
-                                                                     json={"query": query}, 
-                                                                     headers=graphql_headers)
-            if query_response.status_code == SUCCESS_CODE:
-                query_success = True
-                return query_response
-            elif (query_response.status_code in RETRY_CODES):
-                response_code: int = query_response.status_code
-                if retries < RETRIES:
-                    print(f"Status code {response_code} - Retrying in {RETRY_WAIT} seconds.", file=sys.stderr)
+        while not query_success:
+            try:
+                query_response: requests.models.Response = requests.post(url=GRAPHQL_URL, 
+                                                                         json={"query": query}, 
+                                                                         headers=graphql_headers)
+                if query_response.status_code == SUCCESS_CODE:
+                    query_success = True
+                    return query_response
+                elif (query_response.status_code in RETRY_CODES):
+                    response_code: int = query_response.status_code
+                    if retries < RETRIES:
+                        print(f"Status code {response_code} - Retrying in {RETRY_WAIT} seconds.", file=sys.stderr)
+                        time.sleep(RETRY_WAIT)
+                        retries += 1
+                    else:
+                        raise GitHubAPIError(f"Retried {retries} times. Problem with query with return code {query_response.status_code}.")
+                else:
+                    raise GitHubAPIError(f"Problem with query with return code {query_response.status_code}.")
+            except ConnectionError:
+                if retries < RETRIES: 
+                    print(f"ConnectionError - Retrying in {RETRY_WAIT} seconds.", file=sys.stderr)
                     time.sleep(RETRY_WAIT)
                     retries += 1
                 else:
-                    raise GitHubAPIError(f"Retried {retries} times. Problem with query with return code {query_response.status_code}.")
-            else:
-                raise GitHubAPIError(f"Problem with query with return code {query_response.status_code}.")
+                    raise GitHubAPIError(f"Retried {retries} times with ConnectionError in last try.")
+            
+            
     else:
         print(f"ERROR: Query does not look like REST or GraphQL...", file=sys.stderr)
 
@@ -304,6 +314,7 @@ def get_commits_4(repo: dict, branches: list, since: str, token: str):
     # Create empty list of commits to populate from query results
     commits: list = []
     # Create a list of just commit `oid`s which are the commit SHAs
+    # TODO: Include list of previously mined commit `oid`s here to prevent duplication
     commit_oids: list = []
     # Create a string template for commits query
     query_commits_template = string.Template(
@@ -409,12 +420,26 @@ def get_commits_4(repo: dict, branches: list, since: str, token: str):
                     commit = {"oid": c["oid"],
                               "commit_url": c["commitUrl"],
                               "commit_message_headline": c["messageHeadline"],
-                              "committer_name": c["committer"]["name"],
-                              "committer_email": c["committer"]["email"],
-                              "commit_date": c["committedDate"],
+                              "committer_user": "", # Handle immediately below
+                              "committer_email": "", # Handle immediately below
+                              "commit_date": c["authoredDate"],
                               "parent_oids": [],
                               "changed_files": c["changedFiles"],
                               "file_list": []}
+                    # Handle edge case when committer is "GitHub"
+                    if "GitHub" in c["author"]["name"]:
+                        commit["committer_user"] = "GitHub"
+                        commit["committer_email"] = c["author"]["email"]
+                    # Handle edge case when committer doesn't have `user` name/login
+                    # (presumably this committer doesn't have a GitHub account?
+                    # TODO: ask on GitHub Community forums with example: 
+                    # https://github.com/Safecast/bGeigieNanoKit/commit/a50c2374d4acd962621d25b5159c8f82d7e8db6a)
+                    elif c["author"]["user"] is None:
+                        commit["committer_user"] = c["author"]["name"]
+                        commit["committer_email"] = c["author"]["email"]
+                    else:
+                        commit["committer_user"] = c["author"]["user"]["login"]
+                        commit["committer_email"] = c["author"]["email"]
                     # Append parent commit(s) oid(s) to a list in commit object
                     for parent in c["parents"]["nodes"]:
                         commit["parent_oids"].append(parent["oid"])
@@ -471,12 +496,6 @@ def get_issues(repo: dict, since: str, token: str):
     """
     {
         repository(owner: "$owner", name: "$name") {
-            licenseInfo {
-                spdxId
-                name
-                nickname
-                pseudoLicense
-            }
             issues(first: $per_page, after: $after, filterBy: {since: "$since_time"}, orderBy: {field: CREATED_AT, direction: DESC}) {
                 nodes {
                     number
@@ -500,6 +519,7 @@ def get_issues(repo: dict, since: str, token: str):
                     url
                     createdAt
                     closed
+                    closedAt
                 }
                 pageInfo {
                     hasNextPage
@@ -555,7 +575,8 @@ def get_issues(repo: dict, since: str, token: str):
                     "participants": i["participants"]["nodes"],
                     "url": i["url"],
                     "createdAt": i["createdAt"],
-                    "closed": i["closed"]}
+                    "closed": i["closed"],
+                    "closedAt": i["closedAt"]}
             # Paginate through list of participants and add more as needed
             participants_has_next_page: bool = i["participants"]["pageInfo"]["hasNextPage"]
             participants_page: int = 2
@@ -595,7 +616,7 @@ def get_issues(repo: dict, since: str, token: str):
 # Main logic for making GitHub queries
 #
 
-def GitHub(repo_list: pandas.core.frame.DataFrame, token: str) -> dict:
+def GitHub(repo_list: pandas.core.frame.DataFrame, token: str) -> list:
     """
     docstring
     """
@@ -709,9 +730,10 @@ def GitHub(repo_list: pandas.core.frame.DataFrame, token: str) -> dict:
 
         # Combine results if no errors getting data
         # (otherwise, the last_mined timestamp will not be updated)
+        
+        # Initialise an empty dictionary to hold all mined data from this repository
+        mined_repo: dict = {}
         if repo_error == False: 
-            # Initialise an empty dictionary to hold all mined data from this repository
-            mined_repo: dict = {}
             # Record basic repository metadata
             mined_repo["Repository"] = {
                 "name": repo_url_components["name"], 
@@ -720,17 +742,55 @@ def GitHub(repo_list: pandas.core.frame.DataFrame, token: str) -> dict:
                 "project": repo["project"],
                 "forkcount": basics["forkCount"],
                 "forks": [],
-                "license": None,
+                "license": "",
                 "repo_url": repo_url,
                 "last_mined": timestamp_now
                 }
-            if basics["licenseInfo"]["pseudoLicense"]:
+            if basics["licenseInfo"] is None:
+                mined_repo["Repository"]["license"] = "no LICENSE"
+            elif basics["licenseInfo"]["pseudoLicense"]:
                 mined_repo["Repository"]["license"] = "other"
             else:
                 mined_repo["Repository"]["license"] = basics["licenseInfo"]["spdxId"]
+            # Record branches
+            mined_repo["Branches"] = []
+            for branch in branches:
+                mined_repo["Branches"].append({"name": branch})
+            # Record commits
+            mined_repo["Commits"] = []
+            for commit in commits:
+                commit_data: dict = {
+                    "committedBy": commit["committer_user"],
+                    "committed": commit["commit_date"],
+                    "hash": commit["oid"],
+                    "summary": commit["commit_message_headline"],
+                    "parents": commit["parent_oids"],
+                    "url": commit["commit_url"]
+                }
+                mined_repo["Commits"].append(commit_data)
+            # Record issues
+            mined_repo["Tickets"] = []
+            for issue in issues:
+                issue_data: dict = {
+                    "attributedTo": issue["author"],
+                    "summary": issue["title"],
+                    "published": issue["createdAt"],
+                    "isResolved": issue["closed"],
+                    "resolved": issue["closedAt"],
+                    "id": issue["number"],
+                    "participants": [],
+                    "url": issue["url"]
+                }
+                for participant in issue["participants"]:
+                    issue_data["participants"].append(participant["login"])
+                mined_repo["Tickets"].append(issue_data)
+        else: 
+            pass
+
+        mined_repos.append(mined_repo)
             
             
 
     # repo_list: pandas.core.frame.DataFrame = repo_list
 
-    return repo_list
+    return mined_repos
