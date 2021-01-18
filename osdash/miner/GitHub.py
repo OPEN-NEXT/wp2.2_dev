@@ -106,7 +106,7 @@ def make_query(query: str, token: str):
                     time.sleep(RETRY_WAIT)
                     retries += 1
                 else:
-                    raise GitHubAPIError(f"Retried {retries} times with ConnectionError in last try.")
+                    raise GitHubAPIError(f"Retried {retries} times with ConnectionError on last try.")
             
             
     else:
