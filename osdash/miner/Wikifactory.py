@@ -49,22 +49,30 @@ def make_query(query: str):
         print(f"Looks like a GraphQL query...")
         query_success: bool = False
         retries: int = 0
-        while not query_success:    
-            query_response: requests.models.Response = requests.post(url=GRAPHQL_URL, 
-                                                            json={"query": query})
-            if query_response.status_code == SUCCESS_CODE:
-                query_success = True
-                return query_response
-            elif (query_response.status_code in RETRY_CODES):
-                response_code: int = query_response.status_code
-                if retries < RETRIES:
-                    print(f"Status code {response_code} - Retrying in {RETRY_WAIT} seconds.", file=sys.stderr)
+        while not query_success: 
+            try:
+                query_response: requests.models.Response = requests.post(url=GRAPHQL_URL, 
+                                                                         json={"query": query})
+                if query_response.status_code == SUCCESS_CODE:
+                    query_success = True
+                    return query_response
+                elif (query_response.status_code in RETRY_CODES):
+                    response_code: int = query_response.status_code
+                    if retries < RETRIES:
+                        print(f"Status code {response_code} - Retrying in {RETRY_WAIT} seconds.", file=sys.stderr)
+                        time.sleep(RETRY_WAIT)
+                        retries += 1
+                    else:
+                        raise WikifactoryAPIError(f"Retried {retries} times. Problem with query with return code {query_response.status_code}.")
+                else:
+                    raise WikifactoryAPIError(f"Problem with query with return code {query_response.status_code}.")
+            except ConnectionError:
+                if retries < RETRIES: 
+                    print(f"ConnectionError - Retrying in {RETRY_WAIT} seconds.", file=sys.stderr)
                     time.sleep(RETRY_WAIT)
                     retries += 1
                 else:
-                    raise WikifactoryAPIError(f"Retried {retries} times. Problem with query with return code {query_response.status_code}.")
-            else:
-                raise WikifactoryAPIError(f"Problem with query with return code {query_response.status_code}.")
+                    raise WikifactoryAPIError(f"Retried {retries} times with ConnectionError on last try.")
     else:
         print(f"ERROR: Query does not look like GraphQL...", file=sys.stderr)
         sys.exit(1)
