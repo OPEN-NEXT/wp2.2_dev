@@ -32,8 +32,6 @@ RETRY_WAIT: int = 10
 RETRIES: int = 5
 # Requested results per page for each API response
 PER_PAGE: int = 100
-# Set search depth when getting list of changed files in commits
-COMMIT_FILE_DEPTH: int = 3
 
 #
 # Define query-making functions
