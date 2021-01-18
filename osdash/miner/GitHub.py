@@ -146,6 +146,34 @@ def check_rate_limit(token):
 # Functions for retrieving different types of metadata
 #
 
+# Get basic metadata about repository
+
+def get_basics(repo: dict, token: str) -> dict:
+    """[summary]
+
+    Args:
+        repo (dict): [description]
+        token (str): [description]
+    """
+    query_basics_template = string.Template(
+    """
+    {
+        repository(owner: "$owner", name: "$name") {
+            createdAt
+            forkCount
+            licenseInfo {
+                spdxId
+                pseudoLicense
+            }
+        }
+    }
+    """
+    )
+    query_basis: str = query_basics_template.substitute(owner=repo["owner"],
+                                                        name=repo["name"])
+    results: dict = make_query(query=query_basis, token=token).json()["data"]["repository"]
+    return results
+
 # Get branches
 def get_branches(repo: dict, token: str):
     """
@@ -586,6 +614,9 @@ def GitHub(repo_list: pandas.core.frame.DataFrame, token: str) -> dict:
     # 
     repo_list = repo_list.to_dict("records")
 
+    # Initialise empty list to hold mined data where each item is a repository
+    mined_repos: list = []
+
     # For each repository (row) in `repo_list`, mine data at its URL
     # Use itertuples() because it seems to be much faster than iterrows()
     # Reference: https://stackoverflow.com/a/10739432/186904
@@ -625,18 +656,28 @@ def GitHub(repo_list: pandas.core.frame.DataFrame, token: str) -> dict:
         # Check remaining API quota
         check_rate_limit(token=token)
 
-        # Get branches
+        # Get basic information
         try:
-            branches: list = get_branches(repo=repo_url_components, token=token)
-            print(f"This repository's branches: ")
-            print(branches)
-            #repo_list.loc[(repo_list["repo_url"] == repo_url), "branches"] = branches
-            repo["branches"] = branches
+            basics: dict = get_basics(repo=repo_url_components, token=token)
         except GitHubAPIError:
             print(f"There has been an error with querying this repository.")
             repo_error = True
-            #repo_list.loc[(repo_list["repo_url"] == repo_url), "error"] = True
             repo["error"] = True
+
+        # Get branches
+        if repo_error == False:
+            try:
+                branches: list = get_branches(repo=repo_url_components, token=token)
+                print(f"This repository's branches: ")
+                print(branches)
+                #repo_list.loc[(repo_list["repo_url"] == repo_url), "branches"] = branches
+                repo["branches"] = branches
+            except GitHubAPIError:
+                print(f"There has been an error with querying this repository.")
+                repo_error = True
+                #repo_list.loc[(repo_list["repo_url"] == repo_url), "error"] = True
+                repo["error"] = True
+        else:
             pass
 
         # Get commits
@@ -651,7 +692,6 @@ def GitHub(repo_list: pandas.core.frame.DataFrame, token: str) -> dict:
                 repo_error = True
                 #repo_list.loc[(repo_list["repo_url"] == repo_url), "error"] = True
                 repo["error"] = True
-                pass
         else: 
             pass
 
@@ -667,9 +707,29 @@ def GitHub(repo_list: pandas.core.frame.DataFrame, token: str) -> dict:
         else:
             pass
 
-        # Combine results
+        # Combine results if no errors getting data
+        # (otherwise, the last_mined timestamp will not be updated)
         if repo_error == False: 
-            repo["last_mined"] = timestamp_now
+            # Initialise an empty dictionary to hold all mined data from this repository
+            mined_repo: dict = {}
+            # Record basic repository metadata
+            mined_repo["Repository"] = {
+                "name": repo_url_components["name"], 
+                "attributedTo": repo_url_components["owner"],
+                "published": basics["createdAt"],
+                "project": repo["project"],
+                "forkcount": basics["forkCount"],
+                "forks": [],
+                "license": None,
+                "repo_url": repo_url,
+                "last_mined": timestamp_now
+                }
+            if basics["licenseInfo"]["pseudoLicense"]:
+                mined_repo["Repository"]["license"] = "other"
+            else:
+                mined_repo["Repository"]["license"] = basics["licenseInfo"]["spdxId"]
+            
+            
 
     # repo_list: pandas.core.frame.DataFrame = repo_list
 
