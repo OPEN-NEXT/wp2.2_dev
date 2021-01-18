@@ -235,12 +235,12 @@ def get_project_data(repo: dict) -> dict:
                                                                    ])
     contribution_ids: list = list()
     for edge in response["contributions"]["edges"]:
-        contributions.extend(edge["node"])
-        contribution_ids.extend(edge["node"]["id"])
+        contributions.append(edge["node"])
+        contribution_ids.append(edge["node"]["id"])
     issue_ids: list = list()
     for edge in response["tracker"]["issues"]["edges"]:
-        issues.extend(edge["node"])
-        issue_ids.extend(edge["node"]["id"])
+        issues.append(edge["node"])
+        issue_ids.append(edge["node"]["id"])
     # Make more queries as long as there is `hasNextPage == True`
     contributions_next_page: bool = response["contributions"]["pageInfo"]["hasNextPage"]
     issues_next_page: bool = response["tracker"]["issues"]["pageInfo"]["hasNextPage"]
@@ -263,11 +263,11 @@ def get_project_data(repo: dict) -> dict:
                 response = make_query(query=query).json()["data"]["project"]["result"]
                 # Save new results
                 for edge in response["contributions"]["edges"]:
-                    contributions.extend(edge["node"])
-                    contribution_ids.extend(edge["node"]["id"])
+                    contributions.append(edge["node"])
+                    contribution_ids.append(edge["node"]["id"])
                 for edge in response["tracker"]["issues"]["edges"]:
-                    issues.extend(edge["node"])
-                    issue_ids.extend(edge["node"]["id"])
+                    issues.append(edge["node"])
+                    issue_ids.append(edge["node"]["id"])
                 # Update cursors and check if there's next page of results
                 contributions_end_cursor = response["contributions"]["pageInfo"]["endCursor"]
                 issues_end_cursor = response["tracker"]["issues"]["pageInfo"]["endCursor"]
@@ -285,8 +285,8 @@ def get_project_data(repo: dict) -> dict:
                 response = make_query(query=query).json()["data"]["project"]["result"]
                 # Save new results
                 for edge in response["contributions"]["edges"]:
-                    contributions.extend(edge["node"])
-                    contribution_ids.extend(edge["node"]["id"])
+                    contributions.append(edge["node"])
+                    contribution_ids.append(edge["node"]["id"])
                 # Update cursors and check if there's next page of results
                 contributions_end_cursor = response["contributions"]["pageInfo"]["endCursor"]
                 contributions_next_page = response["contributions"]["pageInfo"]["hasNextPage"]
@@ -302,8 +302,8 @@ def get_project_data(repo: dict) -> dict:
                 response = make_query(query=query).json()["data"]["project"]["result"]
                 # Save new results
                 for edge in response["tracker"]["issues"]["edges"]:
-                    issues.extend(edge["node"])
-                    issue_ids.extend(edge["node"]["id"])
+                    issues.append(edge["node"])
+                    issue_ids.append(edge["node"]["id"])
                 # Update cursors and check if there's next page of results
                 issues_end_cursor = response["tracker"]["issues"]["pageInfo"]["endCursor"]
                 issues_next_page = response["tracker"]["issues"]["pageInfo"]["hasNextPage"]
