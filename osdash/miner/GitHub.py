@@ -32,6 +32,9 @@ RETRY_WAIT: int = 10
 RETRIES: int = 5
 # Requested results per page for each API response
 PER_PAGE: int = 100
+# An arbitrarily early "last minted" timestamp if a repository has not been 
+# mined before
+DEFAULT_LAST_MINED: str = "1970-01-01T00:00:00.000000+00:00"
 
 #
 # Define query-making functions
@@ -670,7 +673,7 @@ def GitHub(repo_list: pandas.core.frame.DataFrame, token: str) -> list:
         # been mined before. If so, set `last_mined` to some arbitrarily early
         # time: 
         if math.isnan(last_mined): # If there's not last mined time it will be `nan`
-            last_mined: str = "1970-01-01T00:00:00Z"
+            last_mined: str = DEFAULT_LAST_MINED
         else:
             pass
 

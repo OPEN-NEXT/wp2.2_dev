@@ -360,7 +360,7 @@ def Wikifactory(repo_list: pandas.core.frame.DataFrame) -> dict:
         # been mined before. If so, set `last_mined` to some arbitrarily early
         # time: 
         if math.isnan(last_mined): # If there's not last mined time it will be `nan`
-            last_mined: str = "1970-01-01T00:00:00.000000+00:00"
+            last_mined: str = DEFAULT_LAST_MINED
         else:
             pass
 
@@ -371,7 +371,7 @@ def Wikifactory(repo_list: pandas.core.frame.DataFrame) -> dict:
                 repo["issues"] = None
                 repo["commits"] = None
             except WikifactoryAPIError:
-                print(f"There has been an error querying issues in this repository.")
+                print(f"There has been an error querying this repository.")
                 repo_error = True
                 repo["error"] = True
         else: 
