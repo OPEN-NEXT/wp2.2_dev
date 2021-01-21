@@ -34,9 +34,24 @@ RETRY_WAIT: int = 10
 RETRIES: int = 5
 # Requested results per page for each API response
 PER_PAGE: int = 100
-# An arbitrarily early "last minted" timestamp if a repository has not been 
+# An arbitrarily early "last mined" timestamp if a repository has not been 
 # mined before
 DEFAULT_LAST_MINED: str = "1970-01-01T00:00:00.000000+00:00"
+# License mappings from Wikifactory API [1] to standard SPDX license strings [2]
+# [1]: Via `abreviation` field from Wikifactory API's `licenses` base query
+# [2]: https://spdx.org/licenses/
+# Note: Some Wikifactory licenses like "permissive" doesn't have an SPDX 
+# equivalent and will not be mapped here.
+LICENSE_MAP: dict = {
+    "CC-BY-4.0": "CC-BY-4.0",
+    "CC0-1.0": "CC0-1.0",
+    "MIT": "MIT",
+    "BSD-2-Clause": "BSD-2-Clause",
+    "CC-BY-SA-4.0": "CC-BY-SA-4.0",
+    "GPL-3.0": "GPL-3.0-only",
+    "OHL": "TAPR-OHL-1.0",
+    "CERN OHL": "CERN-OHL-1.2"
+}
 
 # Define a custom exception for when queries fail repeatedly
 class WikifactoryAPIError(Exception): 
@@ -97,8 +112,115 @@ def parse_url(url: str) -> dict:
     }
     return repo
 
+# Process contribution object from Wikifactory API into ForgeFed model
+def process_contributions(contribs: list, known_contribs: list, repo_url: str) -> list:
+    """[summary]
+
+    Args:
+        contrib_edge (dict): Project.contributions.edges
+        known_contribs (list)
+        repo_url (str)
+
+    Returns:
+        list: [description]
+    """
+    contributions_list: list = []
+
+    for edge in contribs:
+        if edge["node"]["id"] in known_contribs:
+            pass
+        else:
+            if edge["node"]["parent"] is None:
+                c_parents: str = ""
+            else:
+                c_parents: str = edge["node"]["parent"]["id"]
+            c: dict = {
+                "committedBy": edge["node"]["creator"]["username"],
+                "committed": edge["node"]["dateCreated"],
+                "hash": edge["node"]["id"],
+                "summary": edge["node"]["title"],
+                "parents": c_parents,
+                "url": get_contrib_url(repo_url=repo_url, contrib_slug=edge["node"]["slug"])
+            }
+            contributions_list.append(c)
+
+    return contributions_list
+
+# Process issue object from Wikifactory API into ForgeFed model
+def process_issues(issues: dict, known_issues: list, repo_url: str) -> list: 
+    """[summary]
+
+    Args:
+        issues (dict): Project.tracker.issues.edges
+        known_issues (list): [description]
+        repo_url (str): [description]
+
+    Returns:
+        list: [description]
+    """
+    issues_list: list = []
+
+    for edge in issues:
+        if edge["node"]["id"] in known_issues:
+            pass
+        else:
+            # Get resolved status
+            if edge["node"]["status"] == "Open":
+                i_resolved: bool = False
+                i_resolved_time: str = ""
+            else:
+                i_resolved: bool = True
+                i_resolved_time: str = edge["node"]["lastActivityAt"]
+            # Get participants
+            i_participants: list = [edge["node"]["creator"]["username"]]
+            for assignee in edge["node"]["assignees"]:
+                if not (assignee["username"] in i_participants):
+                    i_participants.append(assignee["username"])
+            for commenter in edge["node"]["commenters"]:
+                if not (commenter["username"] in i_participants):
+                    i_participants.append(commenter["username"])
+            i: dict = {
+                "attributedTo": edge["node"]["creator"]["username"],
+                "summary": edge["node"]["title"],
+                "published": edge["node"]["dateCreated"],
+                "isResolved": i_resolved,
+                "resolved": i_resolved_time,
+                "id": edge["node"]["id"],
+                "participants": i_participants,
+                "url": get_issue_url(repo_url=repo_url, issue_slug=edge["node"]["slug"])
+            }
+            issues_list.append(i)
+    
+    return issues_list
+
+# Process project URL and contribution slug to create contribution URL
+def get_contrib_url(repo_url: str, contrib_slug: str) -> str: 
+    """[summary]
+
+    Args:
+        repo_url (str): e.g. https://wikifactory.com/+OttoDIY/otto-turtle-drawing-robot
+        contribution (str): e.g. 245367-416eeef63f6500bb79f10d23a623dd0c58c956ea
+
+    Returns:
+        str: [description]
+    """
+    return repo_url + "/contributions/" + contrib_slug.split("-")[1][0:7]
+
+# Process project URL and issue slug to create issue URL
+def get_issue_url(repo_url: str, issue_slug: str) -> str: 
+    """[summary]
+
+    Args:
+        repo_url (str): e.g. https://wikifactory.com/+OttoDIY/otto-turtle-drawing-robot
+        issue (str): e.g. congratulations-your-entry-has-been-approved-for-the-challenge
+
+    Returns:
+        str: [description]
+    """
+    return repo_url + "/issues/" + issue_slug
+
 # Get a Wikifactory project's metadata, contributions, and issues
-def get_project_data(repo: dict) -> dict:
+def get_project_data(repo_url: str) -> dict:
     """[summary]
     Using the Wikifactory GraphQL API
     Args:
@@ -110,6 +232,8 @@ def get_project_data(repo: dict) -> dict:
     contributions: list = []
     # Initialise an empty list of issues
     issues: list = []
+    # Get "space" and "slug" components from this repository's URL
+    repo_url_components: dict = parse_url(url=repo_url)
 
     # The main structure of the query, with space for `tracker` and 
     # `contributions` elements
@@ -139,13 +263,13 @@ def get_project_data(repo: dict) -> dict:
                 license {
                     name
                     title
+                    abreviation
                 }
     """
     
     # Query fragement for `contributions`
-    contributions_fragement: string.Template = string.Template(
-    """
-                contributions(after: "$contributions_after", sortBy: "dateCreated") {
+    contributions_fragement: string.Template = string.Template("""
+                contributions(first: 25, after: "$contributions_after", sortBy: "dateCreated") {
                     edges {
                         node {
                             id
@@ -174,7 +298,7 @@ def get_project_data(repo: dict) -> dict:
     # Query fragment for `tracker`
     tracker_fragment: string.Template = string.Template("""
                 tracker {
-                    issues(after: "$issues_after", sortBy: "dateCreated") {
+                    issues(first: 20, after: "$issues_after", sortBy: "dateCreated") {
                         edges {
                             node {
                                 id
@@ -182,6 +306,7 @@ def get_project_data(repo: dict) -> dict:
                                 type
                                 dateCreated
                                 lastUpdated
+                                lastActivityAt
                                 title
                                 status
                                 creator {
@@ -204,17 +329,20 @@ def get_project_data(repo: dict) -> dict:
     """
     )
 
-    print(f"Retrieving {repo['space']}/{repo['slug']}'s data...", file=sys.stderr)
+    print(f"Retrieving {repo_url_components['space']}/{repo_url_components['slug']}'s data...", file=sys.stderr)
 
     # Start with one query for project metadata, contributions, and issues. 
     # After that, loop through each to see if it `hasNextPage` then run 
     # specific queries as needed.
 
+    # Initialise an empty dictionary to hold mined data
+    mined_data: dict = {}
+
     # Create starting query
     contributions_query: str = contributions_fragement.substitute(contributions_after="")
     tracker_query: str = tracker_fragment.substitute(issues_after="")
-    query: str = main_query.substitute(space=repo["space"],
-                                       slug=repo["slug"],
+    query: str = main_query.substitute(space=repo_url_components["space"],
+                                       slug=repo_url_components["slug"],
                                        project_metadata=project_metadata_fragment,
                                        contributions=contributions_query,
                                        tracker=tracker_query)
@@ -222,25 +350,61 @@ def get_project_data(repo: dict) -> dict:
     # Make starting query
     response = make_query(query=query).json()["data"]["project"]["result"]
 
-    # Process contributions from starting query
-    # First, get a list of query `id`s
+    # 
+    # Get project metadata
+    #
 
-    # Save current results
-    project_metadata: dict = dict((key, response[key]) for key in ["title", 
-                                                                   "creator",
-                                                                   "dateCreated",
-                                                                   "id", 
-                                                                   "license", 
-                                                                   "forkCount"
-                                                                   ])
-    contribution_ids: list = list()
-    for edge in response["contributions"]["edges"]:
-        contributions.append(edge["node"])
-        contribution_ids.append(edge["node"]["id"])
-    issue_ids: list = list()
-    for edge in response["tracker"]["issues"]["edges"]:
-        issues.append(edge["node"])
-        issue_ids.append(edge["node"]["id"])
+    # Map Wikifactory provided license names to SPDX
+    if response["license"]["abreviation"] in LICENSE_MAP.keys():
+        repo_license: str = LICENSE_MAP[response["license"]["abreviation"]]
+    else:
+        repo_license: str = response["license"]["name"]
+    # Record project metadata into a dictionary
+    mined_data["Repository"] = {
+        "name": response["title"],
+        "attributedTo": response["creator"]["username"],
+        "published": response["dateCreated"],
+        "project": repo_url_components["space"],
+        "forkcount": response["forkCount"],
+        "forks": [],
+        "license": repo_license,
+        "repo_url": repo_url
+    }
+
+    # 
+    # Get branches
+    #
+
+    # Wikifactory currently does not implement branches so save an empty list
+    # for now
+    mined_data["Branches"] = []
+
+    #
+    # Get commits and issues
+    #
+
+    # Process contributions from starting query
+
+    # Create a list to hold contribution `id`s
+    contribution_ids: list = []
+
+    contributions.extend(process_contributions(contribs=response["contributions"]["edges"], 
+                                               known_contribs=contribution_ids, 
+                                               repo_url=repo_url))
+    for c in contributions:
+        contribution_ids.append(c["hash"])
+    
+    # Process issues from starting query
+
+    # Create a list to hold issue `id`s
+    issue_ids: list = []
+
+    issues.extend(process_issues(issues=response["tracker"]["issues"]["edges"], 
+                                 known_issues=issue_ids, 
+                                 repo_url=repo_url))
+    for i in issues:
+        issue_ids.append(i["id"])
+    
     # Make more queries as long as there is `hasNextPage == True`
     contributions_next_page: bool = response["contributions"]["pageInfo"]["hasNextPage"]
     issues_next_page: bool = response["tracker"]["issues"]["pageInfo"]["hasNextPage"]
@@ -255,19 +419,23 @@ def get_project_data(repo: dict) -> dict:
                 # Query for more contributions and issues
                 contributions_query = contributions_fragement.substitute(contributions_after=contributions_end_cursor)
                 tracker_query = tracker_fragment.substitute(issues_after=issues_end_cursor)
-                query = main_query.substitute(space=repo["space"],
-                                              slug=repo["slug"],
+                query = main_query.substitute(space=repo_url_components["space"],
+                                              slug=repo_url_components["slug"],
                                               project_metadata="",
                                               contributions=contributions_query,
                                               tracker=tracker_query)
                 response = make_query(query=query).json()["data"]["project"]["result"]
                 # Save new results
-                for edge in response["contributions"]["edges"]:
-                    contributions.append(edge["node"])
-                    contribution_ids.append(edge["node"]["id"])
-                for edge in response["tracker"]["issues"]["edges"]:
-                    issues.append(edge["node"])
-                    issue_ids.append(edge["node"]["id"])
+                contributions.extend(process_contributions(contribs=response["contributions"]["edges"], 
+                                                           known_contribs=contribution_ids, 
+                                                           repo_url=repo_url))
+                for c in contributions:
+                    contribution_ids.append(c["hash"])
+                issues.extend(process_issues(issues=response["tracker"]["issues"]["edges"], 
+                                             known_issues=issue_ids, 
+                                             repo_url=repo_url))
+                for i in issues:
+                    issue_ids.append(i["id"])
                 # Update cursors and check if there's next page of results
                 contributions_end_cursor = response["contributions"]["pageInfo"]["endCursor"]
                 issues_end_cursor = response["tracker"]["issues"]["pageInfo"]["endCursor"]
@@ -277,16 +445,19 @@ def get_project_data(repo: dict) -> dict:
                 print(f"There are more contributions to query...")
                 # Query for more contributions
                 contributions_query = contributions_fragement.substitute(contributions_after=contributions_end_cursor)
-                query = main_query.substitute(space=repo["space"],
-                                              slug=repo["slug"],
+                query = main_query.substitute(space=repo_url_components["space"],
+                                              slug=repo_url_components["slug"],
                                               project_metadata="",
                                               contributions=contributions_query,
                                               tracker="")
+                response = {}
                 response = make_query(query=query).json()["data"]["project"]["result"]
                 # Save new results
-                for edge in response["contributions"]["edges"]:
-                    contributions.append(edge["node"])
-                    contribution_ids.append(edge["node"]["id"])
+                contributions.extend(process_contributions(contribs=response["contributions"]["edges"], 
+                                                           known_contribs=contribution_ids, 
+                                                           repo_url=repo_url))
+                for c in contributions:
+                    contribution_ids.append(c["hash"])
                 # Update cursors and check if there's next page of results
                 contributions_end_cursor = response["contributions"]["pageInfo"]["endCursor"]
                 contributions_next_page = response["contributions"]["pageInfo"]["hasNextPage"]
@@ -294,16 +465,18 @@ def get_project_data(repo: dict) -> dict:
                 print(f"There are more issues to query...")
                 # Query for more issues
                 tracker_query = tracker_fragment.substitute(issues_after=issues_end_cursor)
-                query = main_query.substitute(space=repo["space"],
-                                              slug=repo["slug"],
+                query = main_query.substitute(space=repo_url_components["space"],
+                                              slug=repo_url_components["slug"],
                                               project_metadata="",
                                               contributions="",
                                               tracker=tracker_query)
                 response = make_query(query=query).json()["data"]["project"]["result"]
                 # Save new results
-                for edge in response["tracker"]["issues"]["edges"]:
-                    issues.append(edge["node"])
-                    issue_ids.append(edge["node"]["id"])
+                issues.extend(process_issues(issues=response["tracker"]["issues"]["edges"], 
+                                             known_issues=issue_ids, 
+                                             repo_url=repo_url))
+                for i in issues:
+                    issue_ids.append(i["id"])
                 # Update cursors and check if there's next page of results
                 issues_end_cursor = response["tracker"]["issues"]["pageInfo"]["endCursor"]
                 issues_next_page = response["tracker"]["issues"]["pageInfo"]["hasNextPage"]
@@ -313,16 +486,15 @@ def get_project_data(repo: dict) -> dict:
     
     print(f"There are {len(contribution_ids)} contributions and {len(issue_ids)} issues in this project", file=sys.stderr)
     
-    # Combined data
-    combined_data: dict = {
-        "Repository": project_metadata,
-        "Commits": contributions,
-        "Tickets": issues
-    }
-    return combined_data
+    # Combine data
+    mined_data["Commits"] = contributions
+    mined_data["Tickets"] = issues
+    return mined_data
 
 
-def Wikifactory(repo_list: pandas.core.frame.DataFrame) -> dict:
+
+
+def Wikifactory(repo_list: pandas.core.frame.DataFrame) -> list:
     """
     docstring
     """
@@ -335,6 +507,9 @@ def Wikifactory(repo_list: pandas.core.frame.DataFrame) -> dict:
     # argument.
     repo_list = repo_list.to_dict("records")
 
+    # Create a list to hold data mined from each repository
+    mined_repos: list = []
+
     # Go through each repository URL and fetch data
     for repo in repo_list: 
         # Track if there has been an API query error for this repository
@@ -343,9 +518,6 @@ def Wikifactory(repo_list: pandas.core.frame.DataFrame) -> dict:
         print(f"Processing: " + repo["repo_url"])
 
         repo_url: str = repo["repo_url"]
-
-        # Get "space" and "slug" components from this repository's URL
-        repo_url_components: dict = parse_url(url=repo_url)
 
         last_mined: str = repo["last_mined"]
         # Get current timestamp to record as last mined time in exported data
@@ -367,7 +539,7 @@ def Wikifactory(repo_list: pandas.core.frame.DataFrame) -> dict:
         # Query for the data now
         if repo_error == False: 
             try:
-                response_data: dict = get_project_data(repo=repo_url_components)
+                response_data: dict = get_project_data(repo_url=repo_url)
                 repo["issues"] = None
                 repo["commits"] = None
             except WikifactoryAPIError:
@@ -380,5 +552,7 @@ def Wikifactory(repo_list: pandas.core.frame.DataFrame) -> dict:
         # Combine and format results
         if repo_error == False: 
             repo["last_mined"] = timestamp_now
+            response_data["Repository"]["last_mined"] = timestamp_now
+            mined_repos.append(response_data)
     
-    return repo_list
+    return mined_repos

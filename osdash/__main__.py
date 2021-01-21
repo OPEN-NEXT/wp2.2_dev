@@ -49,6 +49,10 @@ def main():
 
     mined_data: dict = mine(staged_data, GitHub_token=configuration["GitHub_token"])
 
+    #
+    # Export mined data into a file
+    #
+
     print(f"foobar")
 
 if __name__ == "__main__":
