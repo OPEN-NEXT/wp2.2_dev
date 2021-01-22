@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 # Python Standard Library imports
+import pathlib
 import sys
 
 # External imports
@@ -12,10 +13,21 @@ import pandas
 # Internal imports
 if __name__ == "__main__": 
     from read_mining_list import read_repo_list
+    from past_data import read_mined_data
 else: 
     from . read_mining_list import read_repo_list
+    from . past_data import read_mined_data
 
-def stage_data(repo_csv: str) -> pandas.core.frame.DataFrame:
+def stage_data(repo_csv: str, mined_data: str) -> pandas.core.frame.DataFrame:
+    """[summary]
+
+    Args:
+        repo_csv (str): [description]
+        mined_data (str): path to compressed ZIP archive containing previously-mined data in JSON
+
+    Returns:
+        pandas.core.frame.DataFrame: [description]
+    """
     print(f"Reading list of repositories and staging existing data...")
 
     #
@@ -28,7 +40,14 @@ def stage_data(repo_csv: str) -> pandas.core.frame.DataFrame:
     # Read existing data
     #
 
-    # TODO: Read existing data.
+    if pathlib.Path(mined_data).exists() and pathlib.Path(mined_data).is_file(): 
+        print(f"Reading past data from: {mined_data}", file=sys.stderr)
+        past_data: list = read_mined_data(path=mined_data)
+    else: 
+        print(f"{mined_data} doesn't seem to exist.", file=sys.stderr)
+        past_data: list = []
+
+    
 
     #
     # Find last timestamp at which each repository was mined

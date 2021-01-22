@@ -30,7 +30,7 @@ else:
 
 # Default location to store mined data JSON file
 DATA_DIR: str = "./data"
-DATA_FILE: str = "mined_data.json"
+DATA_FILE: str = "mined_data.zip"
 
 # High-level `main()` that spells out high-level data-mining logic
 
@@ -50,7 +50,10 @@ def main():
     # Read repositories list and stage existing data
     #
 
-    staged_data: pandas.core.frame.DataFrame = stage_data(configuration["repo_list"])
+    # Form mined data file path
+    data_path: pathlib.Path = pathlib.Path(DATA_DIR) / pathlib.Path(DATA_FILE)
+
+    staged_data: pandas.core.frame.DataFrame = stage_data(configuration["repo_list"], mined_data=str(data_path))
 
     #
     # Retrieve version control data from repositories
@@ -63,6 +66,7 @@ def main():
     #
 
     # Create directory to store data file if needed
+    # TODO: Honor configuration option on whether to create a new directory
     if pathlib.Path(DATA_DIR).exists(): 
         if pathlib.Path(DATA_DIR).is_dir(): 
             pass
@@ -70,11 +74,8 @@ def main():
             raise Exception("Data path does not seem to be a directory.")
     else: 
         pathlib.Path(DATA_DIR).mkdir()
-    
-    # Form export file path
-    save_path = pathlib.Path(DATA_DIR) / pathlib.Path(DATA_FILE)
 
-    exporter.save_mined_data(path=str(save_path), mined_data=mined_data)
+    exporter.save_mined_data(path=str(data_path), mined_data=mined_data)
 
     print(f"foobar")
 
