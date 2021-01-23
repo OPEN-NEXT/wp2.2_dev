@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 """
-This is the dashboard's main module.
+This is the dashboard's main data-mining module.
 It defines a main function to be executed, representing execution of the
 whole package. This function is high-level and calls other internal modules
 that contain the actual plumbing.
