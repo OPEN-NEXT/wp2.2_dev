@@ -8,14 +8,12 @@ Wikifactory API adapter/interface for data mining script
 
 # Python Standard Library imports
 import datetime
-import math
 import string
 import sys
 import time
 import urllib.parse
 
 # External imports
-import pandas
 import requests
 
 #
@@ -368,7 +366,9 @@ def get_project_data(repo_url: str) -> dict:
         "forkcount": response["forkCount"],
         "forks": [],
         "license": repo_license,
-        "repo_url": repo_url
+        "platform": "Wikifactory",
+        "repo_url": repo_url,
+        "last_mined": ""
     }
 
     # 
@@ -415,7 +415,7 @@ def get_project_data(repo_url: str) -> dict:
         issues_end_cursor: str = response["tracker"]["issues"]["pageInfo"]["endCursor"]
         while query_has_next_page:
             if contributions_next_page and issues_next_page:
-                print(f"There are more contributions and issues to query...")
+                print(f"There are more contributions and issues to query...", file=sys.stderr)
                 # Query for more contributions and issues
                 contributions_query = contributions_fragement.substitute(contributions_after=contributions_end_cursor)
                 tracker_query = tracker_fragment.substitute(issues_after=issues_end_cursor)
@@ -442,7 +442,7 @@ def get_project_data(repo_url: str) -> dict:
                 contributions_next_page = response["contributions"]["pageInfo"]["hasNextPage"]
                 issues_next_page = response["tracker"]["issues"]["pageInfo"]["hasNextPage"]
             elif contributions_next_page:
-                print(f"There are more contributions to query...")
+                print(f"There are more contributions to query...", file=sys.stderr)
                 # Query for more contributions
                 contributions_query = contributions_fragement.substitute(contributions_after=contributions_end_cursor)
                 query = main_query.substitute(space=repo_url_components["space"],
@@ -462,7 +462,7 @@ def get_project_data(repo_url: str) -> dict:
                 contributions_end_cursor = response["contributions"]["pageInfo"]["endCursor"]
                 contributions_next_page = response["contributions"]["pageInfo"]["hasNextPage"]
             elif issues_next_page:
-                print(f"There are more issues to query...")
+                print(f"There are more issues to query...", file=sys.stderr)
                 # Query for more issues
                 tracker_query = tracker_fragment.substitute(issues_after=issues_end_cursor)
                 query = main_query.substitute(space=repo_url_components["space"],
@@ -481,7 +481,7 @@ def get_project_data(repo_url: str) -> dict:
                 issues_end_cursor = response["tracker"]["issues"]["pageInfo"]["endCursor"]
                 issues_next_page = response["tracker"]["issues"]["pageInfo"]["hasNextPage"]
             else:
-                print(f"Done with queries")
+                print(f"Done with queries", file=sys.stderr)
                 query_has_next_page = False
     
     print(f"There are {len(contribution_ids)} contributions and {len(issue_ids)} issues in this project", file=sys.stderr)
@@ -491,38 +491,32 @@ def get_project_data(repo_url: str) -> dict:
     mined_data["Tickets"] = issues
     return mined_data
 
-
-
-
-def Wikifactory(repo_list: pandas.core.frame.DataFrame) -> list:
+def Wikifactory(repos: list) -> list:
     """
     docstring
     """
-    print(f"Begin Wikifactory adapter")
+    print(f"Begin Wikifactory adapter", file=sys.stderr)
     
-    # Create column indicating if there was error when making query
-    repo_list["error"] = bool(False)
+    # track if there was error when making query
+    mining_error: bool = False
 
     # Convert data into a list of dictionaries via the `to_dict()` "records"
     # argument.
-    repo_list = repo_list.to_dict("records")
+    # repo_list = repo_list.to_dict("records")
 
     # Create a list to hold data mined from each repository
     mined_repos: list = []
 
     # Go through each repository URL and fetch data
-    for repo in repo_list: 
-        # Track if there has been an API query error for this repository
-        repo_error: bool = False
+    for repo in repos: 
 
-        print(f"Processing: " + repo["repo_url"])
+        print(f"Processing: " + repo["Repository"]["repo_url"], file=sys.stderr)
 
-        repo_url: str = repo["repo_url"]
+        repo_url: str = repo["Repository"]["repo_url"]
 
-        last_mined: str = repo["last_mined"]
         # Get current timestamp to record as last mined time in exported data
-        # The `datetime.timezone.utc` argument tells now() to use UTC timezone
-        # (or use datetime.datetime.utcnow())
+        # The `datetime.timezone.utc` argument tells `now()` to use UTC timezone
+        # (or use `datetime.datetime.utcnow()`)
         timestamp_object: datetime.datetime = datetime.datetime.now(datetime.timezone.utc)
         date_now: str = str(timestamp_object.date())
         time_now: str = str(timestamp_object.time())
@@ -531,28 +525,23 @@ def Wikifactory(repo_list: pandas.core.frame.DataFrame) -> list:
         # If there is no `last_mined` timestamp, then this `repo_url` has not 
         # been mined before. If so, set `last_mined` to some arbitrarily early
         # time: 
-        if math.isnan(last_mined): # If there's not last mined time it will be `nan`
+        # (this is currently unused because the Wikifactory API doesn't filter
+        # results by timestamp)
+        if repo["Repository"]["last_mined"] == "": 
             last_mined: str = DEFAULT_LAST_MINED
         else:
-            pass
+            last_mined: str = repo["Repository"]["last_mined"]
 
-        # Query for the data now
-        if repo_error == False: 
+        # Query for the data
+        if mining_error == False: 
             try:
                 response_data: dict = get_project_data(repo_url=repo_url)
-                repo["issues"] = None
-                repo["commits"] = None
+                response_data["Repository"]["last_mined"] = timestamp_now
+                mined_repos.append(response_data)
             except WikifactoryAPIError:
-                print(f"There has been an error querying this repository.")
-                repo_error = True
-                repo["error"] = True
+                print(f"There has been an error querying this repository.", file=sys.stderr)
+                mining_error = True
         else: 
             pass
-
-        # Combine and format results
-        if repo_error == False: 
-            repo["last_mined"] = timestamp_now
-            response_data["Repository"]["last_mined"] = timestamp_now
-            mined_repos.append(response_data)
     
     return mined_repos
