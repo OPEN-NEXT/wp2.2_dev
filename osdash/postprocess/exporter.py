@@ -16,7 +16,7 @@ def save_mined_data(path: str, mined_data: list):
     # Export mined data as JSON file
 
     # Save output JSON file in a compressed archive with `zipfile` module
-    with zipfile.ZipFile(path, mode="w", compression=zipfile.ZIP_DEFLATED) as zip_file: 
+    with zipfile.ZipFile(path, mode="w", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as zip_file: 
         dumped_JSON: str = json.dumps(mined_data, ensure_ascii=False, indent=4)
         zip_file.writestr(DATA_FILE, data=dumped_JSON)
         # Test integrity of compressed archive
