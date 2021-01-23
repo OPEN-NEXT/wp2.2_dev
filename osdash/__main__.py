@@ -31,12 +31,35 @@ DATA_FILE: str = "mined_data.zip"
 # Form mined data file path
 data_path: pathlib.Path = pathlib.Path(DATA_DIR) / pathlib.Path(DATA_FILE)
 
-# High-level `main()` that spells out high-level data-mining logic
+# High-level `main()` that spells out high-level dashboard logic
 def main():
     """
     docstring
     """
-    pass
+    
+    #
+    # Read data mined from repositories
+    #
+
+    # TODO: Read data
+
+    #
+    # Derive metrics
+    # 
+
+    # TODO: Derive metrics
+
+    #
+    # Create Dash app
+    #
+
+    # TODO: Create Dash app
+
+    #
+    # Run Dash app server
+    #
+
+    # TODO Run app
 
 if __name__ == "__main__":
     main()
