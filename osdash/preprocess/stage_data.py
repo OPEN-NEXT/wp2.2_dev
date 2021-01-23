@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 # Python Standard Library imports
+import json
 import pathlib
 import sys
 
@@ -18,7 +19,7 @@ else:
     from . read_mining_list import read_repo_list
     from . past_data import read_mined_data
 
-def stage_data(repo_csv: str, mined_data: str) -> pandas.core.frame.DataFrame:
+def stage_data(repo_csv: str, mined_data: str) -> list:
     """[summary]
 
     Args:
@@ -26,7 +27,7 @@ def stage_data(repo_csv: str, mined_data: str) -> pandas.core.frame.DataFrame:
         mined_data (str): path to compressed ZIP archive containing previously-mined data in JSON
 
     Returns:
-        pandas.core.frame.DataFrame: [description]
+        list: [description]
     """
     print(f"Reading list of repositories and staging existing data...")
 
@@ -42,34 +43,47 @@ def stage_data(repo_csv: str, mined_data: str) -> pandas.core.frame.DataFrame:
 
     if pathlib.Path(mined_data).exists() and pathlib.Path(mined_data).is_file(): 
         print(f"Reading past data from: {mined_data}", file=sys.stderr)
-        past_data: list = read_mined_data(path=mined_data)
+        staged_data: list = read_mined_data(path=mined_data)
     else: 
         print(f"{mined_data} doesn't seem to exist.", file=sys.stderr)
-        past_data: list = []
-
-    
+        staged_data: list = []
 
     #
-    # Find last timestamp at which each repository was mined
+    # Record new repositories not mined before
     #
 
-    # TODO: Find last mined timestamps.
+    # Get list of previously-mined repositories first
+    past_repo_list: list = []
+    for repo in staged_data: 
+        past_repo_list.append(repo["Repository"]["repo_url"])
 
-    #
-    # Append last-mined timestamps to list of repositories
-    #
+    # If there is a new un-mined repository, add new entry to staged data
+    for url in list(repo_list["repo_url"]):
+        if url in past_repo_list:
+            pass
+        else:
+            # Create new entry for this new repository
+            new_repo: dict = {
+                "Repository": {
+                    "platform": repo_list[repo_list["repo_url"] == url]["repo_platform"].values[0],
+                    "repo_url": url, 
+                    "last_mined": "" # Empty string since it has not been mined before
+                },
+                "Branches": [],
+                "Commits": [],
+                "Tickets": []
+            }
+            staged_data.append(new_repo) 
 
-    # For now, just append an empty column to `repo_list`. Once there is prior
-    # data, probably need to do some sort of Pandas join operation based on 
-    # `repo_url`?
-    repo_list["last_mined"] = numpy.nan
-
-    return repo_list
+    # Now, we have a set of staged data that contains previously-mined repositories
+    # and possibly new ones. Each one would either have a string of the last-mined
+    # timestamp or an empty string if it's a new repository.
+    return staged_data
 
 def main():
     print(f"Running stage_data.py's main()...")
-    repos = stage_data("input/OSH-repos-GitHub-test.csv")
-    sys.exit(0)
+    repos = stage_data("input/OSH-repos-GitHub-test.csv", "data/mined_data.zip")
 
 if __name__ == "__main__":
     main()
+    sys.exit(0)
