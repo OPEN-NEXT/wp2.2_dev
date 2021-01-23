@@ -18,10 +18,10 @@ import sys
 # Internal imports
 if __name__ == "__main__": 
     # from preprocess import read_config, stage_data
-    pass
+    from preprocess import stage_data
 else:
     # from . preprocess import read_config, stage_data
-    pass
+    from . preprocess import stage_data
 
 # Some constants
 
@@ -38,10 +38,10 @@ def main():
     """
     
     #
-    # Read data mined from repositories
+    # Stage data mined from repositories
     #
 
-    # TODO: Read data
+    staged_data: list = stage_data(str(data_path))
 
     #
     # Derive metrics
@@ -60,6 +60,8 @@ def main():
     #
 
     # TODO Run app
+
+    print(f"Reached end of dashboard `main()`", file=sys.stderr)
 
 if __name__ == "__main__":
     main()
