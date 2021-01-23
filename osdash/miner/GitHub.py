@@ -723,14 +723,10 @@ def GitHub(repos: list, token: str) -> list:
                 mining_error = True
         else:
             pass
-
-        # Combine results if no errors getting data
-        # (otherwise, the `last_mined` timestamp will not be updated)
         
-        # Initialise an empty dictionary to hold mined data from this repository
-        mined_repo: dict = {}
         if mining_error == False: 
             # Record basic repository metadata
+            mined_repo: dict = {}
             mined_repo["Repository"] = {
                 "name": repo_url_components["name"], 
                 "attributedTo": repo_url_components["owner"],
@@ -750,38 +746,6 @@ def GitHub(repos: list, token: str) -> list:
             else:
                 mined_repo["Repository"]["license"] = basics["licenseInfo"]["spdxId"]
             repo["Repository"] = mined_repo["Repository"]
-            # # Record branches
-            # mined_repo["Branches"] = []
-            # for branch in branches:
-            #     mined_repo["Branches"].append({"name": branch})
-            # Record commits
-            # mined_repo["Commits"] = []
-            # for commit in commits:
-            #     commit_data: dict = {
-            #         "committedBy": commit["committer_user"],
-            #         "committed": commit["commit_date"],
-            #         "hash": commit["oid"],
-            #         "summary": commit["commit_message_headline"],
-            #         "parents": commit["parent_oids"],
-            #         "url": commit["commit_url"]
-            #     }
-            #     mined_repo["Commits"].append(commit_data)
-            # Record issues
-            # mined_repo["Tickets"] = []
-            # for issue in issues:
-            #     issue_data: dict = {
-            #         "attributedTo": issue["author"],
-            #         "summary": issue["title"],
-            #         "published": issue["createdAt"],
-            #         "isResolved": issue["closed"],
-            #         "resolved": issue["closedAt"],
-            #         "id": issue["number"],
-            #         "participants": [],
-            #         "url": issue["url"]
-            #     }
-            #     for participant in issue["participants"]:
-            #         issue_data["participants"].append(participant["login"])
-            #     mined_repo["Tickets"].append(issue_data)
         else: 
             pass
 
