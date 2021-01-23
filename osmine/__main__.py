@@ -13,9 +13,6 @@ that contain the actual plumbing.
 import pathlib
 import sys
 
-# External import(s)
-import pandas
-
 # Internal import(s)
 if __name__ == "__main__": 
     from preprocess import read_config, stage_data
@@ -35,7 +32,6 @@ DATA_FILE: str = "mined_data.zip"
 data_path: pathlib.Path = pathlib.Path(DATA_DIR) / pathlib.Path(DATA_FILE)
 
 # High-level `main()` that spells out high-level data-mining logic
-
 def main():
     """[summary]
     """
