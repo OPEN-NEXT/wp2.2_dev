@@ -28,7 +28,7 @@ import pandas
 # Path to example JSON file with staged data for debugging
 STAGED_DATA: str = "./staged_data-example.json"
 
-def mine(staged_data: pandas.core.frame.DataFrame, GitHub_token: str) -> pandas.core.frame.DataFrame:
+def mine(staged_data: list, GitHub_token: str) -> list:
     """[summary]
 
     Args:
@@ -44,14 +44,21 @@ def mine(staged_data: pandas.core.frame.DataFrame, GitHub_token: str) -> pandas.
 
     # For now, this means GitHub and Wikifactory
 
-    # Get GitHub repos
-    GitHub_repos: pandas.core.frame.DataFrame = staged_data[staged_data["repo_platform"] == "GitHub"]
-    mined_GitHub_data: dict = GitHub(GitHub_repos, GitHub_token)
+    # Get GitHub repositories
+    staged_GitHub_data: list = []
+    for repo in staged_data: 
+        if repo["Repository"]["platform"] == "GitHub":
+            staged_GitHub_data.append(repo)
+    # Mine those GitHub repositories
+    mined_GitHub_data: list = GitHub(staged_GitHub_data, GitHub_token)
 
 
     # Get Wikifactory repos
-    Wikifactory_repos: pandas.core.frame.DataFrame = staged_data[staged_data["repo_platform"] == "Wikifactory"]
-    mined_Wikifactory_data: dict = Wikifactory(Wikifactory_repos)
+    staged_Wikifactory_data: list = []
+    for repo in staged_data: 
+        if repo["Repository"]["platform"] == "Wikifactory":
+            staged_Wikifactory_data.append(repo)
+    mined_Wikifactory_data: list = Wikifactory(staged_Wikifactory_data)
 
     #
     # Combine mined data
@@ -72,16 +79,9 @@ def mine(staged_data: pandas.core.frame.DataFrame, GitHub_token: str) -> pandas.
     return mined_data
 
 # main() is for when running this script on its own, probably for debugging
-# Uses the example staged JSON file
 
 def main():
-    with open(STAGED_DATA) as json_file: 
-        loaded_json = json.load(json_file)
-        loaded_json: str = json.dumps(loaded_json)
-    GITHUB_TOKEN: str = os.environ["GITHUB_TOKEN"]
-    staged_data: pandas.core.frame.DataFrame = pandas.read_json(loaded_json, orient="columns")
-    mined_data: pandas.core.frame.DataFrame = mine(staged_data, GITHUB_TOKEN)
-    print(mined_data)
+    pass
 
 if __name__ == "__main__": 
     main()
