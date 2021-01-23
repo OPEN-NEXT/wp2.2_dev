@@ -3,12 +3,10 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 # Python Standard Library imports
-import json
 import pathlib
 import sys
 
 # External imports
-import numpy
 import pandas
 
 # Internal imports
