@@ -65,6 +65,7 @@ def stage_data(repo_csv: str, mined_data: str) -> list:
             # Create new entry for this new repository
             new_repo: dict = {
                 "Repository": {
+                    "project": repo_list[repo_list["repo_url"] == url]["project"].values[0],
                     "platform": repo_list[repo_list["repo_url"] == url]["repo_platform"].values[0],
                     "repo_url": url, 
                     "last_mined": "" # Empty string since it has not been mined before

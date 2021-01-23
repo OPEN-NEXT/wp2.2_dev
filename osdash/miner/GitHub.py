@@ -4,14 +4,12 @@
 
 # Python Standard Library imports
 import datetime
-import math
-import sys
-import urllib.parse
 import string
+import sys
 import time
+import urllib.parse
 
 # External imports
-import pandas
 import requests
 
 #
@@ -40,6 +38,10 @@ DEFAULT_LAST_MINED: str = "1970-01-01T00:00:00.000000+00:00"
 # Define query-making functions
 #
 
+# Define a custom exception for when queries fail repeatedly
+class GitHubAPIError(Exception): 
+    pass
+
 # Function to return appropriate query headers given authentication token
 def get_headers(api: str, token: str) -> dict: 
     if api == "REST":
@@ -53,21 +55,11 @@ def get_headers(api: str, token: str) -> dict:
         print(f"ERROR: Please specify API type 'REST' or 'GraphQL'", file=sys.stderr)
         sys.exit(1)
 
-# Define a custom exception for when queries fail repeatedly
-class GitHubAPIError(Exception): 
-    pass
-
 # Function for making queries
 def make_query(query: str, token: str): 
-    # retry_strategy = requests.packages.urllib3.util.retry.Retry(total=3, 
-    #                                                             status_forcelist=[429,500,502,503,504],
-    #                                                             backoff_factor=0.5)
-    # adapter = requests.adapters.HTTPAdapter(max_retries=retry_strategy)
-    # http_session = requests.Session()
-    # http_session.mount("https://", adapter)
     # See if it is a REST query
     if (REST_URL in query) and (not GRAPHQL_URL in query):
-        print(f"Looks like a REST query...")
+        print(f"Looks like a REST query...", file=sys.stderr)
         rest_headers: dict = get_headers(api="REST", token=token)
         # query_response = http_session.get(url=query, headers=rest_headers)
         query_response: requests.models.Response = requests.get(url=query,
@@ -78,11 +70,8 @@ def make_query(query: str, token: str):
             raise GitHubAPIError(f"Problem with query with return code {query_response.status_code}.")
     # Basic potato check if query looks like GraphQL
     elif ("{" in query) and ("}" in query):
-        print(f"Looks like a GraphQL query...")
+        print(f"Looks like a GraphQL query...", file=sys.stderr)
         graphql_headers: dict = get_headers(api="GraphQL", token=token)
-        # query_response = http_session.get(url=GRAPHQL_URL, 
-        #                                   json={"query": query},
-        #                                   headers=graphql_headers)
         query_success: bool = False
         retries: int = 0
         while not query_success:
@@ -188,7 +177,7 @@ def get_basics(repo: dict, token: str) -> dict:
     return results
 
 # Get branches
-def get_branches(repo: dict, token: str):
+def get_branches(repo: dict, token: str) -> list:
     """
     Use GraphQL API
     `repo` is a dictionary with two keys "owner" and "name" which are parsed 
@@ -250,7 +239,7 @@ def get_branches(repo: dict, token: str):
     return branches
 
 # Get commits via REST API
-def get_commits_3(repo: dict, since: str, token: str):
+def get_commits_3(repo: dict, since: str, token: str) -> list:
     """
     Use GitHub's v3 REST API
     `repo` is a dictionary with two keys "owner" and "name" which are parsed 
@@ -267,7 +256,7 @@ def get_commits_3(repo: dict, since: str, token: str):
     # Append pagination parameters to query
     query_string: str = f"{query_string}?per_page={PER_PAGE}&page={page}"
     # Initialise an empty list to hold query results
-    commits: list = list()
+    commits: list = []
     
     # Send queries as long as there are more pages of results
     # References: 
@@ -304,7 +293,7 @@ def get_commits_3(repo: dict, since: str, token: str):
     return commits
 
 # Get commits from GraphQL API
-def get_commits_4(repo: dict, branches: list, since: str, token: str):
+def get_commits_4(repo: dict, branches: list, since: str, token: str) -> list:
     """
     Use GitHub's v4 GraphQL API
     """
@@ -384,6 +373,7 @@ def get_commits_4(repo: dict, branches: list, since: str, token: str):
     }
     """
     )
+    print(f"Getting commits after {since}", file=sys.stderr)
     # Create a string for `$tree` in the search query. This is based on the
     # recursive depth to search for/list changed files in a commit determined
     # by `COMMIT_FILE_DEPTH` (TODO: Implement this).
@@ -464,14 +454,26 @@ def get_commits_4(repo: dict, branches: list, since: str, token: str):
         end_cursor = "null"
 
     # Print total number of commits
-    print(f"Total commits in repository {repo['owner']}/{repo['name']}: {len(commit_oids)}", file=sys.stderr)
+    print(f"Total commits mined from {repo['owner']}/{repo['name']}: {len(commit_oids)}", file=sys.stderr)
 
-    return commits
+    # Reorganise commits for this function to return in ForgeFed format
+    formatted_commits: list = []
+    for commit in commits:
+        commit_data: dict = {
+            "committedBy": commit["committer_user"],
+            "committed": commit["commit_date"],
+            "hash": commit["oid"],
+            "summary": commit["commit_message_headline"],
+            "parents": commit["parent_oids"],
+            "url": commit["commit_url"]
+        }
+        formatted_commits.append(commit_data)
+    return formatted_commits
 
 # Get commit file changes
 def get_file_changes():
     """
-    Use REST API
+    Right now, this will need to use the REST API for *each* commit!
     """
     # Fetch data
 
@@ -480,7 +482,7 @@ def get_file_changes():
     pass
 
 # Get issues
-def get_issues(repo: dict, since: str, token: str):
+def get_issues(repo: dict, since: str, token: str) -> list:
     """
     Use GraphQL API
     """
@@ -559,7 +561,7 @@ def get_issues(repo: dict, since: str, token: str):
     """
     )
 
-    print(f"Retrieving {repo['owner']}/{repo['name']}'s issues metadata...", file=sys.stderr)
+    print(f"Retrieving {repo['owner']}/{repo['name']}'s issues metadata after {since}", file=sys.stderr)
 
     while query_has_next_page:
         print(f"    Getting page {query_page} of issues")
@@ -612,58 +614,54 @@ def get_issues(repo: dict, since: str, token: str):
             query_page += 1
 
     # Just to have a breakpoint
-    print("Finished getting issues")
-    return issues
+    print("Finished getting issues", file=sys.stderr)
+
+    # Reorganise commits for this function to return in ForgeFed format
+    formatted_issues: list = []
+    for issue in issues:
+        issue_data: dict = {
+            "attributedTo": issue["author"],
+            "summary": issue["title"],
+            "published": issue["createdAt"],
+            "isResolved": issue["closed"],
+            "resolved": issue["closedAt"],
+            "id": issue["number"],
+            "participants": [],
+            "url": issue["url"]
+        }
+        for participant in issue["participants"]:
+            issue_data["participants"].append(participant["login"])
+        formatted_issues.append(issue_data)
+    
+    return formatted_issues
 
 #
 # Main logic for making GitHub queries
 #
 
-def GitHub(repo_list: pandas.core.frame.DataFrame, token: str) -> list:
+def GitHub(repos: list, token: str) -> list:
     """
     docstring
     """
-    print(f"Begin GitHub adapter")
-
-    # Create empty DataFrame to hold mined data
-    #mined_data: pandas.core.frame.DataFrame = repo_list[["repo_url", "last_mined"]]
-    # Create column indicating if there was error when making query
-    repo_list["error"] = bool(False)
-
-    # 
-    # repo_list["branches"] = numpy.nan
-    # repo_list["commits"] = numpy.nan
-    # repo_list["issues"] = numpy.nan
-
-    # 
-    repo_list = repo_list.to_dict("records")
+    print(f"Begin GitHub adapter", file=sys.stderr)
 
     # Initialise empty list to hold mined data where each item is a repository
-    mined_repos: list = []
+    # mined_repos: list = []
 
-    # For each repository (row) in `repo_list`, mine data at its URL
-    # Use itertuples() because it seems to be much faster than iterrows()
-    # Reference: https://stackoverflow.com/a/10739432/186904
-    # TODO: Consider using Pandas's apply() instead: https://stackoverflow.com/a/30566899/186904
-    for repo in repo_list: 
+    # For each repository in staged data, mine data at its URL based on last-
+    # mined timestamp.
+    for repo in repos: 
         # Track if there has been an API query error for this repository
-        repo_error: bool = False
-        # Since itertuples() returns data of namedtuple type, use getattr() to 
-        # access items in each row
-        # Reference: https://medium.com/@rinu.gour123/python-namedtuple-working-and-benefits-of-namedtuple-in-python-276d679b2e9c
-        #print(f"Processing: " + getattr(repo, "repo_url"))
-        print(f"Processing: " + repo["repo_url"])
-        #repo_url: str = str(getattr(repo, "repo_url"))
-        repo_url: str = repo["repo_url"]
+        mining_error: bool = False
+        print(f"Processing: " + repo["Repository"]["repo_url"], file=sys.stderr)
+        repo_url: str = repo["Repository"]["repo_url"]
         # Get "owner" and "repo" components from this repository's URL
         repo_url_components: dict = parse_url(url=repo_url)
-
         
-        #last_mined: str = getattr(repo, "last_mined")
-        last_mined: str = repo["last_mined"]
+        last_mined: str = repo["Repository"]["last_mined"]
         # Get current timestamp to record as last mined time in exported data
-        # The `datetime.timezone.utc` argument tells now() to use UTC timezone
-        # (or use datetime.datetime.utcnow())
+        # The `datetime.timezone.utc` argument tells `now()` to use UTC 
+        # timezone (or use `datetime.datetime.utcnow()`)
         timestamp_object: datetime.datetime = datetime.datetime.now(datetime.timezone.utc)
         date_now: str = str(timestamp_object.date())
         time_now: str = str(timestamp_object.time())
@@ -672,80 +670,76 @@ def GitHub(repo_list: pandas.core.frame.DataFrame, token: str) -> list:
         # If there is no `last_mined` timestamp, then this `repo_url` has not 
         # been mined before. If so, set `last_mined` to some arbitrarily early
         # time: 
-        if math.isnan(last_mined): # If there's not last mined time it will be `nan`
+        if repo["Repository"]["last_mined"] == "": 
             last_mined: str = DEFAULT_LAST_MINED
         else:
-            pass
+            last_mined: str = repo["Repository"]["last_mined"]
 
         # Check remaining API quota
+        # TODO: Raise custom exception if insufficient quota?
         check_rate_limit(token=token)
 
         # Get basic information
-        try:
-            basics: dict = get_basics(repo=repo_url_components, token=token)
-        except GitHubAPIError:
-            print(f"There has been an error with querying this repository.")
-            repo_error = True
-            repo["error"] = True
+        if mining_error == False: 
+            try:
+                basics: dict = get_basics(repo=repo_url_components, token=token)
+            except GitHubAPIError:
+                print(f"There has been an error with querying this repository.", file=sys.stderr)
+                mining_error = True
+        else: 
+            pass
 
         # Get branches
-        if repo_error == False:
+        if mining_error == False:
             try:
                 branches: list = get_branches(repo=repo_url_components, token=token)
-                print(f"This repository's branches: ")
-                print(branches)
-                #repo_list.loc[(repo_list["repo_url"] == repo_url), "branches"] = branches
-                repo["branches"] = branches
+                print(f"This repository's branches: ", file=sys.stderr)
+                print(branches, file=sys.stderr)
+                repo["Branches"] = branches
             except GitHubAPIError:
-                print(f"There has been an error with querying this repository.")
-                repo_error = True
-                #repo_list.loc[(repo_list["repo_url"] == repo_url), "error"] = True
-                repo["error"] = True
+                print(f"There has been an error querying this repository's branches.", file=sys.stderr)
+                mining_error = True
         else:
             pass
 
         # Get commits
-        if repo_error == False: 
+        if mining_error == False: 
             try:
-                # commits = get_commits_3(repo=repo_url_components, since=last_mined, token=token)
-                commits = get_commits_4(repo=repo_url_components, branches=branches, since=last_mined, token=token)
-                #repo_list.loc[(repo_list["repo_url"] == repo_url), "commits"] = commits
-                repo["commits"] = commits
+                commits: list = get_commits_4(repo=repo_url_components, branches=repo["Branches"], since=last_mined, token=token)
+                repo["Commits"].extend(commits)
             except GitHubAPIError:
-                print(f"There has been an error querying commits this repository.")
-                repo_error = True
-                #repo_list.loc[(repo_list["repo_url"] == repo_url), "error"] = True
-                repo["error"] = True
+                print(f"There has been an error querying this repository's commits.", file=sys.stderr)
+                mining_error = True
         else: 
             pass
 
         # Get issues
-        if repo_error == False: 
+        if mining_error == False: 
             try: 
-                issues = get_issues(repo=repo_url_components, since=last_mined, token=token)
-                repo["issues"] = issues
+                issues: list = get_issues(repo=repo_url_components, since=last_mined, token=token)
+                repo["Tickets"].extend(issues)
             except GitHubAPIError: 
                 print(f"There has been an error querying issues in this repository.")
-                repo_error = True
-                repo["error"] = True
+                mining_error = True
         else:
             pass
 
         # Combine results if no errors getting data
-        # (otherwise, the last_mined timestamp will not be updated)
+        # (otherwise, the `last_mined` timestamp will not be updated)
         
-        # Initialise an empty dictionary to hold all mined data from this repository
+        # Initialise an empty dictionary to hold mined data from this repository
         mined_repo: dict = {}
-        if repo_error == False: 
+        if mining_error == False: 
             # Record basic repository metadata
             mined_repo["Repository"] = {
                 "name": repo_url_components["name"], 
                 "attributedTo": repo_url_components["owner"],
                 "published": basics["createdAt"],
-                "project": repo["project"],
+                "project": repo["Repository"]["project"],
                 "forkcount": basics["forkCount"],
                 "forks": [],
                 "license": "",
+                "platform": "GitHub",
                 "repo_url": repo_url,
                 "last_mined": timestamp_now
                 }
@@ -755,45 +749,40 @@ def GitHub(repo_list: pandas.core.frame.DataFrame, token: str) -> list:
                 mined_repo["Repository"]["license"] = "other"
             else:
                 mined_repo["Repository"]["license"] = basics["licenseInfo"]["spdxId"]
-            # Record branches
-            mined_repo["Branches"] = []
-            for branch in branches:
-                mined_repo["Branches"].append({"name": branch})
+            repo["Repository"] = mined_repo["Repository"]
+            # # Record branches
+            # mined_repo["Branches"] = []
+            # for branch in branches:
+            #     mined_repo["Branches"].append({"name": branch})
             # Record commits
-            mined_repo["Commits"] = []
-            for commit in commits:
-                commit_data: dict = {
-                    "committedBy": commit["committer_user"],
-                    "committed": commit["commit_date"],
-                    "hash": commit["oid"],
-                    "summary": commit["commit_message_headline"],
-                    "parents": commit["parent_oids"],
-                    "url": commit["commit_url"]
-                }
-                mined_repo["Commits"].append(commit_data)
+            # mined_repo["Commits"] = []
+            # for commit in commits:
+            #     commit_data: dict = {
+            #         "committedBy": commit["committer_user"],
+            #         "committed": commit["commit_date"],
+            #         "hash": commit["oid"],
+            #         "summary": commit["commit_message_headline"],
+            #         "parents": commit["parent_oids"],
+            #         "url": commit["commit_url"]
+            #     }
+            #     mined_repo["Commits"].append(commit_data)
             # Record issues
-            mined_repo["Tickets"] = []
-            for issue in issues:
-                issue_data: dict = {
-                    "attributedTo": issue["author"],
-                    "summary": issue["title"],
-                    "published": issue["createdAt"],
-                    "isResolved": issue["closed"],
-                    "resolved": issue["closedAt"],
-                    "id": issue["number"],
-                    "participants": [],
-                    "url": issue["url"]
-                }
-                for participant in issue["participants"]:
-                    issue_data["participants"].append(participant["login"])
-                mined_repo["Tickets"].append(issue_data)
+            # mined_repo["Tickets"] = []
+            # for issue in issues:
+            #     issue_data: dict = {
+            #         "attributedTo": issue["author"],
+            #         "summary": issue["title"],
+            #         "published": issue["createdAt"],
+            #         "isResolved": issue["closed"],
+            #         "resolved": issue["closedAt"],
+            #         "id": issue["number"],
+            #         "participants": [],
+            #         "url": issue["url"]
+            #     }
+            #     for participant in issue["participants"]:
+            #         issue_data["participants"].append(participant["login"])
+            #     mined_repo["Tickets"].append(issue_data)
         else: 
             pass
 
-        mined_repos.append(mined_repo)
-            
-            
-
-    # repo_list: pandas.core.frame.DataFrame = repo_list
-
-    return mined_repos
+    return repos
