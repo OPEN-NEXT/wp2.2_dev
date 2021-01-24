@@ -1,6 +1,8 @@
-# Configuration file for package
+# SPDX-FileCopyrightText: 2021 Pen-Yuan Hsing
+#
+# SPDX-License-Identifier: CC0-1.0
 
-
+# Configuration file for data miner backend
 repo_list: input/OSH-repos.csv
 data_dir: data
 GitHub_token: token
