@@ -1,6 +1,6 @@
 # wp2.2_dev
 
-[![standard-readme compliant](https://img.shields.io/badge/readme%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme) [![REUSE status](https://api.reuse.software/badge/github.com/OPEN-NEXT/wp2.2_dev)](https://api.reuse.software/info/github.com/OPEN-NEXT/wp2.2_dev) [![GitHub license](https://img.shields.io/github/license/OPEN-NEXT/wp2.2_dev)](../LICENSE)
+[![standard-readme compliant](https://img.shields.io/badge/readme%20style-standard-brightgreen.svg?style=flat)](https://github.com/RichardLitt/standard-readme) [![REUSE status](https://api.reuse.software/badge/github.com/OPEN-NEXT/wp2.2_dev)](https://api.reuse.software/info/github.com/OPEN-NEXT/wp2.2_dev) [![GitHub license](https://img.shields.io/github/license/OPEN-NEXT/wp2.2_dev)](../LICENSE)
 
 Scripts and other files in development for work package 2.2.
 
@@ -87,4 +87,5 @@ This project exists thanks to all the people who contribute.
 ## License
 
 [![GitHub license](https://img.shields.io/github/license/OPEN-NEXT/wp2.2_dev)](../LICENSE)
+
 [GNU AGPLv3 or later](../LICENSE) © 2021 Pen-Yuan Hsing
