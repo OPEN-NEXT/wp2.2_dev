@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2021 Pen-Yuan Hsing
+#
+# SPDX-License-Identifier: CC0-1.0
+
 dash>=1.16.0
 numpy~=1.17.3
 pandas~=0.25.2
