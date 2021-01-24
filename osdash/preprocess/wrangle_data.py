@@ -80,15 +80,41 @@ def get_metrics(mined_data: list) -> dict:
     # and `participants` in a `Ticket`. `explode()` them so that there is a row
     # for each one. Reference: 
     # https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.explode.html
-    repositories = repositories.explode("forks")
-    commits = commits.explode("parents")
-    tickets = tickets.explode("participants")
+    # Also explicity cast column data types with `astype()` including all timestamps as UTC.
+    repositories = repositories.explode("forks").astype({"name": str, 
+                                                         "attributedTo": str, 
+                                                         "published": "datetime64[ns, UTC]",
+                                                         "project": str, 
+                                                         "forkcount": int, 
+                                                         "forks": str,
+                                                         "license": str, 
+                                                         "platform": "category", 
+                                                         "repo_url": str,
+                                                         "last_mined": "datetime64[ns, UTC]"})
+    commits = commits.explode("parents").astype({"repo_name": str, 
+                                                 "repo_url": str, 
+                                                 "committedBy": str, 
+                                                 "committed": "datetime64[ns, UTC]", 
+                                                 "hash": str, 
+                                                 "summary": str,
+                                                 "parents": str,
+                                                 "url": str})
+    tickets = tickets.explode("participants").astype({"repo_name": str,
+                                                      "repo_url": str,
+                                                      "attributedTo": str, 
+                                                      "summary": str, 
+                                                      "published": "datetime64[ns, UTC]",
+                                                      "isResolved": bool, 
+                                                      "resolved": "datetime64[ns, UTC]",
+                                                      "id": str,
+                                                      "participants": str,
+                                                      "url": str})
 
     # Convert timestamps to Pandas format
-    repositories["published"] = pandas.to_datetime(repositories["published"], utc=True)
-    commits["committed"] = pandas.to_datetime(commits["committed"], utc=True)
-    tickets["published"] = pandas.to_datetime(tickets["published"], utc=True)
-    tickets["resolved"] = pandas.to_datetime(tickets["resolved"], utc=True)
+    # repositories["published"] = pandas.to_datetime(repositories["published"], utc=True)
+    # commits["committed"] = pandas.to_datetime(commits["committed"], utc=True)
+    # tickets["published"] = pandas.to_datetime(tickets["published"], utc=True)
+    # tickets["resolved"] = pandas.to_datetime(tickets["resolved"], utc=True)
 
     # 
     # Create user activity histories
@@ -127,7 +153,7 @@ def get_metrics(mined_data: list) -> dict:
                         inplace=True)
     
     # Combine into complete user history
-    user_history: pandas.DataFrame = pandas.concat([user_commits, user_tickets])
+    user_history: pandas.DataFrame = pandas.concat([user_commits, user_tickets]).astype({"activity_type": "category"})
     user_history.sort_values(by=["repo_url", 
                                  "username", 
                                  "activity_type", 
