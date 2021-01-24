@@ -14,18 +14,14 @@ import pathlib
 import sys
 
 # External imports
+import pandas
 
 # Internal imports
-if __name__ == "__main__": 
-    # from preprocess import read_config, stage_data
-    from preprocess import stage_data
-else:
-    # from . preprocess import read_config, stage_data
-    from . preprocess import stage_data
+import preprocess
 
 # Some constants
 
-# Default location to store mined data JSON file
+# Default location for mined data JSON file
 DATA_DIR: str = "./data"
 DATA_FILE: str = "mined_data.zip"
 # Form mined data file path
@@ -41,13 +37,14 @@ def main():
     # Stage data mined from repositories
     #
 
-    staged_data: list = stage_data(str(data_path))
+    staged_data: list = preprocess.stage_data(str(data_path))
 
     #
     # Derive metrics
     # 
 
-    # TODO: Derive metrics
+    # Note: Each item in this dictionary is a Pandas dataframe
+    derived_data: dict = preprocess.get_metrics(staged_data)
 
     #
     # Create Dash app
