@@ -359,10 +359,10 @@ def get_project_data(repo_url: str) -> dict:
         repo_license: str = response["license"]["name"]
     # Record project metadata into a dictionary
     mined_data["Repository"] = {
-        "name": response["title"],
+        "name": repo_url_components["slug"],
         "attributedTo": response["creator"]["username"],
         "published": response["dateCreated"],
-        "project": repo_url_components["space"],
+        "project": "",
         "forkcount": response["forkCount"],
         "forks": [],
         "license": repo_license,
@@ -536,6 +536,7 @@ def Wikifactory(repos: list) -> list:
         if mining_error == False: 
             try:
                 response_data: dict = get_project_data(repo_url=repo_url)
+                response_data["Repository"]["project"] = repo["Repository"]["project"]
                 response_data["Repository"]["last_mined"] = timestamp_now
                 mined_repos.append(response_data)
             except WikifactoryAPIError:
