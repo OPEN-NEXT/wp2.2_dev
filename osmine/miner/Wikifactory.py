@@ -168,6 +168,8 @@ def process_issues(issues: dict, known_issues: list, repo_url: str) -> list:
                 i_resolved_time: str = ""
             else:
                 i_resolved: bool = True
+                # TODO: For now, assume the issue resolved time is `lastActivityAt`, 
+                # need to confirm if this is correct.
                 i_resolved_time: str = edge["node"]["lastActivityAt"]
             # Get participants
             i_participants: list = [edge["node"]["creator"]["username"]]
