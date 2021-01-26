@@ -14,9 +14,13 @@ import pathlib
 import sys
 
 # External imports
-import pandas
+import dash
 
+# Workaround because for some reason internal imports can't be found once the 
+# Dash app starts running:
+sys.path.append(str(pathlib.Path(__file__).parent))
 # Internal imports
+import dash_app
 import preprocess
 
 # Some constants
@@ -27,39 +31,27 @@ DATA_FILE: str = "mined_data.zip"
 # Form mined data file path
 data_path: pathlib.Path = pathlib.Path(DATA_DIR) / pathlib.Path(DATA_FILE)
 
-# High-level `main()` that spells out high-level dashboard logic
-def main():
-    """
-    docstring
-    """
-    
-    #
-    # Stage data mined from repositories
-    #
+#
+# Stage data mined from repositories
+#
 
-    staged_data: list = preprocess.stage_data(str(data_path))
+staged_data: list = preprocess.stage_data(str(data_path))
 
-    #
-    # Derive metrics
-    # 
+#
+# Derive metrics
+# 
 
-    # Note: Each item in this dictionary is a Pandas dataframe
-    derived_data: dict = preprocess.get_metrics(staged_data)
+# Note: Each item in this dictionary is a Pandas dataframe
+derived_data: dict = preprocess.get_metrics(staged_data)
 
-    #
-    # Create Dash app
-    #
+#
+# Create Dash app
+#
 
-    # TODO: Create Dash app
+app: dash.Dash = dash_app.create_app(data=derived_data)
 
+if __name__ == "__main__":
     #
     # Run Dash app server
     #
-
-    # TODO Run app
-
-    print(f"Reached end of dashboard `main()`", file=sys.stderr)
-
-if __name__ == "__main__":
-    main()
-    sys.exit(0)
+    app.run_server(debug=True)
