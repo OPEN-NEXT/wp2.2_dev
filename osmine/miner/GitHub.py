@@ -740,7 +740,7 @@ def GitHub(repos: list, token: str) -> list:
                 "last_mined": timestamp_now
                 }
             if basics["licenseInfo"] is None:
-                mined_repo["Repository"]["license"] = "no LICENSE"
+                mined_repo["Repository"]["license"] = "no-LICENSE"
             elif basics["licenseInfo"]["pseudoLicense"]:
                 mined_repo["Repository"]["license"] = "other"
             else:
