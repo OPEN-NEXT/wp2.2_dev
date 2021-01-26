@@ -54,4 +54,4 @@ if __name__ == "__main__":
     #
     # Run Dash app server
     #
-    app.run_server(debug=True)
+    app.run_server(debug=True, port=21110)
