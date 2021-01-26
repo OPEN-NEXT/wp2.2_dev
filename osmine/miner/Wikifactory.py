@@ -86,6 +86,13 @@ def make_query(query: str):
                     retries += 1
                 else:
                     raise WikifactoryAPIError(f"Retried {retries} times with ConnectionError on last try.")
+            except requests.exceptions.ChunkedEncodingError:
+                if retries < RETRIES: 
+                    print(f"ConnectionError - Retrying in {RETRY_WAIT} seconds.", file=sys.stderr)
+                    time.sleep(RETRY_WAIT)
+                    retries += 1
+                else:
+                    raise WikifactoryAPIError(f"Retried {retries} times with ChunkedEncodingError on last try.")
     else:
         print(f"ERROR: Query does not look like GraphQL...", file=sys.stderr)
         sys.exit(1)
