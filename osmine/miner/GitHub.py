@@ -25,9 +25,9 @@ SUCCESS_CODE: int = 200
 # GitHub API query response codes when retry will be attempted
 RETRY_CODES: list = [429, 500, 502, 503, 504]
 # Initial retry wait time in seconds
-RETRY_WAIT: int = 10
+RETRY_WAIT: int = 15
 # Numbers of times to retry before fail
-RETRIES: int = 5
+RETRIES: int = 7
 # Requested results per page for each API response
 PER_PAGE: int = 100
 # An arbitrarily early "last minted" timestamp if a repository has not been 
