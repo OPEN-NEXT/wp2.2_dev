@@ -355,7 +355,9 @@ def get_project_data(repo_url: str) -> dict:
     #
 
     # Map Wikifactory provided license names to SPDX
-    if response["license"]["abreviation"] in LICENSE_MAP.keys():
+    if response["license"]["abreviation"] is None: 
+        repo_license: str = "no-LICENSE"
+    elif response["license"]["abreviation"] in LICENSE_MAP.keys():
         repo_license: str = LICENSE_MAP[response["license"]["abreviation"]]
     else:
         repo_license: str = response["license"]["name"]
