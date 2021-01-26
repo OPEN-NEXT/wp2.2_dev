@@ -18,7 +18,8 @@ from dateutil import parser
 import networkx as nx
 import pandas as pd
 import numpy as np
-
+import matplotlib as mpl
+import matplotlib.pyplot as plt
 
 # import the necessary custom functions
 try:
@@ -131,73 +132,119 @@ def main():
         # filter by time window 
         ######################################################################################
         # Arbitrary filter after April 2020 / for a test
-        #sorted_commits = sorted_commits[sorted_commits.index > '2020-07']
+        print("Event history started " + sorted_commits.index[0].strftime('%Y/%m/%d'))
+        print("Event history until: " + sorted_commits.index[-1].strftime('%Y/%m/%d'))
+        filtering_mask = None
 
-        ########################################################################################################################################
-        ########################################################################################################################################
-        # buid the commit history based on the previously fetched (flat) list of commits
-        ########################################################################################################################################
-        ########################################################################################################################################
+        sliding_window = {'width': '60d', 'offset': '14d', 'head': sorted_commits.index[0]}
+        while sliding_window['head'] < sorted_commits.index[-1]:
 
-        # recreate the 'network' view in GitHub (repo > insights > network)
-        # network is supposed to be a DAG (directed acyclic graph)
-        commit_history = nx.DiGraph()
-        build_commit_history(sorted_commits['commit_data'].values.tolist(), commit_history)
+            filtering_mask = (
+                (sorted_commits.index > sliding_window['head']) & 
+                (sorted_commits.index < (sliding_window['head'] + pd.Timedelta(sliding_window['width'])))
+            )
+            
+            filtered_commits = sorted_commits.loc[filtering_mask]
 
-        # stringize the non string node attributes not supported by GrapML
-        for node in commit_history.nodes():
-            commit_history.nodes[node]['refs'] = str(
-                commit_history.nodes[node]['refs'])
-            commit_history.nodes[node]['parents'] = str(
-                commit_history.nodes[node]['parents'])
-    
-        # export the file commit history as GraphML
-        output_GraphML = build_export_file_path(
-            os.path.join(configuration["data_dir"], 'commit_histories'), 
-            username + '-' + repo + '.GraphML') 
-        nx.write_graphml(commit_history, output_GraphML)
+            sliding_window['head'] = sliding_window['head'] + pd.Timedelta(sliding_window['offset'])
+            
+            ########################################################################################################################################
+            ########################################################################################################################################
+            # buid the commit history based on the previously fetched (flat) list of commits
+            ########################################################################################################################################
+            ########################################################################################################################################
+            
+            # # recreate the 'network' view in GitHub (repo > insights > network)
+            # # network is supposed to be a DAG (directed acyclic graph)
+            # commit_history = nx.DiGraph()
+            # build_commit_history(filtered_commits['commit_data'].values.tolist(), commit_history)
 
-        ################################################################################################################################################
-        ################################################################################################################################################
-        # build history of file changes based on the previously previously fetched (flat) list of commits
-        ################################################################################################################################################
-        ################################################################################################################################################
+            # # stringize the non string node attributes not supported by GrapML
+            # for node in commit_history.nodes():
+            #     commit_history.nodes[node]['refs'] = str(
+            #         commit_history.nodes[node]['refs'])
+            #     commit_history.nodes[node]['parents'] = str(
+            #         commit_history.nodes[node]['parents'])
+        
+            # # export the file commit history as GraphML
+            # output_GraphML = build_export_file_path(
+            #     os.path.join(configuration["data_dir"], 'commit_histories'), 
+            #     username + '-' + repo + '.GraphML') 
+            # nx.write_graphml(commit_history, output_GraphML)
 
-        # network is supposed to be a DAG (directed acyclic graph)
-        file_change_history = nx.DiGraph() 
-        build_file_change_history(sorted_commits['commit_data'].values.tolist(), file_change_history)
-    
-        # export the file change history as GraphML
-        output_GraphML = build_export_file_path(
-            os.path.join(configuration["data_dir"], 'file_change_histories'), 
-            username + '-' + repo + '.GraphML') 
-        nx.write_graphml(file_change_history, output_GraphML)
+            ################################################################################################################################################
+            ################################################################################################################################################
+            # build history of file changes based on the previously previously fetched (flat) list of commits
+            ################################################################################################################################################
+            ################################################################################################################################################
 
-        ################################################################################################################################################
-        ################################################################################################################################################
-        # build committer graph based on the previously previously generated file change history
-        ################################################################################################################################################
-        ################################################################################################################################################
+            # network is supposed to be a DAG (directed acyclic graph)
+            file_change_history = nx.DiGraph() 
+            build_file_change_history(filtered_commits['commit_data'].values.tolist(), file_change_history)
+        
+            # # export the file change history as GraphML
+            # output_GraphML = build_export_file_path(
+            #     os.path.join(configuration["data_dir"], 'file_change_histories'), 
+            #     username + '-' + repo + '.GraphML') 
+            # nx.write_graphml(file_change_history, output_GraphML)
 
-        committer_graph = nx.MultiDiGraph() 
-        build_committer_graph(file_change_history, committer_graph)
+            ################################################################################################################################################
+            ################################################################################################################################################
+            # build committer graph based on the previously previously generated file change history
+            ################################################################################################################################################
+            ################################################################################################################################################
 
-        # export the file committer graph as GraphML
-        output_GraphML = build_export_file_path(
-            os.path.join(configuration["data_dir"], 'committer_graphs'), 
-            username + '-' + repo + '.GraphML') 
-        nx.write_graphml(committer_graph, output_GraphML)
+            committer_graph = nx.MultiDiGraph() 
+            build_committer_graph(file_change_history, committer_graph)
 
-        JSON_string = json.dumps(nx.node_link_data(committer_graph), sort_keys=True, indent=4)
-        output_JSON = build_export_file_path(
-            os.path.join(configuration["data_dir"], 'committer_graphs'), 
-            username + '-' + repo + '.json') 
-        with open(output_JSON, 'w') as f:
-           f.write(JSON_string)
-        del f
+            # # export the file committer graph as GraphML
+            # output_GraphML = build_export_file_path(
+            #     os.path.join(configuration["data_dir"], 'committer_graphs'), 
+            #     username + '-' + repo + '.GraphML') 
+            # nx.write_graphml(committer_graph, output_GraphML)
 
-        output_VISJS = os.path.join(os.path.join(configuration["data_dir"], 'committer_graphs'), username + '-' + repo + '.html')
-        export_committer_graph(committer_graph, output_VISJS)
+            # JSON_string = json.dumps(nx.node_link_data(committer_graph), sort_keys=True, indent=4)
+            # output_JSON = build_export_file_path(
+            #     os.path.join(configuration["data_dir"], 'committer_graphs'), 
+            #     username + '-' + repo + '.json') 
+            # with open(output_JSON, 'w') as f:
+            #     f.write(JSON_string)
+            # del f
+
+            # output_VISJS = os.path.join(os.path.join(configuration["data_dir"], 'committer_graphs'), username + '-' + repo + '.html')
+            # export_committer_graph(committer_graph, output_VISJS)
+
+            # https://networkx.github.io/documentation/stable/auto_examples/index.html
+
+
+            pos = nx.layout.circular_layout(committer_graph)
+
+            node_sizes = [committer_graph.nodes[x]['weight']*10 for x in committer_graph.nodes]
+            edge_alphas = [committer_graph[x[0]][x[1]][0]['weight'] for x in committer_graph.edges]
+            labels = {}
+            for x in committer_graph.nodes:
+                labels[x] = x.split(' ')[0]
+            
+            M = committer_graph.number_of_edges()
+            edge_colors = range(2, M + 2)
+
+            nx.draw_networkx_nodes(committer_graph, pos, node_size=node_sizes, node_color='#145F64')
+            edges = nx.draw_networkx_edges(committer_graph, pos, node_size=node_sizes, arrowstyle='->', edge_color='#145F64')
+            nx.draw_networkx_labels(committer_graph, pos, labels, font_size=9, alpha=0.5)
+
+            # set alpha value for each edge
+            for i in range(M):
+                #edges[i].set_alpha(1-1/edge_alphas[i])
+                edges[i].set_mutation_scale(edge_alphas[i])
+
+            ax = plt.gca()
+            ax.set_axis_off()
+
+            output_plot = build_export_file_path(
+                os.path.join(configuration["data_dir"], 'committer_graphs'), 
+                username + '-' + repo + '-head' + sliding_window['head'].strftime('%Y-%m-%d') + '.png') 
+            plt.savefig(output_plot)
+            plt.clf()
     
 if __name__ == "__main__":
     main()
