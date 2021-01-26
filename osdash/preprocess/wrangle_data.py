@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 # Python Standard Library imports
-import sys
 
 # External imports
 import pandas
