@@ -15,6 +15,7 @@ import sys
 
 # External imports
 import dash
+import ipywidgets
 
 # Workaround because for some reason internal imports can't be found once the 
 # Dash app starts running:
