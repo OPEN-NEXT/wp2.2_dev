@@ -60,6 +60,8 @@ This documentation aims to demonstrate practices that facilitate design reuse, i
 
 ## Install
 
+*This section assumes basic knowledge of Python and using a terminal session in a GNU/Linux operating system*.
+
 This project requires [Python](https://www.python.org/) 3.8 or later and setting up a Pyenv virtual environment is optional but recommended. Detailed dependencies are listed in the standard [`requirements.txt`](./requirements.txt): 
 
 * `dash>=1.16.0`
@@ -82,6 +84,8 @@ pip install -r requirements.txt
 For production, one could host the code on a Web Server Gateway Interface (WSGI) server such as [Pythonanywhere](https://eu.pythonanywhere.com/) (where [the demo instance](https://psaltyi.pythonanywhere.com/) is hosted). To do so, please follow the instructions [here](https://csyhuang.github.io/2018/06/24/set-up-dash-app-on-pythonanywhere/) where `from dashing_demo_app import app` would be replaced by `from osdash import app`.
 
 ## Usage
+
+*This section assumes basic knowledge of Python and using a terminal session in a GNU/Linux operating system*.
 
 ### `osmine` data-mining module
 
