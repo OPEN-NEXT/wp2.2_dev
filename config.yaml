@@ -4,6 +4,7 @@
 
 # Configuration file for data miner backend
 # Uncommented and customise items to use them
+# All paths are relative to the root of this repository `wp2.2_dev`
 
 # Path to CSV file containing list of repositories to mine
 repo_list: input/OSH-repos.csv
