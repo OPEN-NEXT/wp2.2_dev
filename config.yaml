@@ -3,7 +3,16 @@
 # SPDX-License-Identifier: CC0-1.0
 
 # Configuration file for data miner backend
+# Uncommented and customise items to use them
+
+# Path to CSV file containing list of repositories to mine
 repo_list: input/OSH-repos.csv
+
+# Data directory where data mined by `osmine` is saved
 data_dir: data
-GitHub_token: token
-# create_data_dir: True
+
+# Create 
+#create_data_dir: True
+
+# (optional) Path to file containing GitHub authentication token as a alphanumeric string
+#GitHub_token: token
