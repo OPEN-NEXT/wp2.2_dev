@@ -1,0 +1,19 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: wp2.2_dev
+Upstream-Contact: Pen-Yuan Hsing <https://github.com/penyuan/>
+Source: https://github.com/OPEN-NEXT/wp2.2_dev/
+
+Files:
+    README.md
+    .github/ISSUE_TEMPLATE/bug_report.md
+    docs/images/architecture.drawio.svg
+    docs/images/hover-plot-controls.gif
+Copyright: 2021 Pen-Yuan Hsing
+License: CC-BY-SA-4.0
+
+Files:
+    CODE_OF_CONDUCT.md
+    data/mined_data.zip
+    input/OSH-repos.csv
+Copyright: 2014 Coraline Ada Ehmke
+License: CC-BY-4.0
