@@ -1,7 +1,8 @@
 # OSD status dashboard _(wp2.2_dev)_
 
 [![Live demo link](https://img.shields.io/badge/Demo-CLICK%20HERE-red.svg?style=flat)](https://psaltyi.pythonanywhere.com/)
-[![Python version](https://img.shields.io/badge/Python-3.8-blue.svg?style=flat)](https://www.python.org/)
+[![Python version](https://img.shields.io/badge/Python-3.8-blue.svg?style=flat)](https://docs.python.org/3.8/)
+![Lines of code](https://sloc.xyz/github/OPEN-NEXT/wp2.2_dev)
 [![standard-readme compliant](https://img.shields.io/badge/readme%20style-standard-brightgreen.svg?style=flat)](https://github.com/RichardLitt/standard-readme)
 [![REUSE compliance status](https://api.reuse.software/badge/github.com/OPEN-NEXT/wp2.2_dev)](https://api.reuse.software/info/github.com/OPEN-NEXT/wp2.2_dev)
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](./CODE_OF_CONDUCT.md)
@@ -9,7 +10,7 @@
 
 *Initial proof-of-concept of open source development status dashboard with data-mining & visualisation components*
 
-This repository contains a set of Python scripts and associated files to host a prototype data visualisation dashboard for open source development projects. It is composed of (a) a data-mining Python module (`osmine`) which retrieves publicly-viewable metadata from a user-supplied list of open source version control repositories; and (b) an interactive [Dash](https://dash.plotly.com/)-based web module (`osdash`) that computes and visualises basic metrics on those repositories. Please see [Install](#install) and [Usage](#usage) to get up and running with this tool. Click [**here**](https://psaltyi.pythonanywhere.com/) to access a demo instance of the prototype dashboard.
+This repository contains a set of Python scripts and associated files to host a prototype data visualisation dashboard for open source development projects. It is composed of (a) a data-mining Python module (`osmine`) which mines publicly-viewable metadata from a user-supplied list of open source [version control](https://en.wikipedia.org/wiki/Version_control) repositories; and (b) an interactive [Dash](https://dash.plotly.com/)-based web module (`osdash`) that computes and visualises basic metrics on those repositories. **Please see the [Install](#install) and [Usage](#usage) sections to get up and running with this tool**. Click [**here**](https://psaltyi.pythonanywhere.com/) to access a demo instance of the prototype dashboard.
 
 This work is an *initial* demonstrator delivered at month 18 of the [OPENNEXT](https://opennext.eu/) project as part of task 2.2: "Creating a design process facilitation dashboard". It is to establish the foundational infrastructure on which the ambition to facilitate company-community collaboration on open source hardware projects described [below](#background) can be pursued. Future iterations of this tool should allow the community developing an open source hardware product to track the the health of their project and if their needs are being met.
 
@@ -22,14 +23,14 @@ This work is an *initial* demonstrator delivered at month 18 of the [OPENNEXT](h
   - [Usage](#usage)
     - [`osmine` data-mining module](#osmine-data-mining-module)
     - [`osdash` dashboard module](#osdash-dashboard-module)
-      - [Running the test server](#running-the-test-server)
-      - [User interface of the prototype dashboard](#user-interface-of-the-prototype-dashboard)
   - [Design notes](#design-notes)
-    - [Sequence of execution](#sequence-of-execution)
-      - [ForgeFed field mappings](#forgefed-field-mappings)
-    - [Data-mining considerations](#data-mining-considerations)
-    - [Data visualisation considerations](#data-visualisation-considerations)
+    - [Internal data structure](#internal-data-structure)
+    - [Data-mining](#data-mining)
+    - [Data visualisation](#data-visualisation)
   - [Future work](#future-work)
+    - [Accessing file-change histories](#accessing-file-change-histories)
+    - [Enhanced project health indicators](#enhanced-project-health-indicators)
+    - [Technical improvements](#technical-improvements)
   - [Maintainers](#maintainers)
   - [Contributing](#contributing)
   - [Acknowledgements](#acknowledgements)
@@ -39,50 +40,68 @@ This work is an *initial* demonstrator delivered at month 18 of the [OPENNEXT](h
 
 > Today’s industrial product creation is expensive, risky and unsustainable. At the same time, the process is highly inaccessible to consumers who have very little input in the design and distribution of the finished product. Presently, SMEs and maker communities across Europe are coming together to fundamentally change the way we create, produce, and distribute products.
 
-[OPENNEXT](https://opennext.eu/) is a collaboration between 19 industry and academic partners across Europe. Funded by the European Union's Horizon 2020 programme, this project seeks to enable small and medium enterprises (SMEs) to work with consumers, makers, and other commnities in rethinking how products are designed and produced. [Open source hardware](https://www.oshwa.org/definition/) is a key enabler of this goal where the design of a physical product is released with the permission for anyone to study, modify, share, and redistribute it. These essential freedoms are based on those of [open source software](https://opensource.org/osd), which is itself derived from [free software](https://www.gnu.org/philosophy/free-sw.en.html) where the word free refers to freedom, *not* free-of-charge. When put in practice, these freedoms could potentially not only reduce planned obsolescence, waste, or proprietary vendor lock-in, but also stimulate novel – even disruptive – business models. The SME partners in OPENNEXT are experimenting with producing open source hardware and even opening up the development process to wider community participation. They produce diverse products range from [desks](https://stykka.com/), [cargo bike modules](http://www.xyzcargo.com/), to a [digital scientific instrument platform](https://pslab.io/) (and [more](https://opennext.eu/project-team/#sme)).
+[OPENNEXT](https://opennext.eu/) is a collaboration between 19 industry and academic partners across Europe. Funded by the European Union's Horizon 2020 programme, this project seeks to enable small and medium enterprises (SMEs) to work with consumers, makers, and other communities in rethinking how products are designed and produced. [Open source hardware](https://www.oshwa.org/definition/) is a key enabler of this goal where the design of a physical product is released with the permission for anyone to study, modify, share, and redistribute it. These essential freedoms are based on those of [open source software](https://opensource.org/osd), which is itself derived from [free software](https://www.gnu.org/philosophy/free-sw.en.html) where the word free refers to freedom, *not* free-of-charge. When put in practice, these freedoms could potentially not only reduce planned obsolescence, waste, or proprietary vendor lock-in, but also stimulate novel – even disruptive – business models. The SME partners in OPENNEXT are experimenting with producing open source hardware and even opening up the development process to wider community participation. They produce diverse products ranging from [desks](https://stykka.com/), [cargo bike modules](http://www.xyzcargo.com/), to a [digital scientific instrument platform](https://pslab.io/) (and [more](https://opennext.eu/project-team/#sme)).
 
-Work package 2 of OPENNEXT is gathering theoretical and practical insights on best practices for company-community colloration when developing open source hardware. This includes running Delphi studies to develop a maturity model to describe the collaboration or developing a precise definition for what the "source" in open source hardware. In particular, task 2.2 in this work package is developing a project status dashboard with "health" indicators showing the evolution of a project within the maturity model; design activities; or progress towards success based on project goals.
+Work package 2 of OPENNEXT is gathering theoretical and practical insights on best practices for company-community colloration when developing open source hardware. This includes running Delphi studies to develop a maturity model to describe the collaboration and developing a precise definition for what the "source" is in open source hardware. In particular, task 2.2 in this work package is developing a project status dashboard with "health" indicators showing the evolution of a project within the maturity model; design activities; or progress towards success based on project goals.
 
-To that end, the month 18 deliverable for task 2.2 is focused on developing the underlying infrastructure to mine metadata from version control repositories that open source hardware projects are hosted on (`osmine`). The Python scripts in this repository currently query the public application programming interfaces (APIs) of GitHub and Wikifactory. There is also a user-facing demonstration dashboard (`osdash`) which computes core metrics from the the mined data and present interactive visualisations. Currently, post-month-18 development is envisaged to include, but not limited to: 
+To that end, the month 18 deliverable for task 2.2 is focused on developing the underlying infrastructure to mine metadata from version control repositories that open source hardware projects are hosted on (`osmine`). The Python scripts in this repository currently query the public [application programming interfaces](https://en.wikipedia.org/wiki/API) (APIs) of [GitHub](https://www.github.com/) and [Wikifactory](https://www.wikifactory.com/). Both host version control repositories with the latter having a focus on supporting open source hardware projects. There is also a user-facing demonstration dashboard (`osdash`) which computes core metrics from the the mined data and presents interactive visualisations. Currently, post-month-18 development is envisaged to include, but not limited to: 
 
-* Modules to query other platforms such as GitLab or generic Git repositories;
+* Modules to query other platforms such as [GitLab](https://gitlab.com/) or generic Git repositories;
 * Logging
 * Network visualisations of file co-edition histories and participation in tickets (e.g. GitHub Issues) with cluster analyses
 * Compute indicators for the dashboard derived from the company-community collaboration community model under development
 * Validate with OPENNEXT SME partners
 
-This documentation aims to demonstrate practices that facilitate design reuse, including of this repository. In addition to the [Install](#install) and [Usage](#usage) sections that increase reproducibility, [Design notes](#design-notes) and [Future work](#future-work) communicate the thought process and lessons-learned while developing the dashboard. Together, they constitute an intangible body of "know-how" that is very often undocumented. In addition, this repository aims to follow international standards and good practices in open source development such as: 
+This documentation aims to demonstrate practices that facilitate design reuse, including of this repository. In addition to the [Install](#install) and [Usage](#usage) sections that increase reproducibility, [Design notes](#design-notes) and [Future work](#future-work) communicate the thought process and lessons-learned while developing the dashboard. Together, they constitute an intangible body of "know-how" that is very often undocumented. For example, the approach to compressing data a the end of the section [Internal data structure](#internal-data-structure) which reduces disk usage is of practical benefit. But "snippets" of practical experience like this are seldom recorded.
 
-* SDPX compliance with a [LICENSE](./LICENSE) file (also see [License](#license) section)
-* REUSE compliance with appropriate machine-readable SPDX metadata for all files
-* README file conforming to the [Standard Readme specification](https://github.com/RichardLitt/standard-readme)
-* Contributor Covenant Code of Conduct
+In addition, this repository aims to follow international standards and good practices in open source development such as, but not limited to: 
+
+* [SDPX](https://chaoss.community/) compliance with a [LICENSE](./LICENSE) file (also see [License](#license) section)
+* [REUSE](https://reuse.software/) compliance with appropriate machine-readable SPDX metadata for all files
+* README file (this document) conforming to the [Standard Readme Specification](https://github.com/RichardLitt/standard-readme)
+* [Contributor Covenant](https://www.contributor-covenant.org/) Code of Conduct
 * [CONTRIBUTING](./CONTRIBUTING.md) document outlining ways to contribute to this repository
+* Naming the primary branch of this repository `main` instead of `master` following [modern best practices](https://github.blog/changelog/2020-10-01-the-default-branch-for-newly-created-repositories-is-now-main/)
 
 ## Install
 
-*This section assumes basic knowledge of Python and using a terminal session in a GNU/Linux operating system*.
+*This section assumes basic knowledge of Python and using a GNU/Linux operating system including installing software and running a terminal session*.
 
-This project requires [Python](https://www.python.org/) 3.8 or later and setting up a [virtual environment](https://docs.python.org/3/tutorial/venv.html) is optional but recommended. Detailed dependencies are listed in the standard [`requirements.txt`](./requirements.txt): 
+This project requires [Python](https://www.python.org/) 3.8 or later and setting up a [virtual environment](https://docs.python.org/3.8/tutorial/venv.html) is optional but recommended. Detailed external library dependencies are listed in the standard-conformant [`requirements.txt`](./requirements.txt): 
 
-* `dash>=1.16.0`
-* `dash-bootstrap-components>=0.11.1`
-* `numpy~=1.17.3`
-* `pandas~=0.25.2`
-* `plotly>=4.10.0`
-* `PyYAML~=5.1.2`
-* `requests~=2.22.0`
+* [`dash>=1.16.0`](https://pypi.org/project/dash/)
+* [`dash-bootstrap-components>=0.11.1`](https://pypi.org/project/dash-bootstrap-components/)
+* [`numpy~=1.17.3`](https://pypi.org/project/numpy/)
+* [`pandas~=0.25.2`](https://pypi.org/project/pandas/)
+* [`plotly>=4.10.0`](https://pypi.org/project/plotly/)
+* [`PyYAML~=5.1.2`](https://pypi.org/project/pyyaml/)
+* [`requests~=2.22.0`](https://pypi.org/project/requests/)
+
+In addition to Python and the dependencies listed above, the following programs must be installed and accessible from the command line: 
+
+* [`git`](https://git-scm.com/) (version 2.7.4 or later)
+* [`pip`](https://pip.pypa.io/) (version 19.3.1 or later)
 
 A [GitHub personal access token](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token) is required because the Python scripts will use it for GitHub API queries. Future versions may make this optional if none of the repositories passed to the data-miner and dashboard are hosted on GitHub.
 
-Currently, the code is set up to be run from source and has been tested on updated versions of GNU/Linux operating systems including [Red Hat Enterprise Linux](https://redhat.com/en/technologies/linux-platforms/enterprise-linux) 8.3 and [Debian](https://www.debian.org/) 10. With the tools [`git`](https://git-scm.com/) and [`pip`](https://pip.pypa.io/) installed, the following commands will retrieve the latest version of this repository and prepare it for development and running locally (usually for testing): 
+Currently, the code is set up to be run from source and has been tested on updated versions of GNU/Linux operating systems including [Red Hat Enterprise Linux](https://redhat.com/en/technologies/linux-platforms/enterprise-linux) 8.3 and [Debian](https://www.debian.org/) 10. While effort has been made to keep the Python scripts platform-agnostic, they have not been tested under other operating systems such as [BSD](https://en.wikipedia.org/wiki/Berkeley_Software_Distribution)-derivatives, [Apple macOS](https://www.apple.com/macos/) or [Microsoft Windows](https://www.microsoft.com/windows/). Viewing and interacting with the user-facing dashboard has been tested with [Mozilla Firefox](https://www.mozilla.org/firefox/) 85.
+
+With the tools [`git`](https://git-scm.com/) and [`pip`](https://pip.pypa.io/) installed, run the following commands in a terminal session to retrieve the latest version of this repository and prepare it for development and running locally (usually for testing): 
 
 ```sh
 git clone https://github.com/OPEN-NEXT/wp2.2_dev.git
 pip install -r requirements.txt
 ```
 
-For production, one could host the code on a Web Server Gateway Interface (WSGI) server such as [Pythonanywhere](https://eu.pythonanywhere.com/) (where [the demo instance](https://psaltyi.pythonanywhere.com/) is hosted). To do so, please follow the instructions [here](https://csyhuang.github.io/2018/06/24/set-up-dash-app-on-pythonanywhere/) where `from dashing_demo_app import app` would be replaced by `from osdash import app`.
+The [`git`](https://git-scm.com/) command downloads the files in this repository onto your local system, and [`pip`](https://pip.pypa.io/) installs the Python packages listed in [`requirements.txt`](./requirements.txt) required for `osmine` and `osdash` to work.
+
+For production, one could run the code on a self-hosted [Web Server Gateway Interface (WSGI)](https://docs.python.org/3/library/wsgiref.html) server. Setting up a WSGI server is beyond the scope of this documentation, but it may be easier use a pre-configured WSGI instance such as on platforms like [Pythonanywhere](https://eu.pythonanywhere.com/) (where [the demo instance](https://psaltyi.pythonanywhere.com/) is hosted). To do so, please follow the instructions [here](https://csyhuang.github.io/2018/06/24/set-up-dash-app-on-pythonanywhere/) where `from dashing_demo_app import app` would be replaced by `from osdash import app`.
+
+**Optional:** Configure the port at which the dashboard can be accessed in testing mode. This is done by modifying the the last line of `osdash/__main__.py`:
+```python
+app.run_server(debug=True, port=[port number])
+```
+where `[port number]` can be any integer of your choice. The default has been arbitrarily set to `21110`.
 
 ## Usage
 
@@ -94,162 +113,217 @@ After following the steps in the [Install](#install) section, change directories
 cd wp2.2_dev
 ```
 
+All paths used in the rest of this document are relative to the `wp2.2_dev` base directory.
+
 ### `osmine` data-mining module
 
-Command line arguments.
+This module should be run first to produce the dataset for the `osdash` dashboard to visualise. The following is the typical sequence of execution:
 
-Github API personal access token file:
+1. Prepare list of repositories to mine.
+   
+    Currently, only GitHub repositories and Wikifactory projects are supported. The list must be saved in a [comma-separated values](https://tools.ietf.org/html/rfc4180) (CSV) file with the following named columns: 
+    
+    * `project` - Name of the project that this repository belongs to. This is to accomodate situations where an open source project with work split among multiple repositories.
+    * `repo_url` - Fully qualified [universal resource locator](https://en.wikipedia.org/wiki/URL) (URL) of the repository starting with `https://`. Example valid URLs for GitHub and Wikifactory repository URLs are `https://github.com/octocat/Hello-World/` and `https://wikifactory.com/+elektrictube/pikon-telescope`. Note: Wikifactory URLs could have custom domains and not be `wikifactory.com`. This will not by itself trigger errors in `osmine`.
+    * `repo_platform` - One of `GitHub` or `Wikifactory` (case-sensitive). This tells which APIs to use when querying repository metadata.
+    * `notes` - This is ignored by the script and is for your own notes.
 
-* A two-line file with any name, but placed besides `start.py`.
-* First line is username
-* Second line is the token string
+    An example CSV list is included with this repository in [`input/OSH-repos.csv`](./input/OSH-repos.csv) and can be used out-of-the-box. This list was used to obtain the data visualised in the dashboard [demo instance](https://psaltyi.pythonanywhere.com/).
 
-Configuration file.
+2. Obtain a [GitHub personal access token](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token), which is a 40-character alphanumeric string in the form of `22x9w3npi629wgam5s6xxxen5abrozeb3db2mr42`. A GitHub account is required for this step. This token can be fed to `osmine` as: The environmental variable `GITHUB_TOKEN`; a path to a one-line pure-text file containing the string as a command line argument (see step 4); or directly in the configuration file (see step 3.).
 
-Mined data will be in `data`. It *could* be viewed by extracting it from the zip file.
+3. Set up configuration file.
+  
+    The configuration file is formatted in [YAML](https://yaml.org/) and a commented example is provided in [`config.yaml`](./config.yaml). The same options can also be provided as command line arguments when running `osmine`. The most important piece of information is the path to a CSV file from step 1. For example, the path to the example list included with this repository would be `input/OSH-repos.csv`. The path to a file containing the GitHub access token can also be specified here.
+
+4. Run `osmine` to query GitHub and Wikifactory APIs for repository metadata.
+   
+    The basic command to run in a terminal session is: 
+
+    ```sh
+    python osmine
+    ```
+
+    Unless provided elsewhere, these two command line arguments are the most important: `-t` - path to file containing GitHub access token; `-r` - path to CSV file containing list of repositories to query. Here is a full example assuming the a pure-text file `token` containing the GitHub token has been placed in the base directory of `wp2.2_dev`: 
+
+    ```sh
+    python osmine -t=./token -r=./input/OSH-repos.csv
+    ```
+
+5. The `osmine` module will preprocess inputs provided in the steps above and existing data using this logic: 
+
+    1. Read CSV list of repositories to query.
+    2. Check if `osmine` has been run before and previously mined data has been saved.
+    3. If there is past data, compare it against CSV list and determine the timestamp of when each repository was last mined. Note: If there is a new repository in the CSV list that has not be mined before (no past data), then its "last mined" timestamp will be set to the beginning of the [UNIX epoch](https://en.wikipedia.org/wiki/Unix_time) (00:00:00 UTC on 1st January 1970), long before version control software is known to exist.
+
+6. The `osmine` module will run, using the GitHub and Wikifactory APIs to query the provided list of repositories. At time of writing, the GitHub API allows filtering results by time to reduce network usage. `osmine` will use the "last mined" timestamp described above to only query for data after that timestamp and append the results to previously saved data.
+
+7. Once data-mining is complete, the results will be saved in a [JSON](https://www.json.org/json-en.html) file with 4-spaces indentation (`mined_data.json`) contained in a compressed archive `data/mined_data.zip`. Currently this behaviour is hard-coded in the Python script `osmine/postprocess/exporter.py`.
+
+If no visualisation is needed, there is no need to run anything else. The mined data file `data/mined_data.zip` can be used in other applications. See [Design notes](#design-notes) section on how the data file is structured.
 
 ### `osdash` dashboard module
 
-The `osmine` data-mining module must first be run at least once so that there is data for the dashboard to visualise.
+The `osmine` data-mining module must be run at least once – with `data/mined_data.zip` in place – so that there is data for the `osdash` dashboard to visualise.
 
-#### Running the test server
+Alternatively, if you want to only test `osdash` without running `osmine` first, there is already an example `data/mined_data.zip` in this repository with data mined from the example list `input/OSH-repos.csv`.
 
-The test server can be accessed in a web browser at 127.0.0.1:[`port`] where `port` can be specified in the function app.serve() in `osdash\__main__.py`.
+The following steps will start a local test instance of the dashboard:
 
-#### User interface of the prototype dashboard
+1. Run the following command to start the dashboard: 
 
-Explain UI usage.
+    ```sh
+    python osdash
+    ```
 
-Can be embedded in other pages with `iframe`s.
+    This will start the test server using mined-data from `osmine` saved in `data/mined_data.zip`. The initialisation process will take at least several seconds.
+
+2. Unless the default port number was changed (see [Install](#install) section), open the dashboard's URL in a web browser such as [Mozilla Firefox](https://www.mozilla.org/firefox/): 
+   
+   `http://127.0.0.1:21110` (no `https://` in this case)
+
+   Replace `21110` with another number if you changed the port. After a few seconds, the dashboard should be visible in your browser window.
+
+3. There should already be statistics shown for a repository. If the example `input/OSH-list.csv` was used by `osmine`, then the dashboard should be showing information on the [Airpup](https://github.com/mathewlippincott/airpup-balloon) open source hardware aerial sensing platform.
+
+4. The left side of the page is a sidebar for configuring which repository's information to show. Follow the numbered steps in order to customise the view.
+
+5. In this proof-of-concept version of the dashboard, the timespan slider in the sidebar will constrain the data shown in the repository view to the right. This view has three components: 
+   
+   * Basic information about the *cumulative* number of commits, tickets (opened and closed), and contributors in the repository until the end time specified by the timespan slider.
+   * An interactive plot of the number of commits per month in this repository. The interactive elements will appear after hovering the mouse cursor over the top of the plot: 
+
+   ![GIF of Plotly interaction buttons](./docs/images/hover-plot-controls.gif)
+   
+   * A table showing the list of users who have contributed to this repository including their number of commits and the tickets they have participated in. Participation can be either opening or commenting on a ticket.
+
+6. (*optional*) If `osdash` is running on a publicly-accessible WSGI server over the Internet (see [Install](#install) section) instead of a local test instance, the dashboard could be embedded into generic [HTML](https://html.spec.whatwg.org/multipage/) web pages with the [`iframe`](https://html.spec.whatwg.org/multipage/iframe-embed-object.html#the-iframe-element) element. Details are beyond the scope of this document, but the `iframe` element would looke like: 
+    ```html
+    <iframe src="[url]">
+    ```
+    where `[url]` is the publicly accessible URL at which the dashboard is hosted.
 
 ## Design notes
 
-### Sequence of execution
+The essential sequence of operation for `osmine` and `osdash` has been described in the [Usage](#usage) section. The rest of this section describes the thought-process and decisions made when developing key components of this program.
 
-The data-mining module `osmine` is always expected to be run first to produce a dataset for the user-facing dashboard `osdash` to visualise. The following is the general order of events after running the command `python osmine`: 
-
-1. Configuration options (see [Usage](#usage)) are read by the script `prepreprocess.read_config.py` to parameterise the behaviour of `osmine`.
-2. A comma separated values (CSV) formatted list of version control repositories is read 
-
-The following is a high-level diagram of the dashboard with its main data-mining backend (`osmine`) and user-facing Dash visualisation frontend (`osdash`).
+The following is a high-level architecture diagram of the key components of `wp2.2_dev`: 
 
 ![Dashboard architecture diagram](./docs/images/architecture.drawio.svg)
 
+### Internal data structure
+
+The GitHub and Wikifactory APIs respond to queries with JSON formatted data. However, the data fields and how they are structured differ between the two platforms. To standardise the internal data structure used by `osmine` and `osdash` in a non-arbitrary way, the ForgeFed data model was used as a starting point. [ForgeFed](https://forgefed.peers.community/) is a new "[federation](https://en.wikipedia.org/wiki/Federation_(information_technology)) protocol for enabling interoperability between version control services". Relevant to the work in this repository is the standard [ForgeFed data model](https://forgefed.peers.community/modeling.html) that describes the essential elements of a version control repository. This includes: 
+
+* `Repository` - Basic information about the whole repository.
+* `Branch` - A named reference to a point along a version-controlled repository's revision history. In practice, this allows developers to work on different parts of a complex software project which can later be "[merged](https://git-scm.com/book/en/v2/Git-Branching-Basic-Branching-and-Merging)" into a primary branch.
+* `Commit` - The fundamental unit representing every change that is tracked in a repository's revision history.
+* `Ticket` - Discussion topics related to the repository, known as "Issues" in GitHub and Wikifactory.
+
+API query results from GitHub and Wikifactory are mapped into an internal data structure that matches the ForgeFed data model as closely as possible. For our purposes, additional fields not defined by ForgeFed were added such as one for recording the last time a repository was mined by `osmine` (introduced above). While `osmine` and `osdash` are running, this internal data is contained in a Python `list` object where each list item contains the following components described in [YAML](https://www.yaml.org/)-formatted schema: 
+
+```yaml
+Repository:              # dict
+  - name: str            # GitHub repository name i.e. the name part of owner/name in URL; Wikifactory project name from URL project name slug
+  - attributedTo: str    # GitHub owner name in owner/namer in URL; Wikifactory project creator username (* because ForgeFed wants this to be URI or mailtoURI as email address)
+  - published: str       # GitHub repository's dateCreated; Wikifactory project's dateCreated
+  - project: str         # (*) The project that this repository belongs to, e.g. multiple GitHub repositories belong to the Pocket Science Lab project
+  - forkcount: int       # (*) GitHub provides this number directly; Wikifactory 0 for now
+  - forks: list          # (*) GitHub list of forks URLs; Wikifactory null for now
+  - license: str         # (*) GitHub provides this directly; Wikifactory might need mapping to SPDX string, need to check
+  - platform: str        # (*) "GitHub" or "Wikifactory"
+  - repo_url: str        # (*) This string should match what's in the repository list URLs
+  - last_mined: str      # (*) ISO 8601 this is saved each time the repository is successfully mined
+Branches:                # list
+  - Branch:              # dict
+    - name: str          # Straightforward for GitHub, null for Wikifactory for now
+Commits:                 # list
+  - Commit:              # dict
+    - committedBy: str   # GitHub author user name and Wikifactory creator user name (* because ForgeFed wants this to be URI or mailtoURI as email address)
+    - committed: str     # ISO 8601 GitHub authored time and Wikifactory dateCreated
+    - hash: str          # GitHub commit hash; Wikifactory contribution id
+    - summary: str       # GitHub one-line title; Wikifactory contribution title
+    - parents: list      # (*) GitHub normally one or two hashes; Wikifactory always seems to be one id since there are no branches to merge for now
+    - url: list          # (*) GitHub and Wikifactory URLs to commit. GitHub gives this directly; for Wikifactory you need to construct this from project URL and contribution slug.
+Tickets:                 # list
+  - Ticket:              # dict
+    - attributedTo: str  # GitHub and Wikifactory user name (* because ForgeFed wants this to be URI or mailtoURI as email address)
+    - summary: str       # GitHub title and Wikifactory title
+    - published: str     # ISO 8601 GitHub publishedAt and Wikifactory dateCreated
+    - isResolved: bool   # True/False from GitHub closed and Wikifactory
+    - resolved: str      # ISO 8601 GitHub closedAt and Wikifactory empty string if not resolved, lastActivityAt if resolved (need to check if lastActivityAt matches actual resolve timestamp)
+    - id: str            # (*) GitHub issue number and Wikifactory issue id
+    - participants: list # (*) List of strings of user names of anyone who has participated in this issue. Right now this probably means just commentors plus the original creator. (e.g. `creator` and `commentor` `username`s in Wikifactory API)
+    - url: str           # (*) URL to issue. GitHub's API gives this directly, for Wikifactory will need project URL plus issue slug.
 ```
-.
-├── config.yaml
-├── data
-│   └── mined_data.zip
-├── docs
-├── input
-│   └── OSH-repos.csv
-├── LICENSE
-├── osdash
-│   ├── __init__.py
-│   ├── __main__.py
-│   ├── dash_app.py
-│   ├── assets
-│   │   └── css
-│   │       └── bootstrap.min.css
-│   └── preprocess
-│       ├── __init__.py
-│       ├── stage_data.py
-│       └── wrangle_data.py
-├── osmine
-│   ├── __main__.py
-│   ├── miner
-│   │   ├── GitHub.py
-│   │   ├── __init__.py
-│   │   ├── mine.py
-│   │   └── Wikifactory.py
-│   ├── postprocess
-│   │   ├── exporter.py
-│   │   └── __init__.py
-│   └── preprocess
-│       ├── __init__.py
-│       ├── past_data.py
-│       ├── read_config.py
-│       ├── read_mining_list.py
-│       └── stage_data.py
-├── README.md
-└── requirements.txt
-```
 
-#### ForgeFed field mappings
+The schema above includes the Python data type for each field (i.e. `dict`, `list`, `int`, `str`, `bool`) with comments (denoted by `#`) explaining how it maps to data returned by the GitHub and Wikifactory APIs (`(*)` denotes a data field not in the standard ForgeFed data model).
 
-Highest level is a Python dictionary with the following keys (those with "*" are not part of or deviate from ForgeFed model): 
+This data is exported at the end of `osmine`'s execution into a JSON file (`mined_data.json`) that is subsequently compressed into an archive (`data/mined_data.zip`) using compression level 9 of the [DEFLATE](https://docs.python.org/3.8/library/zipfile.html#zipfile.ZIP_DEFLATED) algorithm as implemented by Python 3.8's internal [`zipfile`](https://docs.python.org/3.8/library/zipfile.html) module. The [`zipfile`](https://docs.python.org/3.8/library/zipfile.html) module was chosen because it allows creating the JSON file *and* compressing it into the archive in one disk operation. This reduces disk usage when compared to saving a JSON file to disk, compressing it into a separate compressed archive, then deleting the original JSON file (three disk read/write operations).
 
-* Repository (dictionary)
-  * name (string) - GitHub repository name i.e. the name part of owner/name in URL; Wikifactory project name from URL project name slug
-  * attributedTo (string) - GitHub owner name in owner/namer in URL; Wikifactory project creator username (* because ForgeFed wants this to be URI or mailtoURI as email address)
-  * published (ISO 8601 string) - GitHub repository's dateCreated; Wikifactory project's dateCreated
-  * project* (string) - The project that this repository belongs to, e.g. multiple GitHub repositories belong to the Pocket Science Lab project
-  * forkcount* (integer) - GitHub provides this number directly; Wikifactory 0 for now
-  * forks* (list?) - GitHub list of forks URLs; Wikifactory null for now
-  * license* (SPDX string) - GitHub provides this directly; Wikifactory might need mapping to SPDX string, need to check
-  * platform* (string) - "GitHub" or "Wikifactory"
-  * repo_url* (string) - This string should match what's in the repository list URLs
-  * last_mined* (ISO 8601 string) - this is saved each time the repository is successfully mined
-* Branches (list)
-  * Branch (dictionary)
-    * name (string) - Straightforward for GitHub, null for Wikifactory for now
-* Commits (list)
-  * Commit (dictionary)
-    * committedBy (string) - GitHub author user name and Wikifactory creator user name (* because ForgeFed wants this to be URI or mailtoURI as email address)
-    * committed (ISO 8601 string) - GitHub authored time and Wikifactory dateCreated
-    * hash (string) - GitHub commit hash; Wikifactory contribution id
-    * summary (string) - GitHub one-line title; Wikifactory contribution title
-    * parents* (list) - GitHub normally one or two hashes; Wikifactory always seems to be one id since there are no branches to merge for now
-    * url* (string) - GitHub and Wikifactory URLs to commit. GitHub gives this directly; for Wikifactory you need to construct this from project URL and contribution slug.
-* Tickets (list)
-  * Ticket (dictionary)
-    * attributedTo (string) - GitHub and Wikifactory user name (* because ForgeFed wants this to be URI or mailtoURI as email address)
-    * summary (string) - GitHub title and Wikifactory title
-    * published (ISO 8601 string) - GitHub publishedAt and Wikifactory dateCreated
-    * isResolved (boolean) - True/False from GitHub closed and Wikifactory
-    * resolved (ISO 8601 string) - GitHub closedAt and Wikifactory empty string if not resolved, lastActivityAt if resolved (need to check if lastActivityAt matches actual resolve timestamp)
-    * id* (string) - GitHub issue number and Wikifactory issue id
-    * participants* (list) - List of strings of user names of anyone who has participated in this issue. Right now this probably means just commentors plus the original creator. (e.g. `creator` and `commentor` `username`s in Wikifactory API)
-    * url* (string) - URL to issue. GitHub's API gives this directly, for Wikifactory will need project URL plus issue slug.
+The dashboard module `osdash` reads the data file and computes the metrics and visualisations as described in the [Usage](#usage) section.
 
+### Data-mining
 
-### Data-mining considerations
+One way to mine data from a version control repository is to download it directly. However, some repositories, especially those developing open source hardware with binary format computer-aided design (CAD) files, can take up hundreds of megabytes. This will substantially increase the time and storage space needed when mining many repositories to the point of being impractical.
 
-Users requests library for API calls to prevent cloning Git repository locally. For Wikifactory there isn't anything other than the API anyway.
+The solution implemented in `osmine` is to use the Python [`requests`](https://requests.readthedocs.io/) library to query APIs provided by GitHub and Wikifactory. Queries are essentially text strings written in the [GraphQL](https://graphql.org/) langauge which allow highly granular requests for data. For example, a GraphQL query may request the username of the person who made a particular commit to a certain repository. In contrast, previous-generation [representational state transfer](https://en.wikipedia.org/wiki/Representational_state_transfer) (REST) queries are less expressive, and obtaining that username may require a query for *all* metadata for a commit including its creation time, summary test, URL, and other information. Fortunately, the latest versions of the GitHub and Wikifactory APIs support GraphQL queries making the data-mining task performed by `osmine` more time and network-bandwidth efficient. Since these queries only request *metadata*, the large downloads associated with downloading whole repositories are avoided.
 
-[brief history investigating how to do this and settling on just using requests library and Dash for visualisations]
+One design goal of `osmine` is modularity in the supported version control platforms. For example, the main data-mining script `osmine/miner/mine.py` calls separate scripts for GitHub (`osmine/miner/GitHub.py`) and Wikifactory (`osmine/miner/Wikifactory.py`) then combines the data before it is saved by the export script (`osmine/postprocess/exporter.py`). The hope is that support for other platforms such as GitLab or generic Git repositories can be added by adding scripts specific to them under `osmine/miner`. This will reduce duplication of code and increase the maintainability of the codebase.
 
-GitHub v3 vs v4 API thoughts.
+### Data visualisation
 
-Uses DEFLATE algorithm as implemented by the `zipfile` module in Python 3.8 set to compression level 9.
+The most widely used Python scientific plotting libraries such as [Matplotlib](https://matplotlib.org/) are focused on producing static images for offline viewing. By design, the `osdash` dashboard is to be delivered online with interactive and dynamic data visualisations. To that end, we decided to utilise the [Dash](https://dash.plotly.com/) framework which was created for building "web analytic applications". Dash allows the creation of web applications with complex, dynamic, and interactive data visualisations arranged on a unified canvas using Python. These tasks were traditionally done with web-focused programming languages such as HTML, [CSS](https://www.w3.org/Style/CSS/), or [Javascript](https://en.wikipedia.org/wiki/JavaScript). Dash allowed us to conduct all development in Python, the only language we are familiar with, thereby saving substantial time and effort. Other benefits of Dash are its maturity, active development, and strong community support.
 
-### Data visualisation considerations
+Notably, a live Dash web app automatically reloads when the underlying Python code is changed. This saves time during development since we can edit the code of the `osdash` module and changes are immediately reflected in the web browser. Lastly, the Dash framework is a piece of commercially successful open source software. This aligns with the theme of OPENNEXT which is to study models of commercially-produced open source hardware.
+
+There is no strict limitation on where Dash web apps can be hosted. However, since the [demo instance](https://psaltyi.pythonanywhere.com/) of the `osdash` module is currently hosted on [Pythonanywhere](https://eu.pythonanywhere.com/), the version numbers of the dependencies for this repository listed in [`requirements.txt`](./requirements.txt) are based on [those offered](https://eu.pythonanywhere.com/batteries_included/) by their default Python 3.8 environment.
 
 ## Future work
 
-Connect with Wikibase or whatever it ends up being.
+### Accessing file-change histories
 
-Need file change histories for repositories, looks like we will need to download at least partial Git repos to get this with libraries like pydriller.
+In a typical version control system such as [Git](https://git-scm.com/) (on which GitHub is based), the metadata of a commit includes the author and a list of files that were changed. This crucial piece of data allows us to construct not only the complete file-change history of a repository, but also  file co-edition graphs using authorship data. Nodes in such a graph would be those who have made a commit and edges between two nodes would be formed if they have committed changes to the same files. And since each commit also has a timestamp, we could observe how the structure of the graph changed over time and perform clustering or modularity analyses to quantify that evolution. We hypothesise that the evolution of such a graph would reflect changes in a repository's developer community over time.
 
-Ideas for constructing file, ticket, and file/ticket networks to look at product and community architecture.
+A major barrier to building a repository's file-change history is that while the current GitHub GraphQL API allows requesting the *list* of commits that have been made in a repository, there is no way to retrieve the list of files that were changed in *individual* commits. To obtain that information, we need to query *each* commit in a repository with GitHub's older REST API. Since each repository could have hundreds, sometimes thousands, of commits, and that we would like to study the file-change histories of many repositories (possibly hundreds), the number of API queries would increase exponentially with the number of repositories. This is impractical not only because of how much time the API queries would take, but also that GitHub caps the number of API requests allowed from the same source every hour. One solution is to download a copy of the entire repository and directly access its commit history. However, as previously discussed, this is also time-consuming and takes up substantial storage.
 
-Based on file metadata, derive the skills that have been used in a repository (hardware design e.g. use of OpenSCAD, programming with Python (or even more specific like Python frontend development with Flask?)), and allow repositories to express what skills they are looking for, so something in the dashboard like: "Skills used", "Skills wanted", etc.
+To our knowledge, the most promising solution at time of writing is to use Git's [internal transfer protocols](https://git-scm.com/book/en/v2/Git-Internals-Transfer-Protocols) to request metadata. These protocols allow low-level access to the "behind the scenes" mechanisms of a Git repository and bypass the limitations of GitHub's high-level (albeit easier to use) API. Since every GitHub repository is also a valid Git repository, communicating with it via the Git internal transfer protocols will likely allow granular access to specific pieces of metadata (such as the files changes in a commit) without the overheads described above. This is an advanced and complex technique but worth further investigation.
 
-Badges for the above?
+It should also be noted that a graph of community interactions need not be solely based on file co-edition histories. Since we also mine data on tickets (i.e. GitHub and Wikifactory issues), these interactions can also form edges in the graph. Including these activites could form a more complete representation of community structure.
 
-Better connect with SMEs who are going through the user journey.
+In addition, the Dash framework includes components (such as [Cytoscape](https://dash.plotly.com/cytoscape)) for visualising and interacting with network graphs. This was an important factor when we chose Dash as the basis of our `osdash` dashboard module.
 
-On technical side, proper logging and testing would be ideal but challenging. At least try to support generic Git repositories.
+### Enhanced project health indicators
 
-If resources permit, unit testing will be incorporated into all Python code.
+After month 18, we hope to gather feedback from the OPENNEXT SMEs producing open source hardware on which indicators they believe would aid their development process. Certain indicators may require development of methods to acquire deeper insights from repository metadata. For example, by studying the evolution of a large number of open source hardware repositories, we might see typical structures that reflect different stages of development. This could be used to derive a "project stage" indicator showing if a project is in the ideation, prototyping, or production stages.
 
-Improve documentation through extensive code comments and reaching level four or five in the [README Maturity Model](https://github.com/LappleApple/feedmereadmes/blob/master/README-maturity-model.md#level-five-product-oriented-readme).
+Additionally, the maturity model under development by OPENNEXT work package 2 will also be useful in creating indicators reflecting different stages in the model. More study is needed to ascertain whether repository metadata is sufficient for deriving those indicators.
+
+Alternatively, by parsing the types of files in a repository, we may infer the skills needed to contribute to a project. For example, the presence of [STL](https://en.wikipedia.org/wiki/STL_(file_format)) files in a repository might imply the use of 3D printing skills.
+
+There could also be indicators that require self-reporting. While existing files may represent the skills used to take a repository to its current state, a project could flag other skills needed for further development. By displaying such a "skills needed" indicator in the dashboard, prospective contributors can better understand which projects need their help and which one(s) to join.
+
+### Technical improvements
+
+Task 3.3 in the OPENNEXT project is deploying a [Wikibase](https://www.wikiba.se/) graph database to record metadata on open source hardware products. This database will implement a new, standardised data model – partially derived from the [Open Know-How Manifest specification](https://app.standardsrepo.com/MakerNetAlliance/OpenKnowHow/src/branch/master/1) – for describing all aspects of a product such as its bill of materials (BOM) or manufacturing information (e.g. materials, production method). We plan to collaborate with task 3.3 by contributing our data-mining efforts while benefitting from the web hosting that they will set up. If `osdash` can be hosted with the Wikibase instance, then we can replace the current Pythonanywhere hosting which is running on a low-performance plan.
+
+As noted above, `osmine` saves the timestamp of when each repository was mined. During development, it was realised that since it can take several minutes to mine a repository, it is conceivable that new commits or tickets were added during that time. Therefore, the "last mined" timestamp is currently set to end of the mining process. This would avoid future runs of `osmine` to retrieve data that have previously been saved. However, if new commits or tickets are indeed created when mining, then they will be missed in future runs. To solve this, an upcoming revision of `osmine` will set the "last mined" timestamp to the beginning of the run and check for duplicated results against previously saved data.
+
+Other technical improves may include, but are not limited to: 
+
+* Implement user-configurable logging for `osmine` and `osdash` depending on if a log file is desired and at what level of detail.
+* While effort has been made to maintain the GitHub and Wikifactory specific data-mining code as independent modules, there are still hard-coded elements across the `osmine` scripts to accomodate those platforms. We hope to implement a proper plug-in system where platform-specific code are truly self-contained and called by the main data-mining module `osmine/miner/mine.py` (which would be fully generalised).
+* Develop data-mining plug-ins for GitLab and generic Git repositories. If the latter is particularly successful, it could even supplant at least parts of the GitHub and GitLab modules.
+* If resources permit, incorporate [unit testing](https://en.wikipedia.org/wiki/Unit_testing) across all Python code in this repository. This is a software testing technique where dedicated testing code is written for all elements of a program. Comprehensive unit testing will take an intensive effort to implement but greatly improve the reliability and long-term maintainability of the code.
+* Further improve documentation by: 
+  * Creating dedicated documentation beyond this README file.
+  * Improve on the current README file by attaining level four or five in the [README Maturity Model](https://github.com/LappleApple/feedmereadmes/blob/master/README-maturity-model.md#level-five-product-oriented-readme).
 
 ## Maintainers
 
-[@penyuan](https://github.com/penyuan)
+Dr Pen-Yuan Hsing ([@penyuan](https://github.com/penyuan)) is the current maintainer.
 
-@jbon is past maintainer who has contributed greatly during the first year of the project.
+Dr Jérémy Bonvoisin ([@jbon](https://github.com/jbon)) was a previous maintainer who contributed greatly to this repository during the first year of the OPENNEXT project.
 
 ## Contributing
 
@@ -259,21 +333,21 @@ This project is released with a [Contributor Code of Conduct](./CODE_OF_CONDUCT.
 
 ## Acknowledgements
 
-Elies and Rafaella at UBA.
+The maintainer wishes to thank:
 
-Max and Andres from Wikifactory.
+* Dr Jérémy Bonvoisin ([@jbon](https://github.com/jbon)) not only for the initial contributions to this repository, but also for continued practical and theoretical insight, generosity, and guidance.
+* Dr Elies Dekoninck and Rafaella Antoniou for valuable feedback and support.
+* Max Kampik ([@mkampik](https://github.com/mkampik)) and Andrés Barreiro from Wikifactory for close collaboration, design insights, and technical support throughout the project.
+* OPENNEXT internal reviewers Dr Jean-François Boujut ([@boujut](https://github.com/boujut)) and Martin Häuer ([@moedn](https://github.com/moedn)) for constructive criticism.
+* OPENNEXT project researchers Robert Mies ([@MIE5R0](https://github.com/MIE5R0)), Mehera Hassan ([@meherrahassan](https://github.com/meherahassan)), and Sonika Gogineni ([@GoSFhg](https://github.com/GoSFhg)) for useful feedback and extensive administrative support.
+* The Linux Foundation [CHAOSS](https://chaoss.community/) group for insights on open source community health metrics.
 
-OPENNEXT internal reviewers: JF and @moedn.
-
-Rober, Mehera, and Sonika for useful feedback and admin support.
-
-Useful discussions at CHAOSS con 2020 and the people there.
-
-@jbon for continued practical and theoretical insight.
-Funders: EU H2020 grant numbers.
+The work in this repository is supported by the European Union [Horizon 2020](https://ec.europa.eu/programmes/horizon2020/) programme grant agreement ID [869984](https://cordis.europa.eu/project/id/869984).
 
 ## License
 
 [![GitHub license](https://img.shields.io/github/license/OPEN-NEXT/wp2.2_dev)](./LICENSE)
 
-[GNU AGPLv3 or later](./LICENSE) © 2021 Pen-Yuan Hsing
+The code in this repository is licensed under the [GNU AGPLv3 or later](./LICENSE) © 2021 Pen-Yuan Hsing
+
+This README is licensed under the [Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0) license](https://creativecommons.org/licenses/by-sa/4.0/) © 2021 Pen-Yuan Hsing
