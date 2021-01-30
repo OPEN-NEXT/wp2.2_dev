@@ -232,8 +232,8 @@ def create_app(data: dict) -> dash.Dash:
     TICKETS_CARD = dbc.Card(
         dbc.CardBody(
             [
-                html.H4("Tickets", className="card-title"), 
-                html.P("tickets open/closed")
+                html.H4(id="tickets-card", className="card-title"), 
+                html.P("Tickets opened/closed")
             ]
         )
     )
@@ -278,7 +278,7 @@ def create_app(data: dict) -> dash.Dash:
         ),
 
         html.H3("User activities", style={"marginTop": 30}), 
-        html.P("Total commits and tickets by username during specified timespan."),
+        html.P("Total commits and tickets by username during specified timeframe."),
         html.Div(
             id="user-activity-table"
         )
@@ -478,6 +478,66 @@ def create_app(data: dict) -> dash.Dash:
         #     ticklabelmode="period"
         # )
         return str(n_commits), commits_fig
+    
+    # Compute number of tickets are open/closed during time slider timespan
+    @app.callback(
+        Output("tickets-card", "children"),
+        [
+            Input("repo-menu", "value"),
+            Input("time-range-slider", "value")
+        ]
+    )
+    def get_n_tickets(repo_name, slider_values):
+        # Get tickets for specified repository
+        repo_tickets: pandas.DataFrame = tickets[tickets["repo_name"] == repo_name]
+        # If there are no tickets, just return 0
+        if repo_tickets.empty:
+            return str("0/0")
+        else: 
+            pass
+        # Initialise start time to first ticket that was published
+        start_time = repo_tickets["published"].min()
+        # Initialise start date to the first day of its month
+        start_date: datetime.date = datetime.date(
+            start_time.year, 
+            start_time.month, 
+            1
+        )
+        # Set end date to number of months after start date set by time slider
+        end_date: datetime.date = add_months(start_date, slider_values[-1] + 1)
+        # Set end time to the final UTC day and moment of its month
+        end_time: datetime.datetime = datetime.datetime(
+            end_date.year, 
+            end_date.month, 
+            calendar.monthrange(end_date.year, end_date.month)[1],
+            23, 59, 59, 
+            tzinfo=datetime.timezone.utc
+        )
+        # Change start date/time to that specified by time slider
+        start_date = add_months(start_date, slider_values[0])
+        start_time: datetime.datetime = datetime.datetime(
+            start_date.year, 
+            start_date.month, 
+            1,
+            0, 0, 0, 
+            tzinfo=datetime.timezone.utc
+        )
+
+        # Constrain tickets to within slider-set timespan
+        repo_tickets_opened = repo_tickets[
+            (repo_tickets["published"] >= start_time) & (repo_tickets["published"] <= end_time)
+        ].drop_duplicates(subset="id")
+        repo_tickets_resolved = repo_tickets[
+            (repo_tickets["resolved"] >= start_time) & (repo_tickets["resolved"] <= end_time)
+        ].drop_duplicates(subset="id")
+        # Calculate number of tickets opened and resolved during this time
+        n_tickets_opened: int = len(repo_tickets_opened["id"])
+        n_tickets_resolved: int = len(repo_tickets_resolved["id"])
+
+        # Construct string to show in card
+        n_tickets: str = f"{n_tickets_opened}/{n_tickets_resolved}"
+
+        return n_tickets
 
     # Compute: 
     # 1. Number of users during time slider timespan
