@@ -200,11 +200,13 @@ def create_app(data: dict) -> dash.Dash:
                 ],
                 # Default to project in first row of repositories dataframe
                 value=repositories.iloc[0]["project"],
+                clearable=False, 
                 style={"marginBottom": 30}
             ),
             html.Label(id="repo-menu-label"),
             dcc.Dropdown(
                 id="repo-menu",
+                clearable=False, 
                 style={"marginBottom": 30},
             ),
             html.Label("3. Customise timeframe to view: "), 
