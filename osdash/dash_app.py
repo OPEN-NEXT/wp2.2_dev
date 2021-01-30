@@ -164,7 +164,7 @@ def create_app(data: dict) -> dash.Dash:
     #
 
     repositories: pandas.DataFrame = data["Repositories"]
-    branches: pandas.DataFrame = data["Branches"]
+    # branches: pandas.DataFrame = data["Branches"] # Nothing implemented yet
     commits: pandas.DataFrame = data["Commits"]
     tickets: pandas.DataFrame = data["Tickets"]
     users: pandas.DataFrame = data["Users"]
@@ -223,8 +223,8 @@ def create_app(data: dict) -> dash.Dash:
     COMMITS_CARD = dbc.Card(
         dbc.CardBody(
             [
-                html.H4("Commits", className="card-title"), 
-                html.P("commits")
+                html.H4(id="commits-card", className="card-title"), 
+                html.P("Commits")
             ]
         )
     )
@@ -378,25 +378,67 @@ def create_app(data: dict) -> dash.Dash:
     def update_repo_title(repo_name): 
         return str(repo_name)
 
-    # Compute commits history plot based on time slider constraints
+    # Compute: 
+    # 1. Number of commits within time slider timespan
+    # 2. Commits history plot based on time slider constraints
     @app.callback(
-        Output("commits-plot", "figure"),
+        [
+            Output("commits-card", "children"),
+            Output("commits-plot", "figure")
+        ],
         [
             Input("repo-menu", "value"), 
             Input("time-range-slider", "value")
         ]        
     )
     def draw_commits_plot(repo_name, slider_values): 
+        # Get commits for just the specified repository
         repo_commits: pandas.DataFrame = commits[commits["repo_name"] == repo_name]
+        # Get the earliest committed timestamp
         repo_start_time = repo_commits["committed"].min()
+        # Set start date to the first day of the month of that timestamp
         start_date: datetime.date = datetime.date(repo_start_time.year, repo_start_time.month, 1)
-        end_date: datetime.date = add_months(start_date, slider_values[-1])
+        # Set end date to the number of months after that start date as specified
+        # by the time slider
+        end_date: datetime.date = add_months(start_date, slider_values[-1] + 1)
+        end_date = datetime.date(
+            end_date.year,
+            end_date.month,
+            calendar.monthrange(end_date.year, end_date.month)[1]
+        )
+        # Change start date to that specified by time slider
         start_date = add_months(start_date, slider_values[0])
 
-        # Use full time range for now then work from there
-        
+        #
+        # 1. Get number of commits within timespan
+        #
 
-        # Count number of row per month. The resulting dataframe would have the
+        # Get number of commits within slider-defined timespan
+        start_time: datetime.datetime = datetime.datetime(
+            start_date.year, 
+            start_date.month, 
+            1,
+            0, 0, 0, 
+            tzinfo=datetime.timezone.utc
+        )
+        end_time: datetime.datetime = datetime.datetime(
+            end_date.year, 
+            end_date.month, 
+            calendar.monthrange(end_date.year, end_date.month)[1],
+            23, 59, 59, 
+            tzinfo=datetime.timezone.utc
+        ) # Set `end_time` to the last day of its month at 23:59:59 UTC
+        # Get all commits between `start_time` and `end_time` (inclusive)
+        n_commits_df: pandas.DataFrame = repo_commits[
+            (repo_commits["committed"] >= start_time) & (repo_commits["committed"] <= end_time)
+        ].drop_duplicates(subset="committed") # Drop due to multiple parent commits
+        n_commits: int = len(n_commits_df["hash"])
+
+        #
+        # 2. Plot monthly commits during timespan
+        #
+
+        # Count number of rows per month. The resulting dataframe would have the
         # same values in each row so any one of them could be used in the plot.
         # `drop_duplicates()` because some commits have >1 parents.
         # `freq="1M"` groups `committed` timestamps by month: 
@@ -435,7 +477,7 @@ def create_app(data: dict) -> dash.Dash:
         #     rangeslider_range=[str(start_date), str(end_date)],
         #     ticklabelmode="period"
         # )
-        return commits_fig
+        return str(n_commits), commits_fig
 
     # Compute user activity table based on time slider constraints
     @app.callback(
@@ -460,12 +502,12 @@ def create_app(data: dict) -> dash.Dash:
             0, 0, 0, 
             tzinfo=datetime.timezone.utc
         )
-        end_date: datetime.date = add_months(start_date, slider_values[-1])
+        end_date: datetime.date = add_months(start_date, slider_values[-1] + 1)
         end_time: datetime.datetime = datetime.datetime(
             end_date.year, 
             end_date.month, 
             calendar.monthrange(end_date.year, end_date.month)[1],
-            0, 0, 0, 
+            23, 59, 59, 
             tzinfo=datetime.timezone.utc
         )
         repo_users = repo_users[
