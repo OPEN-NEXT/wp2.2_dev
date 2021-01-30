@@ -241,8 +241,8 @@ def create_app(data: dict) -> dash.Dash:
     CONTRIBUTORS_CARD = dbc.Card(
         dbc.CardBody(
             [
-                html.H4("Contributors", className="card-title"), 
-                html.P("contributors")
+                html.H4(id="contributors-card", className="card-title"), 
+                html.P("Contributors")
             ]
         )
     )
@@ -251,7 +251,7 @@ def create_app(data: dict) -> dash.Dash:
         html.H1(id="repo-title"),
 
         html.Div(children=f'''
-            Information about this repository.
+            Information about this repository during specified timeframe.
         '''),
 
         dbc.CardGroup(
@@ -278,7 +278,7 @@ def create_app(data: dict) -> dash.Dash:
         ),
 
         html.H3("User activities", style={"marginTop": 30}), 
-        html.P("Total commits and tickets by user by end date."),
+        html.P("Total commits and tickets by username during specified timespan."),
         html.Div(
             id="user-activity-table"
         )
@@ -479,9 +479,14 @@ def create_app(data: dict) -> dash.Dash:
         # )
         return str(n_commits), commits_fig
 
-    # Compute user activity table based on time slider constraints
+    # Compute: 
+    # 1. Number of users during time slider timespan
+    # 2. User activity table based on time slider constraints
     @app.callback(
-        Output("user-activity-table", "children"), 
+        [
+            Output("contributors-card", "children"), 
+            Output("user-activity-table", "children")
+        ], 
         [
             Input("repo-menu", "value"), 
             Input("time-range-slider", "value")
@@ -495,13 +500,6 @@ def create_app(data: dict) -> dash.Dash:
             start_time.month, 
             1
         )
-        start_time: datetime.datetime = datetime.datetime(
-            start_time.year, 
-            start_time.month, 
-            1,
-            0, 0, 0, 
-            tzinfo=datetime.timezone.utc
-        )
         end_date: datetime.date = add_months(start_date, slider_values[-1] + 1)
         end_time: datetime.datetime = datetime.datetime(
             end_date.year, 
@@ -510,9 +508,30 @@ def create_app(data: dict) -> dash.Dash:
             23, 59, 59, 
             tzinfo=datetime.timezone.utc
         )
+        # Change start date/time to that specified by time slider
+        start_date = add_months(start_date, slider_values[0])
+        start_time: datetime.datetime = datetime.datetime(
+            start_date.year, 
+            start_date.month, 
+            1,
+            0, 0, 0, 
+            tzinfo=datetime.timezone.utc
+        )
+        
         repo_users = repo_users[
             (repo_users["activity_time"] >= start_time) & (repo_users["activity_time"] <= end_time)
         ]
+        
+        #
+        # 1. Number of users during time slider timespan
+        # 
+
+        n_users_df: pandas.DataFrame = repo_users.drop_duplicates(subset="username", inplace=False)
+        n_users: int = len(n_users_df["username"])
+
+        #
+        # 2. User activity table based on time slider constraints
+        # 
 
         user_commits: pandas.DataFrame = repo_users[
             repo_users["activity_type"] == "commit"
@@ -543,6 +562,6 @@ def create_app(data: dict) -> dash.Dash:
             on="username"
         ).fillna("0")
 
-        return generate_table(user_activities)
+        return str(n_users), generate_table(user_activities)
     
     return app
