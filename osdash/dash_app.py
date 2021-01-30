@@ -378,7 +378,22 @@ def create_app(data: dict) -> dash.Dash:
         Input("repo-menu", "value")
     )
     def update_repo_title(repo_name): 
-        return str(repo_name)
+        repo_info: pandas.DataFrame = repositories[
+            repositories["name"] == repo_name
+        ].reset_index(
+            drop=True # This resets the row index to start from 0 which allows
+                      # referring to index `[0]` below for `href`
+        )
+        title: list = html.P(
+            [
+                dcc.Link(
+                    children=str(repo_name),
+                    href=str(repo_info["repo_url"][0])
+                ),
+                str(f" on {repo_info['platform'][0]}")
+            ]
+        )
+        return title
 
     # Compute: 
     # 1. Number of commits within time slider timespan
