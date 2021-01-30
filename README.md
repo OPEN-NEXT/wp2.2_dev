@@ -57,7 +57,7 @@ This documentation aims to demonstrate practices that facilitate design reuse, i
 In addition, this repository aims to follow international standards and good practices in open source development such as, but not limited to: 
 
 * [SDPX](https://chaoss.community/) compliance with a [LICENSE](./LICENSE) file (also see [License](#license) section)
-* [REUSE](https://reuse.software/) compliance with appropriate machine-readable SPDX metadata for all files
+* [REUSE](https://reuse.software/) compliance with appropriate machine-readable SPDX metadata for all files and license texts in [`LICENSES`](./LICENSES/) directory
 * README file (this document) conforming to the [Standard Readme Specification](https://github.com/RichardLitt/standard-readme)
 * [Contributor Covenant](https://www.contributor-covenant.org/) Code of Conduct
 * [CONTRIBUTING](./CONTRIBUTING.md) document outlining ways to contribute to this repository
