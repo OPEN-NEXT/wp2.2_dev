@@ -348,6 +348,8 @@ The work in this repository is supported by the European Union [Horizon 2020](ht
 
 [![GitHub license](https://img.shields.io/github/license/OPEN-NEXT/wp2.2_dev)](./LICENSE)
 
-The code in this repository is licensed under the [GNU AGPLv3 or later](./LICENSE) © 2021 Pen-Yuan Hsing
+The Python code in this repository is licensed under the [GNU AGPLv3 or any later version](./LICENSE) © 2021 Pen-Yuan Hsing
 
 This README is licensed under the [Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0) license](https://creativecommons.org/licenses/by-sa/4.0/) © 2021 Pen-Yuan Hsing
+
+More details in the REUSE specification [dep5](./.reuse/dep5) file.
