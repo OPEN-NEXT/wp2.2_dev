@@ -31,40 +31,45 @@ def get_metrics(mined_data: list) -> dict:
     # 
 
     for repo in mined_data: 
-        # Process `Repository`
-        repositories_list.append(repo["Repository"])
-        # Process `Branches`
-        for branch in repo["Branches"]: 
-            # Start with columns for repository info
-            branch_row: dict = {
-                "repo_name": repo["Repository"]["name"],
-                # Include `repo_url` so that there's a more unique identifier:
-                "repo_url": repo["Repository"]["repo_url"], 
-                "branch": branch
-            }
-            branches_list.append(branch_row)
-        # Process `Commits`
-        for commit in repo["Commits"]:
-            # Start with columns for repository info
-            commit_row: dict = {
-                "repo_name": repo["Repository"]["name"],
-                # Include `repo_url` so that there's a more unique identifier:
-                "repo_url": repo["Repository"]["repo_url"]
-            }
-            # Then add other columns from the commit
-            commit_row.update(commit)
-            commits_list.append(commit_row)
-        # Process `Tickets`
-        for ticket in repo["Tickets"]: 
-            # Start with columns for repository info
-            ticket_row: dict = {
-                "repo_name": repo["Repository"]["name"], 
-                # Include `repo_url` so that there's a more unique identifier:
-                "repo_url": repo["Repository"]["repo_url"]
-            }
-            # Then add other columns from the ticket
-            ticket_row.update(ticket)
-            tickets_list.append(ticket_row)
+        # First, check if last mined timestamp is empty. If so, then `osmine`
+        # did not complete successfuly for this repository so skip for now.
+        if repo["Repository"]["last_mined"] == "":
+            pass
+        else: 
+            # Process `Repository`
+            repositories_list.append(repo["Repository"])
+            # Process `Branches`
+            for branch in repo["Branches"]: 
+                # Start with columns for repository info
+                branch_row: dict = {
+                    "repo_name": repo["Repository"]["name"],
+                    # Include `repo_url` so that there's a more unique identifier:
+                    "repo_url": repo["Repository"]["repo_url"], 
+                    "branch": branch
+                }
+                branches_list.append(branch_row)
+            # Process `Commits`
+            for commit in repo["Commits"]:
+                # Start with columns for repository info
+                commit_row: dict = {
+                    "repo_name": repo["Repository"]["name"],
+                    # Include `repo_url` so that there's a more unique identifier:
+                    "repo_url": repo["Repository"]["repo_url"]
+                }
+                # Then add other columns from the commit
+                commit_row.update(commit)
+                commits_list.append(commit_row)
+            # Process `Tickets`
+            for ticket in repo["Tickets"]: 
+                # Start with columns for repository info
+                ticket_row: dict = {
+                    "repo_name": repo["Repository"]["name"], 
+                    # Include `repo_url` so that there's a more unique identifier:
+                    "repo_url": repo["Repository"]["repo_url"]
+                }
+                # Then add other columns from the ticket
+                ticket_row.update(ticket)
+                tickets_list.append(ticket_row)
 
     #
     # Convert lists to Pandas dataframes and process
