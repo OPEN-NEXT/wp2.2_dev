@@ -205,11 +205,11 @@ The following steps will start a local test instance of the dashboard:
 
 ## Design notes
 
-The essential sequence of operation for `osmine` and `osdash` has been described in the [Usage](#usage) section. The rest of this section describes the thought-process and decisions made when developing key components of this program.
+The essential sequence of operation for `osmine` and `osdash` has been described in the [Usage](#usage) section. The following flowchart depicts that sequence: 
 
-The following is a high-level architecture diagram of the key components of `wp2.2_dev`: 
+![Dashboard flowchart](./docs/images/dashboard_flowchart.drawio.jpg)
 
-![Dashboard architecture diagram](./docs/images/architecture.drawio.svg)
+The rest of this section describes the thought-process and decisions made when developing key components of this program.
 
 ### Internal data structure
 
