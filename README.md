@@ -337,7 +337,7 @@ This project is released with a [Contributor Code of Conduct](./CODE_OF_CONDUCT.
 The maintainer would like to gratefully acknowledge:
 
 * Dr Jérémy Bonvoisin ([@jbon](https://github.com/jbon)) not only for the initial contributions to this repository, but also for continued practical and theoretical insight, generosity, and guidance.
-* Dr Elies Dekoninck and Rafaella Antoniou for valuable feedback and support.
+* Dr Elies Dekoninck ([@elies30](https://github.com/orgs/OPEN-NEXT/people/elies30)) and Rafaella Antoniou ([@rafaellaantoniou](https://github.com/orgs/OPEN-NEXT/people/rafaellaantoniou)) for valuable feedback and support.
 * Max Kampik ([@mkampik](https://github.com/mkampik)) and Andrés Barreiro from Wikifactory for close collaboration, design insights, and technical support throughout the project.
 * OPENNEXT internal reviewers Dr Jean-François Boujut ([@boujut](https://github.com/boujut)) and Martin Häuer ([@moedn](https://github.com/moedn)) for constructive criticism.
 * OPENNEXT project researchers Robert Mies ([@MIE5R0](https://github.com/MIE5R0)), Mehera Hassan ([@meherrahassan](https://github.com/meherahassan)), and Sonika Gogineni ([@GoSFhg](https://github.com/GoSFhg)) for useful feedback and extensive administrative support.
