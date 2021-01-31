@@ -6,14 +6,19 @@ Source: https://github.com/OPEN-NEXT/wp2.2_dev/
 Files:
     README.md
     .github/ISSUE_TEMPLATE/bug_report.md
-    docs/images/architecture.drawio.svg
+    docs/images/dashboard_flowchart.drawio.jpg
+    docs/images/dashboard_flowchart.drawio.svg
     docs/images/hover-plot-controls.gif
 Copyright: 2021 Pen-Yuan Hsing
 License: CC-BY-SA-4.0
 
 Files:
     CODE_OF_CONDUCT.md
+Copyright: 2014 Coraline Ada Ehmke
+License: CC-BY-4.0
+
+Files:
     data/mined_data.zip
     input/OSH-repos.csv
-Copyright: 2014 Coraline Ada Ehmke
+Copyright: 2021 Pen-Yuan Hsing
 License: CC-BY-4.0
