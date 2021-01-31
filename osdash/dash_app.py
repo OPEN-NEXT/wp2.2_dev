@@ -360,7 +360,12 @@ def create_app(data: dict) -> dash.Dash:
         end_date: datetime.date = datetime.date(end_time.year, end_time.month, end_time.day)
         # This will create a list from 0 to x, where x is the number of months
         # the end timestamp is after the beginning:
-        months: list = list(range(0, month_diff(start_date, end_date)))
+        if month_diff(start_date, end_date) < 1:
+            # Handle situation when the repository has less than a month of activity
+            months: list = list(range(0, 2))
+        else:
+            months: list = list(range(0, month_diff(start_date, end_date)))
+
         slider_min: int = months[0]
         slider_max: int = months[-1] # I.e. the last item in `months`
 
@@ -461,27 +466,22 @@ def create_app(data: dict) -> dash.Dash:
         # `freq="1M"` groups `committed` timestamps by month: 
         # https://pandas.pydata.org/pandas-docs/stable/user_guide/timeseries.html#offset-aliases
         # https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.Grouper.html
-        repo_commits_monthly = repo_commits.drop_duplicates(
+        repo_commits_monthly = repo_commits[
+            (repo_commits["committed"] >= start_time) & (repo_commits["committed"] <= end_time)
+        ].drop_duplicates(
             subset="committed"
         ).groupby(
             pandas.Grouper(key="committed", freq="1M")
         ).count()
 
-        commits_fig = plotly.express.bar(
-            repo_commits_monthly, 
+        commits_fig = plotly.graph_objects.Figure()
+        commits_fig.add_trace(plotly.graph_objects.Bar(
+            name="Commits bar plot", 
             x=repo_commits_monthly.index, 
-            y=repo_commits_monthly["hash"],
-            range_x=[str(start_date), str(end_date)]
-        )
-
-        # commits_fig = plotly.graph_objects.Figure()
-        # commits_fig.add_trace(plotly.graph_objects.Bar(
-        #     name="Commits bar plot", 
-        #     x=repo_commits_monthly.index, 
-        #     y=repo_commits_monthly["hash"], 
-        #     xperiod="M1", 
-        #     xperiodalignment="middle"
-        # ))
+            y=repo_commits_monthly["hash"], 
+            xperiod="M1", 
+            xperiodalignment="middle"
+        ))
         commits_fig.update_layout(
             xaxis_title="Date", 
             yaxis_title="Number of commits"
