@@ -56,7 +56,7 @@ This documentation aims to demonstrate practices that facilitate design reuse, i
 
 In addition, this repository aims to follow international standards and good practices in open source development such as, but not limited to: 
 
-* [SDPX](https://chaoss.community/) compliance with a [LICENSE](./LICENSE) file (also see [License](#license) section)
+* [SDPX](https://spdx.dev/) compliance with a [LICENSE](./LICENSE) file (also see [License](#license) section)
 * [REUSE](https://reuse.software/) compliance with appropriate machine-readable SPDX metadata for all files and license texts in [`LICENSES`](./LICENSES/) directory
 * README file (this document) conforming to the [Standard Readme Specification](https://github.com/RichardLitt/standard-readme)
 * [Contributor Covenant](https://www.contributor-covenant.org/) Code of Conduct for participants
@@ -130,7 +130,7 @@ This module should be run first to produce the dataset for the `osdash` dashboar
 
     An example CSV list is included with this repository in [`input/OSH-repos.csv`](./input/OSH-repos.csv) and can be used out-of-the-box. This list was used to obtain the data visualised in the dashboard [demo instance](https://psaltyi.pythonanywhere.com/).
 
-2. Obtain a [GitHub personal access token](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token), which is a 40-character alphanumeric string in the form of `22x9w3npi629wgam5s6xxxen5abrozeb3db2mr42`. A GitHub account is required for this step. This token can be fed to `osmine` as: The environmental variable `GITHUB_TOKEN`; a path to a one-line pure-text file containing the string as a command line argument (see step 4); or directly in the configuration file (see step 3.).
+2. Obtain a [GitHub personal access token](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token), which is a 40-character alphanumeric string in the form of `22x9w3npi629wgam5s6xxxen5abrozeb3db2mr42`. A GitHub account is required for this step. This token can be fed to `osmine` as: The environment variable `GH_TOKEN`; a path to a one-line pure-text file containing the string as a command line argument (see step 4); or directly in the configuration file (see step 3.).
 
 3. Set up configuration file.
   

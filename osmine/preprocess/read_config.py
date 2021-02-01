@@ -94,9 +94,9 @@ def read_config() -> dict:
 
     # Read GitHub token from environment variable if it is there
     # Reference: https://stackoverflow.com/q/40697845/186904
-    if "GITHUB_TOKEN" in os.environ:
-        logging.info(f"Reading GitHub token from environment variable GITHUB_TOKEN")
-        configuration["GitHub_token"] = os.environ["GITHUB_TOKEN"]
+    if "GH_TOKEN" in os.environ:
+        logging.info(f"Reading GitHub token from environment variable GH_TOKEN")
+        configuration["GitHub_token"] = os.environ["GH_TOKEN"]
 
     #
     # Apply commandline arguments
@@ -133,7 +133,7 @@ def read_config() -> dict:
     #
 
     # Put the authentication string into its own entry
-    if not("GITHUB_TOKEN" in os.environ):
+    if not("GH_TOKEN" in os.environ):
         # I.e. Try to open token file if the token is not already read from environment
         try:
             with open(configuration["GitHub_token"], mode="r") as token_file:
