@@ -1,0 +1,82 @@
+# SPDX-FileCopyrightText: 2021 Pen-Yuan Hsing
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+# References: 
+# https://news.ycombinator.com/item?id=24732943
+# https://github.com/simonw/ca-fires-history/blob/main/.github/workflows/scrape.yml
+# https://github.com/openZH/covid_19/blob/master/.github/workflows/run_scrapers.yml
+
+name: Run miner
+
+# Controls when the action will run. 
+on:
+    # Triggers on schedule
+    schedule:
+      - cron: 30 2 * * 3 # 02:30 UTC every Wednesday: https://crontab.guru/#30_2_*_*_3
+    # Allows you to run this workflow manually from the Actions tab
+    workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+    # This workflow contains a single job called "mine"
+    mine:
+        # The type of runner that the job will run on
+        runs-on: ubuntu-latest
+        continue-on-error: false # Abort on errors
+        timeout-minutes: 90
+
+        # Steps represent a sequence of tasks that will be executed as part of the job
+        steps:
+            # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+            - name: Check-out repository
+              uses: actions/checkout@v2
+
+            - name: Set up Python 3.8
+              uses: actions/setup-python@v2
+              with:
+                  python-version: '3.8'
+                  architecture: 'x64'
+            
+            - name: Cache pip # https://docs.github.com/en/actions/guides/building-and-testing-python
+              uses: actions/cache@v2
+              with: 
+                  # Ubuntu-specific path
+                  path: ~/.cache/pip
+                  # See if there is a cache hit for the corresponding requirements file
+                  key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+                  restore-keys: |
+                    ${{ runner.os }}-pip-
+                    ${{ runner.os }}-
+            
+            - name: Install dependencies
+              run: | 
+                  python -m pip install --upgrade pip setuptools wheel
+                  if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+            
+            - name: Run `osmine`
+              env: 
+                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: python osmine -r=./input/OSH-repos.csv
+            
+            - name: Check if there are file change(s) # Presumably `mined_data.zip`
+              id: changes
+              uses: UnicornGlobal/has-changes-action@v1.0.11
+            
+            - name: Set commit message # If there are file change(s)
+              if: steps.changes.outputs.changed == 1
+              run: | 
+                  echo "commit_msg=`osmine` Action ${timestamp}" >> $GITHUB_ENV
+            
+            - name: Commit new file
+              if: steps.changes.outputs.changed == 1
+              uses: github-actions-x/commit@v2.6
+              with: 
+                github-token: ${{ secrets.GITHUB_TOKEN }}
+                push-branch: 'main'
+                commit-message: ${{ env.commit_msg }}
+                name: GitHub Actions
+                email: actions@users.noreply.github.com
+            
+            - name: Message if no changes
+              if: steps.changes.outputs.changed == 0
+              run: echo "No changes during this run"
