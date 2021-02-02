@@ -6,7 +6,7 @@
 # https://github.com/simonw/ca-fires-history/blob/main/.github/workflows/scrape.yml
 # https://github.com/openZH/covid_19/blob/master/.github/workflows/run_scrapers.yml
 
-name: Run miner
+name: miner
 
 # Controls when the action will run. 
 on:
@@ -64,8 +64,10 @@ jobs:
             
             - name: Set commit message # If there are file change(s)
               if: steps.changes.outputs.changed == 1
+              # Time stamp would look like 2021-02-02T19:26:18+00:00
               run: | 
-                  echo "commit_msg=`osmine` Action ${timestamp}" >> $GITHUB_ENV
+                  timestamp=$(date -Iseconds -u)
+                  echo "commit_msg=\`osmine\` action ${timestamp}" >> $GITHUB_ENV
             
             - name: Commit new file
               if: steps.changes.outputs.changed == 1

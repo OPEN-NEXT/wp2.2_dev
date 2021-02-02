@@ -151,8 +151,6 @@ def read_config() -> dict:
 
     # Check if GitHub authentication key string looks correct
     # AFAIK the token should be exactly 40 alphanumeric characters
-    barbaz: str = configuration["GitHub_token"][::-1]
-    print(f"foobar abc-{barbaz}-123", file=sys.stderr)
     try:
         assert (configuration["GitHub_token"].isalnum() and len(configuration["GitHub_token"]) == 40)
     except AssertionError:
