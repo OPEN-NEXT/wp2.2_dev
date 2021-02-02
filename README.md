@@ -329,7 +329,7 @@ Dr Jérémy Bonvoisin ([@jbon](https://github.com/jbon)) was a previous maintain
 
 ## Contributing
 
-[Open an issue](https://github.com/OPEN-NEXT/wp2.2_dev/issues/new) or submit a GitHub Pull Request.
+Thank you in advance for your contribution. Please [open an issue](https://github.com/OPEN-NEXT/wp2.2_dev/issues/new) or submit a [GitHub pull request](http://help.github.com/pull-requests/). For more details, please look at [CONTRIBUTING.md](./CONTRIBUTING.md).
 
 This project is released with a [Contributor Code of Conduct](./CODE_OF_CONDUCT.md). By participating in this project you agree to abide by the [Contributor Covenant](https://www.contributor-covenant.org/version/2/0/code_of_conduct/) Code of Conduct 2.0.
 

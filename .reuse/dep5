@@ -18,6 +18,7 @@ Copyright: 2014 Coraline Ada Ehmke
 License: CC-BY-4.0
 
 Files:
+    CONTRIBUTING.md
     data/mined_data.zip
     input/OSH-repos.csv
 Copyright: 2021 Pen-Yuan Hsing
