@@ -3,7 +3,7 @@
 [![Live demo link](https://img.shields.io/badge/Demo-CLICK%20HERE-red.svg?style=flat)](https://psaltyi.pythonanywhere.com/)
 [![Python version](https://img.shields.io/badge/Python-3.8-blue.svg?style=flat&logo=Python&logoColor=white)](https://docs.python.org/3.8/)
 ![Lines of code](https://sloc.xyz/github/OPEN-NEXT/wp2.2_dev)
-![GitHub Workflow Status (main branch)](https://img.shields.io/github/workflow/status/OPEN-NEXT/wp2.2_dev/main-branch-CI/main.svg?label=checks&logo=GitHub%20Actions&logoColor=white)
+![GitHub Workflow Status (main branch)](https://img.shields.io/github/workflow/status/OPEN-NEXT/wp2.2_dev/main-branch-checks/main.svg?label=checks&logo=GitHub%20Actions&logoColor=white)
 [![standard-readme compliant](https://img.shields.io/badge/readme%20style-standard-brightgreen.svg?style=flat)](https://github.com/RichardLitt/standard-readme)
 [![REUSE compliance status](https://api.reuse.software/badge/github.com/OPEN-NEXT/wp2.2_dev)](https://api.reuse.software/info/github.com/OPEN-NEXT/wp2.2_dev)
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](./CODE_OF_CONDUCT.md)
