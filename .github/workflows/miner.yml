@@ -55,7 +55,7 @@ jobs:
             
             - name: Run `osmine`
               env: 
-                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  GH_TOKEN: ${{ secrets.GH_TOKEN }}
               run: python osmine -r=./input/OSH-repos.csv
             
             - name: Check if there are file change(s) # Presumably `mined_data.zip`
