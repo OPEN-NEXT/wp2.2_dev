@@ -1,4 +1,4 @@
-# wp2.2_dev
+# **This is an old, archived branch and unmaintained. Please go to the [`main` branch](https://github.com/OPEN-NEXT/wp2.2_dev/) for the latest developments and documentation.**
 
 Scripts and other files in development for work package 2.2.
 
