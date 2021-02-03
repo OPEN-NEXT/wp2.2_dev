@@ -1,6 +1,6 @@
 # OSD status dashboard _(wp2.2_dev)_
 
-[![Live demo link](https://img.shields.io/badge/Demo-CLICK%20HERE-red.svg?style=flat)](https://psaltyi.pythonanywhere.com/)
+[![Live demo link](https://img.shields.io/badge/Demo-CLICK%20HERE-red.svg?style=flat)](https://opennextwp22.eu.pythonanywhere.com/)
 [![Python version](https://img.shields.io/badge/Python-3.8-blue.svg?style=flat&logo=Python&logoColor=white)](https://docs.python.org/3.8/)
 ![Lines of code](https://sloc.xyz/github/OPEN-NEXT/wp2.2_dev)
 ![GitHub Workflow Status (main branch)](https://img.shields.io/github/workflow/status/OPEN-NEXT/wp2.2_dev/main-branch-checks/main.svg?label=checks&logo=GitHub%20Actions&logoColor=white)
@@ -12,7 +12,7 @@
 
 *Initial proof-of-concept of open source development status dashboard with data-mining & visualisation components*
 
-This repository contains a set of Python scripts and associated files to host a prototype data visualisation dashboard for open source development projects. It is composed of (a) a data-mining Python module (`osmine`) which mines publicly-viewable metadata from a user-supplied list of open source [version control](https://en.wikipedia.org/wiki/Version_control) repositories; and (b) an interactive [Dash](https://dash.plotly.com/)-based web module (`osdash`) that computes and visualises basic metrics on those repositories. **Please see the [Install](#install) and [Usage](#usage) sections to get up and running with this tool**. Click [**here**](https://psaltyi.pythonanywhere.com/) to access a demo instance of the prototype dashboard.
+This repository contains a set of Python scripts and associated files to host a prototype data visualisation dashboard for open source development projects. It is composed of (a) a data-mining Python module (`osmine`) which mines publicly-viewable metadata from a user-supplied list of open source [version control](https://en.wikipedia.org/wiki/Version_control) repositories; and (b) an interactive [Dash](https://dash.plotly.com/)-based web module (`osdash`) that computes and visualises basic metrics on those repositories. **Please see the [Install](#install) and [Usage](#usage) sections to get up and running with this tool**. Click [**here**](https://opennextwp22.eu.pythonanywhere.com/) to access a demo instance of the prototype dashboard.
 
 This work is an *initial* demonstrator delivered at month 18 of the [OPENNEXT](https://opennext.eu/) project as part of task 2.2: "Creating a design process facilitation dashboard". It is to establish the foundational infrastructure on which the ambition to facilitate company-community collaboration on open source hardware projects described [below](#background) can be pursued. Future iterations of this tool should allow the community developing an open source hardware product to track the the health of their project and if their needs are being met.
 
@@ -99,7 +99,7 @@ pip install --user -r requirements.txt
 
 The [`git`](https://git-scm.com/) command will download the files in this repository onto your local system into a directory named `wp2.2_dev`, and [`pip`](https://pip.pypa.io/) installs the Python packages listed in [`requirements.txt`](./requirements.txt) required for `osmine` and `osdash` to work.
 
-For production, one could run the code on a self-hosted [Web Server Gateway Interface (WSGI)](https://docs.python.org/3/library/wsgiref.html) server. Setting up a WSGI server is beyond the scope of this documentation, but it may be easier use a pre-configured WSGI instance such as on platforms like [PythonAnywhere](https://eu.pythonanywhere.com/) (where [the demo instance](https://psaltyi.pythonanywhere.com/) is hosted). To do so, please follow the instructions [here](https://csyhuang.github.io/2018/06/24/set-up-dash-app-on-pythonanywhere/) where `from dashing_demo_app import app` would be replaced by `from osdash import app`.
+For production, one could run the code on a self-hosted [Web Server Gateway Interface (WSGI)](https://docs.python.org/3/library/wsgiref.html) server. Setting up a WSGI server is beyond the scope of this documentation, but it may be easier use a pre-configured WSGI instance such as on platforms like [PythonAnywhere](https://eu.pythonanywhere.com/) (where [the demo instance](https://opennextwp22.eu.pythonanywhere.com/) is hosted). To do so, please follow the instructions [here](https://csyhuang.github.io/2018/06/24/set-up-dash-app-on-pythonanywhere/) where `from dashing_demo_app import app` would be replaced by `from osdash import app`.
 
 **Optional:** Configure the port at which the dashboard can be accessed in testing mode. This is done by modifying the the last line of `osdash/__main__.py`:
 ```python
@@ -132,7 +132,7 @@ This module should be run first to produce the dataset for the `osdash` dashboar
     * `repo_platform` - One of `GitHub` or `Wikifactory` (case-sensitive). This tells `osmine` which APIs to use when querying repository metadata.
     * `notes` - This is ignored by the script and is for your own notes.
 
-    An example CSV list is included with this repository in [`input/OSH-repos.csv`](./input/OSH-repos.csv) and can be used out-of-the-box. This list was used to obtain the data visualised in the dashboard [demo instance](https://psaltyi.pythonanywhere.com/).
+    An example CSV list is included with this repository in [`input/OSH-repos.csv`](./input/OSH-repos.csv) and can be used out-of-the-box. This list was used to obtain the data visualised in the dashboard [demo instance](https://opennextwp22.eu.pythonanywhere.com/).
 
 2. Obtain a [GitHub personal access token](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token), which is a 40-character alphanumeric string in the form of `22x9w3npi629wgam5s6xxxen5abrozeb3db2mr42`. A GitHub account is required for this step. This token can be fed to `osmine` as: The environment variable `GH_TOKEN`; a path to a one-line pure-text file containing the string as a command line argument (see step 4); or directly in the configuration file (see step 3.).
 
@@ -283,7 +283,7 @@ In addition, the Dash framework includes components (such as [Cytoscape](https:/
 
 Notably, a live Dash web app automatically reloads when the underlying Python code is changed. This saves time during development since we can edit the code of the `osdash` module and changes (or errors) are immediately reflected in the web browser. Lastly, the Dash framework is a piece of commercially successful open source software. This aligns with the theme of OPENNEXT which is to study models of commercially-produced open source hardware.
 
-There is no strict limitation on where Dash web apps can be hosted. However, since the [demo instance](https://psaltyi.pythonanywhere.com/) of the `osdash` module is currently hosted on [PythonAnywhere](https://eu.pythonanywhere.com/), the version numbers of the dependencies for this repository listed in [`requirements.txt`](./requirements.txt) are based on [those offered](https://eu.pythonanywhere.com/batteries_included/) by their default Python 3.8 environment.
+There is no strict limitation on where Dash web apps can be hosted. However, since the [demo instance](https://opennextwp22.eu.pythonanywhere.com/) of the `osdash` module is currently hosted on [PythonAnywhere](https://eu.pythonanywhere.com/), the version numbers of the dependencies for this repository listed in [`requirements.txt`](./requirements.txt) are based on [those offered](https://eu.pythonanywhere.com/batteries_included/) by their default Python 3.8 environment.
 
 ## Future work
 
