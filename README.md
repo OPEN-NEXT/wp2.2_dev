@@ -16,7 +16,7 @@ This repository contains a set of Python scripts and associated files to host a 
 
 **Please see the [Install](#install) and [Usage](#usage) sections to get up and running with this tool**. For more details on its background and design considerations, please see the [Background](#background), [Design notes](#design-notes), and [Future work](#future-work) sections.
 
-This work is an *initial* demonstrator delivered at month 18 of the [OPENNEXT](https://opennext.eu/) project as part of task 2.2: "Creating a design process facilitation dashboard". It is to establish the foundational infrastructure on which the ambition to facilitate company-community collaboration on open source hardware projects described [below](#background) can be pursued. Future iterations of this tool should allow the community developing an open source hardware product to track the health of their project and if their needs are being met.
+This work is an *initial* demonstrator delivered at month 18 of the [OPENNEXT](https://opennext.eu/) project as part of task 2.2: "Creating a design process facilitation dashboard". It is to establish the foundational infrastructure on which the ambition to facilitate company-community collaboration on open source hardware projects described [below](#background) can be pursued. Future iterations of this tool should allow the community developing an open source hardware product to track the health of their project and if their needs are being met. For the purposes of reviewing OPENNEXT deliverables, there is an **[Executive summary](EXECUTIVE_SUMMARY.md)** available.
 
 ## Table of Contents
 
@@ -27,11 +27,12 @@ This work is an *initial* demonstrator delivered at month 18 of the [OPENNEXT](h
   - [Usage](#usage)
     - [`osmine` data-mining module](#osmine-data-mining-module)
     - [`osdash` dashboard module](#osdash-dashboard-module)
-  - [Current results](#current-results)
   - [Design notes](#design-notes)
     - [Internal data structure](#internal-data-structure)
     - [Data-mining](#data-mining)
     - [Data visualisation](#data-visualisation)
+  - [Results](#results)
+  - [Discussion](#discussion)
   - [Future work](#future-work)
     - [Accessing and analysing file-change histories](#accessing-and-analysing-file-change-histories)
     - [Enhanced project health indicators](#enhanced-project-health-indicators)
@@ -210,15 +211,6 @@ The following steps will start a local test instance of the dashboard:
     <iframe src="[url]">
     ```
     where `[url]` is the publicly accessible URL at which the dashboard is hosted.
-
-## Current results
-
-The `main` branch of this repository reflects the status of development at month 18 of the OPENNEXT project. At this time, we have achieved for the dashboard: 
-
-1. Underlying algorithms to fetch project metadata (such as participant list, commit history, ticket activity) from their respective version control repository hosted on GitHub or Wikifactory.
-2. A minimum viable online dashboard that demonstrates interactive visualisations of the underlying data.
-
-The following sections describe in more detail on the design process and how the current state of this dashboard will facilitate future work.
 ## Design notes
 
 The essential sequence of operation for `osmine` and `osdash` has been described in the [Usage](#usage) section above. The following flowchart depicts that sequence: 
@@ -314,6 +306,22 @@ Notably, a live Dash web app automatically reloads when the underlying Python co
 
 There is no strict limitation on where Dash web apps can be hosted. However, since the [demo instance](https://opennextwp22.eu.pythonanywhere.com/) of the `osdash` module is currently hosted on [PythonAnywhere](https://eu.pythonanywhere.com/), the version numbers of the dependencies for this repository listed in [`requirements.txt`](./requirements.txt) are based on [those offered](https://eu.pythonanywhere.com/batteries_included/) by their default Python 3.8 environment.
 
+## Results
+
+The `main` branch of this repository reflects the status of development at month 18 of the OPENNEXT project. At this time, we have achieved for the dashboard: 
+
+1. Underlying algorithms to fetch project metadata (such as participant list, commit history, ticket activity) from their respective version control repository hosted on GitHub or Wikifactory.
+2. A minimum viable online dashboard that demonstrates interactive visualisations of the underlying data.
+
+The [Design notes](#design-notes) section described in more detail the design process. The following section addresses how the current state of this dashboard will facilitate future work.
+
+## Discussion
+
+The development of this demonstrator deliverable benefited from and was informed by work by work package 2 and work package 3 including the developers behind Wikifactory. This process is fruitful for idea cross-pollination and reducing duplication of effort. We intend to continue and expand this collaboration model to include OPENNEXT SME partners to gain input from their real-life practical experience.
+
+One way to mine data from a version control repository is to download it directly. However, some repositories, especially those developing open source hardware with binary format computer-aided design (CAD) files, can take up hundreds of megabytes. This will substantially increase the time, network bandwidth, and storage space needed when mining many repositories to the point of being impractical. That is the rationale for our current solution which uses the APIs of open source project hosting platforms such as GitHub and Wikifactory to retrieve only the metadata we need at finer resolution. One challenge is our desire to expand the supported platforms of our tool, such as GitLab or generic Git repositories. However, each has a different API which provides not only differently structured data responses but also in their content. There might be information we can retrieve from one platform that is not available from another.
+
+One of our major ambitions is to investigate community collaboration patterns in open source development by analysing the file-change commit histories of their version control repositories. This information allows us to contruct file co-edition graphs using commit authorship data. Nodes in such a graph would be those who have made a commit and an edge between two nodes would be formed if they have committed changes to the same files. And since each commit has a timestamp, we could observe how the structure of the graph changed over time and perform clustering or modularity analyses to quantify that evolution. We hypothesise that the evolution of such a graph would reflect changes in a repository's developer community over time. This will be discussed further in the following section.
 ## Future work
 
 This section describes future work that we hope to conduct with the foundation that the month 18 deliverable established. These are aspirations where the specifics of how they are implemented might be subject to change.
