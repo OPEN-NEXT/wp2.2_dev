@@ -5,6 +5,7 @@ Source: https://github.com/OPEN-NEXT/wp2.2_dev/
 
 Files:
     README.md
+    EXECUTIVE_SUMMARY.md
     .github/ISSUE_TEMPLATE/bug_report.md
     docs/images/dashboard_flowchart.drawio.jpg
     docs/images/dashboard_flowchart.drawio.svg
