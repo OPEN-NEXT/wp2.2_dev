@@ -392,6 +392,8 @@ The maintainer would like to gratefully acknowledge:
 * OPENNEXT project researchers Robert Mies ([@MIE5R0](https://github.com/MIE5R0)), Mehera Hassan ([@meherrahassan](https://github.com/meherahassan)), and Sonika Gogineni ([@GoSFhg](https://github.com/GoSFhg)) for useful feedback and extensive administrative support.
 * The Linux Foundation [CHAOSS](https://chaoss.community/) group for insights on open source community health metrics.
 
+[![EU flag](./docs/images/EU_flag.svg)](https://commons.wikimedia.org/wiki/File:Flag_of_Europe.svg)
+
 The work in this repository is supported by a European Union [Horizon 2020](https://ec.europa.eu/programmes/horizon2020/) programme grant (agreement ID [869984](https://cordis.europa.eu/project/id/869984)).
 
 ## License
