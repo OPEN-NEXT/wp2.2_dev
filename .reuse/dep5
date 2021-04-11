@@ -10,7 +10,14 @@ Files:
     docs/images/dashboard_flowchart.drawio.jpg
     docs/images/dashboard_flowchart.drawio.svg
     docs/images/hover-plot-controls.gif
+    docs/images/mined_data.json.jpg
+    docs/images/osdash-command.jpg
     docs/images/osdash-screenshot.jpg
+    docs/images/osdash-select-project.jpg
+    docs/images/osdash-select-repo.jpg
+    docs/images/osdash-select-timeframe.jpg
+    docs/images/OSH-repos.csv.png
+    docs/images/osmine-command.png
     docs/images/osmine-example-run.jpg
 Copyright: 2021 Pen-Yuan Hsing
 License: CC-BY-SA-4.0
