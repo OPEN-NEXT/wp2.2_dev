@@ -148,6 +148,12 @@ This module should be run first to produce the dataset for the `osdash` dashboar
 
     An example CSV list is included with this repository in [`input/OSH-repos.csv`](./input/OSH-repos.csv) and can be used out-of-the-box. This list was used to obtain the data visualised in the dashboard proof-of-concept [demo instance](https://opennextwp22.eu.pythonanywhere.com/).
 
+    The following is a screenshot of the example CSV list opened as a spreadsheet where columns and contents are visible: 
+
+    ![Screenshot of CSV list of repositories to mine](docs/images/OSH-repos.csv.png)
+
+    ***Figure 1.** Screenshot of input CSV list of repositories to mine opened as a spreadsheet.*
+
 2. Obtain a [GitHub personal access token](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token), which is a 40-character alphanumeric string in the form of `22x9w3npi629wgam5s6xxxen5abrozeb3db2mr42`. A GitHub account is required for this step. This token can be fed to `osmine` as: The environment variable `GH_TOKEN`; a path to a one-line pure-text file containing the string as a command line argument (see step 4); or directly in the configuration file (see step 3.).
 
 3. Set up configuration file.
@@ -161,6 +167,12 @@ This module should be run first to produce the dataset for the `osdash` dashboar
     ```sh
     python osmine
     ```
+
+    If successful, the first lines of terminal output should resemble the following: 
+
+    ![Screenshot of initial terminal output from `python osmine` command](docs/images/osmine-command.png)
+
+    ***Figure 2.** First lines of output from data-mining script `osmine`.*
 
     Unless provided elsewhere, these two command line arguments are the most important: **`-t`** - path to file containing GitHub access token; **`-r`** - path to CSV file containing list of repositories to query. Here is a full example assuming a pure-text file named `token` containing the GitHub token string has been placed in the base directory of `wp2.2_dev`: 
 
@@ -176,11 +188,17 @@ This module should be run first to produce the dataset for the `osdash` dashboar
 
 6. The `osmine` module will run, using its internal GitHub and Wikifactory modules ([`osmine/miner/GitHub.py`](./osmine/miner/GitHub.py) and [`osmine/miner/Wikifactory.py`](./osmine/miner/Wikifactory.py)) to query the provided list of repositories. At time of writing, the GitHub API allows filtering results by time to reduce network usage. `osmine` will use the "last mined" timestamp described above to only query for data after that timestamp and append the results to previously saved data. During the run, you should see output in your terminal that resembles the following: 
 
-    ![terminal output from `osmine`](docs/images/osmine-example-run.jpg) 
+    ![Screenshot of terminal output from `osmine`](docs/images/osmine-example-run.jpg) 
 
-    ***Figure 1.** Typical terminal output when running `osmine`.*
+    ***Figure 3.** Typical terminal output when running `osmine`.*
 
 7. Once data-mining is complete, the results will be saved in a [JSON](https://www.json.org/json-en.html) file with 4-spaces indentation (`mined_data.json`) contained in a compressed archive `data/mined_data.zip`. Currently this behaviour is hard-coded in the Python script [`osmine/postprocess/exporter.py`](./osmine/postprocess/exporter.py).
+
+    Since a JSON file is also a text file, the contents of `mined_data.json` could be directly inspected by opening it in any text editor. The following screenshot shows a section of the JSON-formatted data saved by the data-mining script `osmine` containing metadata on GitHub commits. For example, the timestamp of the commit, authorship information, and link to the commit are recorded.
+
+    ![Screenshot of contents of mined data saved in JSON format](docs/images/mined_data.json.jpg)
+
+    ***Figure 4.** Typical contents of exported data in JSON format from the data-mining script `osmine`.*
 
 If no visualisation is needed, then there is no need to run anything else. The mined data file `data/mined_data.zip` can be used in other applications. See [Design notes](#design-notes) section on how the data file is structured.
 
@@ -198,7 +216,11 @@ On your server, the following steps will start a local test instance of the dash
     python osdash
     ```
 
-    This will start the test server using mined-data from `osmine` saved in `data/mined_data.zip`. The initialisation process will take at least several seconds to serve the dashboard webpage.
+    This will start the test server using mined-data from `osmine` saved in `data/mined_data.zip`. The initialisation process will take at least several seconds to serve the dashboard webpage. The following is typical output in the terminal indicating the test server has been started: 
+
+    ![Terminal output if `osdash` test server is started](docs/images/osdash-command.jpg)
+
+    ***Figure 5.** Typical terminal output upon successful start of the test server of the proof-of-concept `osdash` online dashboard.*
 
 2. Unless the default port number was changed (see [Install](#install) section), open the dashboard's URL in a web browser such as [Mozilla Firefox](https://www.mozilla.org/firefox/): 
    
@@ -206,13 +228,31 @@ On your server, the following steps will start a local test instance of the dash
 
    Replace `21110` with another number if you changed the port. After a few seconds, the dashboard should be visible in your browser window. The following is a screenshot showing a typical session of the dashboard displaying metrics for the [`open-source-rover`](https://github.com/nasa-jpl/open-source-rover) project: 
 
-   ![dashboard screenshot](./docs/images/osdash-screenshot.jpg) 
+   ![Prototype dashboard screenshot](./docs/images/osdash-screenshot.jpg) 
 
-   ***Figure 2.** Typical screenshot of the proof-of-concept dashboard module `osdash`.*
+   ***Figure 6.** Typical screenshot of the proof-of-concept dashboard module `osdash` opened in a web browser.*
 
 3. There should already be statistics shown for a repository. If the example `input/OSH-list.csv` was used by `osmine`, then the dashboard should be showing information on the [Airpup](https://github.com/mathewlippincott/airpup-balloon) open source hardware aerial sensing platform.
 
-4. The left side of the page is a sidebar for configuring which repository's information to show. Follow the numbered steps in order to customise the view.
+4. The left side of the page is a sidebar for configuring which repository's information to show. Follow the numbered steps in order to customise the view. Specifically: 
+
+   a. Begin by choosing an open source hardware project: 
+
+    ![Dashboard OSH project selection menu](docs/images/osdash-select-project.jpg)
+
+    ***Figure 7.** OSH project selection menu.*
+
+    b. Some projects might spread their work into multiple repositories. They can be selected from the following menu: 
+
+    ![Project repository selection menu](docs/images/osdash-select-repo.jpg)
+
+    ***Figure 8.** OSH project repository selection menu.*
+
+    c. There is a slider with two draggable ends to filter the dataset for the selected repository by the desired timeframe. Click and drag them to specify the timeframe: 
+
+    ![Timeslider](docs/images/osdash-select-timeframe.jpg)
+
+    ***Figure 9.** OSH repository time slider.*
 
 5. In this proof-of-concept version of the dashboard, the timeframe slider in the sidebar will constrain the data shown in the repository view to the right. This view has three components: 
    
@@ -221,7 +261,7 @@ On your server, the following steps will start a local test instance of the dash
 
    ![GIF of Plotly interaction buttons](./docs/images/hover-plot-controls.gif) 
 
-   ***Figure 3.** Hovering the mouse cursor over a dashboard plot will reveal interaction tools.*
+   ***Figure 10.** Hovering the mouse cursor over a dashboard plot will reveal interaction tools.*
    
    * A table showing the list of users (shown as usernames) who have contributed to this repository including their number of commits and the tickets they have participated in. Participation can be either opening or commenting on a ticket.
 
@@ -236,7 +276,7 @@ The essential sequence of operation for `osmine` and `osdash` has been described
 
 ![Dashboard flowchart](./docs/images/dashboard_flowchart.drawio.jpg) 
 
-***Figure 4.** Sequence of events when running the `osmine` data-mining script and the `osdash` data visualisation dashboard.*
+***Figure 11.** Sequence of events when running the `osmine` data-mining script and the `osdash` data visualisation dashboard.*
 
 To re-iterate, the following in a textual description of the steps in the flowchart: 
 
