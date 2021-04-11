@@ -12,7 +12,8 @@ name: miner
 on:
     # Triggers on schedule
     schedule:
-      - cron: 30 2 * * 3 # 02:30 UTC every Wednesday: https://crontab.guru/#30_2_*_*_3
+      - cron: 30 2 15 * * # 02:30 UTC on the 15th of each month: https://crontab.guru/#30_2_15_*_*
+      # - cron: 30 2 * * 3 # 02:30 UTC every Wednesday: https://crontab.guru/#30_2_*_*_3
     # Allows you to run this workflow manually from the Actions tab
     workflow_dispatch:
 
