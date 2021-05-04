@@ -2,7 +2,6 @@
 
 [![Live demo link](https://img.shields.io/badge/Demo-CLICK%20HERE-red.svg?style=flat)](https://opennextwp22.eu.pythonanywhere.com/)
 [![Python version](https://img.shields.io/badge/Python-3.8-blue.svg?style=flat&logo=Python&logoColor=white)](https://docs.python.org/3.8/)
-![Lines of code](https://sloc.xyz/github/OPEN-NEXT/wp2.2_dev)
 ![GitHub Workflow Status (main branch)](https://img.shields.io/github/workflow/status/OPEN-NEXT/wp2.2_dev/main-branch-checks/main.svg?label=checks&logo=GitHub%20Actions&logoColor=white)
 ![CodeQL](https://github.com/OPEN-NEXT/wp2.2_dev/workflows/CodeQL/badge.svg)
 [![standard-readme compliant](https://img.shields.io/badge/readme%20style-standard-brightgreen.svg?style=flat)](https://github.com/RichardLitt/standard-readme)
