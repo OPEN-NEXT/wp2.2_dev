@@ -2,7 +2,6 @@
 
 [![Live demo link](https://img.shields.io/badge/Demo-CLICK%20HERE-red.svg?style=flat)](https://opennextwp22.eu.pythonanywhere.com/)
 [![Python version](https://img.shields.io/badge/Python-3.8-blue.svg?style=flat&logo=Python&logoColor=white)](https://docs.python.org/3.8/)
-![Lines of code](https://sloc.xyz/github/OPEN-NEXT/wp2.2_dev)
 ![GitHub Workflow Status (main branch)](https://img.shields.io/github/workflow/status/OPEN-NEXT/wp2.2_dev/main-branch-checks/main.svg?label=checks&logo=GitHub%20Actions&logoColor=white)
 ![CodeQL](https://github.com/OPEN-NEXT/wp2.2_dev/workflows/CodeQL/badge.svg)
 [![standard-readme compliant](https://img.shields.io/badge/readme%20style-standard-brightgreen.svg?style=flat)](https://github.com/RichardLitt/standard-readme)
@@ -19,7 +18,7 @@ Targeted at hosters of version control platforms (such as [Wikifactory](https://
 
 This *initial* demonstrator is delivered at month 18 of the [OPENNEXT](https://opennext.eu/) project as part of task 2.2: "Creating a design process facilitation dashboard". It is to establish the foundational, "behind the scenes" infrastructure on which the ambition to facilitate company-community collaboration on open source hardware projects described [below](#background) can be pursued. Future iterations of this tool should allow the community developing an open source hardware product to track the health of their project and if their needs are being met. **Importantly, an instance of the data-mining script and dashboard will be hosted by OPENNEXT partner [Wikifactory](https://wikifactory.com/)**. For the purposes of reviewing OPENNEXT deliverables, there is an **[Executive summary](EXECUTIVE_SUMMARY.md)** available.
 
-**Please see the [Install](#install) and [Usage](#usage) sections to get up and running with this tool**. For more details on its background and design considerations, please see the [Background](#background), [Design notes](#design-notes), and [Future work](#future-work) sections.
+**Please see the [Install](#install) and [Usage](#usage) sections to get up and running with this tool**. For more details on its background and design considerations, please see the [Background](#background), [Design notes](#design-notes), and [Future work](#future-work) sections. There is also a detailed [step-by-step walkthrough](docs/usage-example.md).
 
 ## Table of Contents
 
@@ -81,7 +80,7 @@ In addition, this repository aims to follow international standards and good pra
 
 ## Install
 
-*This section assumes knowledge of Python, Git, and using a GNU/Linux-based server including installing software from package managers and running a terminal session*.
+*This section assumes knowledge of Python, Git, and using a GNU/Linux-based server including installing software from package managers and running a terminal session. There is also a detailed [step-by-step walkthrough](docs/usage-example.md)*.
 
 **Note:** This software is designed to be deployed on a server by system administrators or developers, not on generic consumer devices.
 
@@ -123,7 +122,7 @@ where `[port number]` can be any integer of your choice. The default has been ar
 
 ## Usage
 
-*This section assumes basic knowledge of Python and using a terminal session on a GNU/Linux server*.
+*This section assumes basic knowledge of Python and using a terminal session on a GNU/Linux server. There is also a detailed [step-by-step walkthrough](docs/usage-example.md)*.
 
 After following the steps in the [Install](#install) section, change directories into `wp2.2_dev` with this terminal command: 
 
