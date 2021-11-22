@@ -8,7 +8,6 @@ Files:
     docs/images/*
     docs/usage-example-images/*
     .github/ISSUE_TEMPLATE/bug_report.md
-    EXECUTIVE_SUMMARY.md
     README.md
 Copyright: 2021 Pen-Yuan Hsing
 License: CC-BY-SA-4.0
@@ -20,8 +19,6 @@ License: CC-BY-4.0
 
 Files:
     CONTRIBUTING.md
-    data/mined_data.zip
-    input/OSH-repos.csv
 Copyright: 2021 Pen-Yuan Hsing
 License: CC-BY-4.0
 
