@@ -2,6 +2,11 @@
 #
 # SPDX-License-Identifier: CC0-1.0
 
+# Deta files
+.deta*
+.deta/prog_info
+.deta/state
+
 # LibreOffice lock files
 .~lock*
 
