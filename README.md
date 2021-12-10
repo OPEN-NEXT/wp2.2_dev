@@ -273,7 +273,7 @@ On your server, the following steps will start a local test instance of the dash
 
 The essential sequence of operation for `osmine` and `osdash` has been described in the [Usage](#usage) section above. The following flowchart depicts that sequence: 
 
-![Dashboard flowchart](./docs/images/dashboard_flowchart.drawio.jpg) 
+![Dashboard flowchart](./docs/images/dashboard_flowchart.drawio.png) 
 
 ***Figure 11.** Sequence of events when running the `osmine` data-mining script and the `osdash` data visualisation dashboard.*
 
