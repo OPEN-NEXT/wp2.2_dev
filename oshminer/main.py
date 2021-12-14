@@ -39,9 +39,16 @@ supported_data_requests: list = [
     "files_editable"
 ]
 
-app = FastAPI()
+app = FastAPI(
+    title = "WP2.2 dashboard backend", 
+    description = "A REST API to request dashboard metrics for a list of repositories on GitHub and Wikifactory."
+)
 
-@app.get("/")
+@app.get(
+    "/", 
+    name = "Root", 
+    description = "Returns a message that the API is online."
+    )
 async def root(): 
     return {"message": "Dashboard data-mining backend is on"}
 
@@ -57,7 +64,10 @@ async def create_item(item: Item):
 async def read_item(item_id: int): 
     return {"requested item_id": item_id}
 
-@app.post("/data/")
+@app.post(
+    "/data/", 
+    name = "Primary endpoint for retrieving data"
+    )
 async def mining_request(request_body: MiningRequest): 
     # 
     # Check API client's request body
