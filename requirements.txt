@@ -1,5 +1,4 @@
 # SPDX-FileCopyrightText: 2021 Pen-Yuan Hsing
-#
 # SPDX-License-Identifier: CC0-1.0
 
 fastapi>=0.70
