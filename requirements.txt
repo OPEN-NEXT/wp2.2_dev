@@ -3,4 +3,5 @@
 
 fastapi>=0.70
 PyYAML>=5.4
+sgqlc>=14.1
 uvicorn>=0.15
