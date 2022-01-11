@@ -9,6 +9,7 @@ from fastapi import FastAPI, status
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, HttpUrl
 
+import oshminer.supported_domains
 class Item(BaseModel): 
     name: str
     description: Optional[str] = None
@@ -18,13 +19,6 @@ class Item(BaseModel):
 class MiningRequest(BaseModel): 
     repo_urls: Set[HttpUrl] = set()
     requested_data: Set[str] = set()
-
-# Supported hosting platforms as a list of their domains. 
-# `repo_urls` need to include one of these domains.
-supported_domains: list = [
-    "github.com", 
-    "wikifactory.com"
-]
 
 # Supported data-mining request types. Items in `required_data` must
 # be from this list.
@@ -146,3 +140,24 @@ async def mining_request(request_body: MiningRequest):
                 repo_dict["requested_data"][data_item] = ""
         response.append(repo_dict)
     return response
+
+
+
+
+
+
+
+
+
+
+
+"""
+1. get `list` of requested info
+2. compile API request
+    2.1 get needed API requests for each item in `list`
+    2.2 deduplicate into list of what's needed from API
+    2.3 create API call
+    2.4 make API call
+3. interpret and derive info from API response
+4. send our own response
+"""
