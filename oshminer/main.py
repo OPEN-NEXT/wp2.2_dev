@@ -3,7 +3,6 @@
 # SPDX-FileCopyrightText: 2021 Pen-Yuan Hsing
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
-from typing import Optional, Set
 
 from fastapi import FastAPI, status
 from fastapi.responses import JSONResponse
@@ -12,13 +11,13 @@ from pydantic import BaseModel, HttpUrl
 import oshminer.supported_domains
 class Item(BaseModel): 
     name: str
-    description: Optional[str] = None
+    description: str | None = None
     price: float
-    tax: Optional[float] = None
+    tax: float | None = None
 
 class MiningRequest(BaseModel): 
-    repo_urls: Set[HttpUrl] = set()
-    requested_data: Set[str] = set()
+    repo_urls: HttpUrl = set()
+    requested_data: str = set()
 
 # Supported data-mining request types. Items in `required_data` must
 # be from this list.
