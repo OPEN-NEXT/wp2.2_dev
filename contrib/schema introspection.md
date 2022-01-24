@@ -108,3 +108,12 @@ fragment TypeRef on __Type {
 ```
 
 The results are stored in `WIF_schema.json`, and converted for use with the [`sgqlc`](https://github.com/profusion/sgqlc) library into `WIF_schema.py`.
+
+## License
+
+This document is shared under the Creative Commons Attribution-ShareAlike 4.0 license.
+
+```
+SPDX-FileCopyrightText: 2022 Pen-Yuan Hsing
+SPDX-License-Identifier: CC-BY-SA-4.0
+```
