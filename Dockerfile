@@ -19,4 +19,4 @@ COPY ./ /opt/app
 RUN adduser --disabled-password myuser
 USER myuser
 
-CMD uvicorn main:app --host 0.0.0.0 --port $PORT
+CMD uvicorn oshminer.main:app --host 0.0.0.0 --port $PORT
