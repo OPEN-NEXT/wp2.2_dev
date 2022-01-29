@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 # Python Standard Library imports
+import asyncio
 import json
 import sys
 
@@ -42,6 +43,17 @@ app = FastAPI(
     )
 async def root(): 
     return {"message": "Dashboard data-mining backend is on"}
+
+async def process_repo(repo: HttpUrl, requests: list[str], responses: list): 
+    platform: str = repo.host.replace("www.", "")
+    try: 
+        repo_info: dict = await supported_domains[platform](repo, requests)
+    except exceptions.BadRepoError: 
+        return JSONResponse(
+            status_code = status.HTTP_400_BAD_REQUEST, 
+            content = f"Error with repository: {repo}"
+        )
+    responses.append(repo_info)
 
 @app.post(
     "/data/", 
@@ -85,21 +97,23 @@ async def mining_request(request_body: MiningRequest):
     # Prepare API response
     #
 
-    response: list = []
+    response_list: list = []
 
     #
     # Construct, send API requests, and get results
     #
 
-    for repo in request_body.repo_urls: 
-        platform = repo.host.replace("www.", "")
-        try: 
-            repo_info: dict = await supported_domains[platform](repo, request_body.requested_data)
-        except exceptions.BadRepoError: 
-            return JSONResponse(
-                status_code = status.HTTP_400_BAD_REQUEST, 
-                content = f"Error with repository: {repo}"
-            )
-        response.append(repo_info)
+    await asyncio.gather(*[process_repo(repo, request_body.requested_data, response_list) for repo in request_body.repo_urls])
 
-    return response
+    # for repo in request_body.repo_urls: 
+    #     platform = repo.host.replace("www.", "")
+    #     try: 
+    #         repo_info: dict = await supported_domains[platform](repo, request_body.requested_data)
+    #     except exceptions.BadRepoError: 
+    #         return JSONResponse(
+    #             status_code = status.HTTP_400_BAD_REQUEST, 
+    #             content = f"Error with repository: {repo}"
+    #         )
+    #     response_list.append(repo_info)
+
+    return response_list

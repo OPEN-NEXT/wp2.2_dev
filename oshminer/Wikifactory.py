@@ -17,12 +17,7 @@ from gql.transport.aiohttp import AIOHTTPTransport
 import oshminer.filetypes as filetypes
 from oshminer.errors import exceptions
 
-# Select transport with the Wikifactory API endpoint URL
-transport = AIOHTTPTransport(url = "https://wikifactory.com/api/graphql")
-# Create a GraphQL client using the defined transport
-client = Client(transport = transport, fetch_schema_from_transport = True)
-
-async def get_files_info(project: dict) -> dict:
+async def get_files_info(project: dict, session) -> dict:
     # Provide a GraphQL query
     query = gql(
         """
@@ -55,7 +50,7 @@ async def get_files_info(project: dict) -> dict:
     
     # Execute the query on the transport
     # `execute_async()` is the asynchronous version of `execute()`
-    API_response = await client.execute_async(query, variable_values = params)
+    API_response = await session.execute(query, variable_values = params)
     if API_response["project"]["result"] is None: 
         raise exceptions.BadRepoError # Raise error if Wikifactory API can't find this project
     # Only continue if there are files in the project
@@ -131,7 +126,7 @@ async def get_files_info(project: dict) -> dict:
 
     return result
 
-async def get_issues_level(project: dict) -> dict: 
+async def get_issues_level(project: dict, session) -> dict: 
     # Provide a GraphQL query
     query = gql(
         """
@@ -175,7 +170,7 @@ async def get_issues_level(project: dict) -> dict:
     # Make queries to retrieve project issues
     while issues_has_next_page: 
         # `execute_async()` is the asynchronous version of `execute()`
-        API_response: dict = await client.execute_async(query, variable_values = params)
+        API_response: dict = await session.execute(query, variable_values = params)
         if API_response["project"]["result"] is None: 
             raise exceptions.BadRepoError # Raise error if Wikifactory API can't find this project
         if API_response["project"]["result"]["tracker"]["issues"]["totalCount"] > 0: # Only continue if there are issues
@@ -200,7 +195,7 @@ async def get_issues_level(project: dict) -> dict:
     }
     return result
 
-async def get_commits_level(project: dict) -> dict: 
+async def get_commits_level(project: dict, session) -> dict: 
     # Provide a GraphQL query
     query = gql(
         """
@@ -239,7 +234,7 @@ async def get_commits_level(project: dict) -> dict:
     contribs: list = []
     while contribs_has_next_page: 
         # `execute_async()` is the asynchronous version of `execute()`
-        API_response: dict = await client.execute_async(query, variable_values = params)
+        API_response: dict = await session.execute(query, variable_values = params)
         if API_response["project"]["result"] is None: 
             raise exceptions.BadRepoError # Raise error if Wikifactory API can't find this project
         if API_response["project"]["result"]["contributions"]["totalCount"] > 0: # Only continue if there are contributions
@@ -261,7 +256,7 @@ async def get_commits_level(project: dict) -> dict:
     }
     return result
 
-async def get_tags(project: dict) -> dict: 
+async def get_tags(project: dict, session) -> dict: 
     # Provide a GraphQL query
     query = gql(
         """
@@ -304,7 +299,7 @@ async def get_tags(project: dict) -> dict:
     # Keep going while there is a next page of user tags
     while user_tags_has_next_page: 
         # `execute_async()` is the asynchronous version of `execute()`
-        API_response: dict = await client.execute_async(query, variable_values = params)
+        API_response: dict = await session.execute(query, variable_values = params)
         if API_response["project"]["result"] is None: 
             raise exceptions.BadRepoError # Raise error if Wikifactory API can't find this project
         # Append project level tags to list
@@ -324,7 +319,7 @@ async def get_tags(project: dict) -> dict:
     result["tags"] = list(set(result["tags"]))
     return result
 
-async def get_license(project: dict) -> dict: 
+async def get_license(project: dict, session) -> dict: 
     # Provide a GraphQL query
     query = gql(
         """
@@ -355,7 +350,7 @@ async def get_license(project: dict) -> dict:
     
     # Execute the query on the transport
     # `execute_async()` is the asynchronous version of `execute()`
-    API_response: dict = await client.execute_async(query, variable_values = params)
+    API_response: dict = await session.execute(query, variable_values = params)
     if API_response["project"]["result"] is None: 
         raise exceptions.BadRepoError # Raise error if Wikifactory API can't find this project
     # Get license string for this project
@@ -416,11 +411,15 @@ async def make_Wikifactory_request(url: str, data: list) -> str:
         "requested_data": {}
     }
 
+    # Select transport with the Wikifactory API endpoint URL
+    transport = AIOHTTPTransport(url = "https://wikifactory.com/api/graphql")
+
     # Get "space" and "slug" components from this repository's URL
     space_slug: dict = parse_url(url)
 
-    for data_type in data: 
-        query_result: dict = await queries[data_type](space_slug)
-        results["requested_data"].update(query_result)
+    async with Client(transport = transport, fetch_schema_from_transport = True) as session: 
+        for data_type in data: 
+            query_result: dict = await queries[data_type](space_slug, session)
+            results["requested_data"].update(query_result)
 
     return results
