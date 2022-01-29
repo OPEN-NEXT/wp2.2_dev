@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2021 Pen-Yuan Hsing
 # SPDX-License-Identifier: CC0-1.0
 
+aiohttp>=3.8.1
 fastapi>=0.70
 PyYAML>=5.4
-sgqlc>=14.1
 uvicorn>=0.15
