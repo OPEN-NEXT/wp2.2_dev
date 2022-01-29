@@ -10,7 +10,7 @@ COPY ./requirements.txt /tmp/requirements.txt
 RUN pip install --no-cache-dir --upgrade -r /tmp/requirements.txt \
     && rm /tmp/requirements.txt
 
-COPY ./oshminer /opt/app
+COPY ./ /opt/app
 
 # Create and use a non-root user (required by Heroku)
 RUN adduser --disabled-password myuser
