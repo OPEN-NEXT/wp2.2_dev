@@ -55,7 +55,7 @@ async def process_repo(repo: HttpUrl, requests: list[str], responses: list):
         )
     responses.append(repo_info)
 
-@app.post(
+@app.get(
     "/data/", 
     name = "API endpoint", 
     description = "Primary endpoint for requesting data."
