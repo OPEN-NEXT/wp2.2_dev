@@ -26,3 +26,14 @@ Files:
     docs/images/EU_flag.svg
 Copyright: Council of Europe
 License: CC0-1.0
+
+Files: 
+    contrib/WIF_schema.json
+    contrib/license_list.json
+Copyright: 2022 Pen-Yuan Hsing
+License: CC0-1.0
+
+Files: 
+    contrib/WIF_schema.py
+Copyright: 2022 Pen-Yuan Hsing
+License: MIT
