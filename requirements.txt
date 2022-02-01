@@ -1,11 +1,8 @@
 # SPDX-FileCopyrightText: 2021 Pen-Yuan Hsing
-#
 # SPDX-License-Identifier: CC0-1.0
 
-dash>=1.16.0
-dash-bootstrap-components>=0.11.1
-numpy~=1.17.3
-pandas~=0.25.2
-plotly>=4.10.0 # To solve: https://github.com/plotly/plotly.py/issues/1630
+aiohttp>=3.8.1
+fastapi>=0.70
+gql>=3.0.0
 PyYAML>=5.4
-requests~=2.22.0
+uvicorn>=0.15
