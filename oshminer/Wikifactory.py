@@ -99,12 +99,19 @@ async def get_files_info(project: dict, session) -> dict:
             - result["files_info"]["data_files"]\
             - result["files_info"]["document_files"]
         # Calculate proportion of each file type
-        result["files_info"]["ecad_proportion"]: float = result["files_info"]["ecad_files"]/result["files_info"]["total_files"]
-        result["files_info"]["mcad_proportion"]: float = result["files_info"]["mcad_files"]/result["files_info"]["total_files"]
-        result["files_info"]["image_proportion"]: float = result["files_info"]["image_files"]/result["files_info"]["total_files"]
-        result["files_info"]["data_proportion"]: float = result["files_info"]["data_files"]/result["files_info"]["total_files"]
-        result["files_info"]["document_proportion"]: float = result["files_info"]["document_files"]/result["files_info"]["total_files"]
-        result["files_info"]["other_proportion"]: float = result["files_info"]["other_files"]/result["files_info"]["total_files"]
+        # Limit to three decimal places to reduce size of response
+        ecad_proportion: float = result["files_info"]["ecad_files"]/result["files_info"]["total_files"]
+        mcad_proportion: float = result["files_info"]["mcad_files"]/result["files_info"]["total_files"]
+        image_proportion: float = result["files_info"]["image_files"]/result["files_info"]["total_files"]
+        data_proportion: float = result["files_info"]["data_files"]/result["files_info"]["total_files"]
+        document_proportion: float = result["files_info"]["document_files"]/result["files_info"]["total_files"]
+        other_proportion: float = result["files_info"]["other_files"]/result["files_info"]["total_files"]
+        result["files_info"]["ecad_proportion"]: float = float(f"{ecad_proportion:.3f}")
+        result["files_info"]["mcad_proportion"]: float = float(f"{mcad_proportion:.3f}")
+        result["files_info"]["image_proportion"]: float = float(f"{image_proportion:.3f}")
+        result["files_info"]["data_proportion"]: float = float(f"{data_proportion:.3f}")
+        result["files_info"]["document_proportion"]: float = float(f"{document_proportion:.3f}")
+        result["files_info"]["other_proportion"]: float = float(f"{other_proportion:.3f}")
     else: # If there are no files, return 0 for everything
         result: dict = {
             "files_info": {
