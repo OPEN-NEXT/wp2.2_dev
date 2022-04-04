@@ -5,3 +5,12 @@
 
 def make_GitHub_request(url: str, data: list) -> str: 
     print(f"Constructing an API request to GitHub for repository {url} for the following data {data}")
+
+    # Create a dictionary to hold results from GitHub API query
+    results: dict = {
+        "repository": str(url), 
+        "platform": "Wikifactory", 
+        "requested_data": {}
+    }
+
+    return results
