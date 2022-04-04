@@ -5,3 +5,6 @@
 
 class BadRepoError(Exception): 
     pass
+
+class BadWIFAPIError(Exception):
+    pass

@@ -6,7 +6,9 @@
 # Python Standard Library imports
 import asyncio
 import json
+import http.client
 import sys
+import urllib
 
 # External library imports
 from fastapi import FastAPI, status
@@ -17,9 +19,12 @@ from pydantic import BaseModel, HttpUrl
 from oshminer.supported_platforms import supported_domains
 from oshminer.errors import exceptions
 
+# Default Wikifactory API URL
+WIF_API_DEFAULT: str = "https://wikifactory.com/api/graphql"
 class MiningRequest(BaseModel): 
     repo_urls: list[HttpUrl] = set()
     requested_data: list[str] = set()
+    wikifactory_API_URL: str = WIF_API_DEFAULT
 
 # Supported data-mining request types. Items in `required_data` must
 # be from this list.
@@ -44,23 +49,58 @@ app = FastAPI(
 async def root(): 
     return {"message": "Dashboard data-mining backend is on"}
 
-async def process_repo(repo: HttpUrl, requests: list[str], responses: list): 
+async def process_repo(repo: HttpUrl, requests: list[str], responses: list, WIF_API: str = WIF_API_DEFAULT): 
     platform: str = repo.host.replace("www.", "")
-    try: 
-        repo_info: dict = await supported_domains[platform](repo, requests)
-    except exceptions.BadRepoError: 
-        return JSONResponse(
-            status_code = status.HTTP_400_BAD_REQUEST, 
-            content = f"Error with repository: {repo}"
-        )
-    responses.append(repo_info)
+    # If a custom Wikifactory API URL is provided, then use it.
+    if WIF_API != WIF_API_DEFAULT: 
+        try: 
+            repo_info: dict = await supported_domains[platform](repo, requests, WIF_API)
+        except exceptions.BadRepoError: 
+            return JSONResponse(
+                status_code = status.HTTP_400_BAD_REQUEST, 
+                content = f"Error with repository: {repo}"
+            )
+        responses.append(repo_info)
+    else: 
+        try: 
+            repo_info: dict = await supported_domains[platform](repo, requests)
+        except exceptions.BadRepoError: 
+            return JSONResponse(
+                status_code = status.HTTP_400_BAD_REQUEST, 
+                content = f"Error with repository: {repo}"
+            )
+        responses.append(repo_info)
 
-@app.get(
+@app.post(
     "/data/", 
     name = "API endpoint", 
     description = "Primary endpoint for requesting data."
     )
 async def mining_request(request_body: MiningRequest): 
+    #
+    # Check if custom Wikifactory API URL is provided and test it
+    #
+    
+    if request_body.wikifactory_API_URL != WIF_API_DEFAULT: 
+        print(
+            f"Custom Wikifactory API URL detected: {request_body.wikifactory_API_URL}", 
+            file = sys.stderr
+            )
+        try: 
+            api_url_response = urllib.request.urlopen(
+                request_body.wikifactory_API_URL, 
+                timeout=10
+                )
+            if api_url_response.status != 200: 
+                raise exceptions.BadWIFAPIError
+        except (exceptions.BadWIFAPIError, urllib.error.URLError, http.client.BadStatusLine) as err: 
+            return JSONResponse(
+                status_code = status.HTTP_400_BAD_REQUEST, 
+                content = f"Error reaching Wikifactory API URL: {request_body.wikifactory_API_URL} {err}"
+            )
+    elif request_body.wikifactory_API_URL is None: 
+        request_body.wikifactory_API_URL = WIF_API_DEFAULT
+
     # 
     # Check API client's request body
     #
@@ -103,7 +143,16 @@ async def mining_request(request_body: MiningRequest):
     # Construct, send API requests, and get results
     #
 
-    await asyncio.gather(*[process_repo(repo, request_body.requested_data, response_list) for repo in request_body.repo_urls])
+    await asyncio.gather(
+        *[
+            process_repo(
+                repo, 
+                request_body.requested_data, 
+                response_list, 
+                WIF_API=request_body.wikifactory_API_URL
+                ) for repo in request_body.repo_urls
+            ]
+        )
 
     # for repo in request_body.repo_urls: 
     #     platform = repo.host.replace("www.", "")
