@@ -405,7 +405,7 @@ def parse_url(url: str) -> dict:
     }
     return repo
 
-async def make_Wikifactory_request(url: str, data: list) -> str: 
+async def make_Wikifactory_request(url: str, data: list, api_url: str = "https://wikifactory.com/api/graphql") -> str: 
     print(
         f"Constructing and making an API request to Wikifactory for repository {url} for the following data {data}", 
         file = sys.stderr
@@ -419,7 +419,7 @@ async def make_Wikifactory_request(url: str, data: list) -> str:
     }
 
     # Select transport with the Wikifactory API endpoint URL
-    transport = AIOHTTPTransport(url = "https://wikifactory.com/api/graphql")
+    transport = AIOHTTPTransport(url = api_url)
 
     # Get "space" and "slug" components from this repository's URL
     space_slug: dict = parse_url(url)
