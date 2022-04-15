@@ -6,6 +6,7 @@
 # Python Standard Library imports
 from datetime import datetime
 import json
+import os
 import urllib.parse
 import sys
 
@@ -16,6 +17,14 @@ from gql.transport.aiohttp import AIOHTTPTransport
 # Internal imports
 import oshminer.filetypes as filetypes
 from oshminer.errors import exceptions
+
+# Set Wikifactory API URL
+# Looks for the `WIF_API_URL` environment variable, and if not found, default to: 
+# https://wikifactory.com/api/graphql
+# See: 
+# https://www.twilio.com/blog/environment-variables-python
+WIF_API_URL: str = os.environ.get("WIF_API_URL", "https://wikifactory.com/api/graphql")
+# print(f"Wikifactory API URL: {WIF_API_URL}", file=sys.stderr)
 
 async def get_files_info(project: dict, session) -> dict:
     # Provide a GraphQL query
@@ -419,7 +428,7 @@ async def make_Wikifactory_request(url: str, data: list) -> str:
     }
 
     # Select transport with the Wikifactory API endpoint URL
-    transport = AIOHTTPTransport(url = "https://wikifactory.com/api/graphql")
+    transport = AIOHTTPTransport(url = WIF_API_URL)
 
     # Get "space" and "slug" components from this repository's URL
     space_slug: dict = parse_url(url)
