@@ -1,4 +1,4 @@
-'# OSD status dashboard _(wp2.2_dev)_
+# OSD status dashboard _(wp2.2_dev)_
 
 [![Demo backend API](https://img.shields.io/badge/Demo-CLICK%20HERE-red.svg?style=flat)](https://wp22dev.herokuapp.com/)
 [![Python version](https://img.shields.io/badge/Python-3.10-blue.svg?style=flat&logo=Python&logoColor=white)](https://docs.python.org/3.8/)
@@ -17,19 +17,21 @@ Targeted at hosters of version control platforms (such as [Wikifactory](https://
 **Please see the [Install](#install) and [Usage](#usage) sections to get up and running with this tool**. For more details on its background and design considerations, please see the [Background](#background), ~~[Design notes](#design-notes), and [Future work](#future-work) sections. There is also a detailed [step-by-step walkthrough](docs/usage-example.md).~~
 ## Table of Contents
 
-- [Table of Contents](#table-of-contents)
-- [Background](#background)
-- [Install](#install)
-  - [Running from source](#running-from-source)
-  - [Deploy as container](#deploy-as-container)
-- [Usage](#usage)
-  - [Making requests to the REST API](#making-requests-to-the-rest-api)
-  - [API response format](#api-response-format)
-- [Design notes](#design-notes)
-- [Maintainers](#maintainers)
-- [Contributing](#contributing)
-- [Acknowledgements](#acknowledgements)
-- [License](#license)
+- [OSD status dashboard _(wp2.2_dev)_](#osd-status-dashboard-wp22_dev)
+  - [Table of Contents](#table-of-contents)
+  - [Background](#background)
+  - [Install](#install)
+    - [Running from source](#running-from-source)
+    - [Deploy as container](#deploy-as-container)
+  - [Usage](#usage)
+    - [Making requests to the REST API](#making-requests-to-the-rest-api)
+    - [API response format](#api-response-format)
+    - [Custom Wikifactory URLs](#custom-wikifactory-urls)
+  - [Design notes](#design-notes)
+  - [Maintainers](#maintainers)
+  - [Contributing](#contributing)
+  - [Acknowledgements](#acknowledgements)
+  - [License](#license)
 
 ## Background
 
@@ -258,6 +260,18 @@ Notes:
 
 * For `files_info` above, filetypes are identified by file extensions. The categories and mapping are located in [`oshminer/filetypes.py`](./oshminer/filetypes.py).
 * The `license` information and formatting is largely based on that from the GitHub-managed [choosealicense.com repository](https://github.com/github/choosealicense.com), with the exception of some open source hardware licenses which were manually added.
+
+### Custom Wikifactory URLs
+
+By default, this tool will: 
+
+1. Identify whether a provided repository URL in the JSON request body as a Wikifactory project if it is under the domain `wikifactory.com`
+2. Use the public Wikifactory GraphQL API endpoint at `https://wikifactory.com/api/graphql`
+
+Both can be customised with the following environmental variables: 
+
+1. `WIF_BASE_URL` - (default: `wikifactory.com`) The base domain used for pattern-matching and identifying Wikifactory project URLs in the JSON request body in the form of `example.com`. If this is customised, then the requested Wikifactory project URLs passed to this tool should also use that domain instead of `wikifactory.com`. Otherwise, an "Repository URL domain not supported" error will be returned.
+2. `WIF_API_URL` - (default: `https://wikifactory.com/api/graphql`) The full URL of the GraphQL API endpoint to make queries regarding Wikifactory projects in the form of `https://example.com[:port]/foo/bar`.
 
 ## Design notes
 
