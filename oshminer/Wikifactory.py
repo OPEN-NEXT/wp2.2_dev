@@ -7,10 +7,12 @@
 from datetime import datetime
 import json
 import os
-import urllib.parse
+import urllib
 import sys
 
 # External imports
+from fastapi import status
+from fastapi.responses import JSONResponse
 from gql import gql, Client
 from gql.transport.aiohttp import AIOHTTPTransport
 
@@ -23,8 +25,8 @@ from oshminer.errors import exceptions
 # https://wikifactory.com/api/graphql
 # See: 
 # https://www.twilio.com/blog/environment-variables-python
-WIF_API_URL: str = os.environ.get("WIF_API_URL", "https://wikifactory.com/api/graphql")
-# print(f"Wikifactory API URL: {WIF_API_URL}", file=sys.stderr)
+WIF_API_URL_DEFAULT: str = "https://wikifactory.com/api/graphql"
+WIF_API_URL: str = os.environ.get("WIF_API_URL", WIF_API_URL_DEFAULT)
 
 async def get_files_info(project: dict, session) -> dict:
     # Provide a GraphQL query
@@ -415,27 +417,50 @@ def parse_url(url: str) -> dict:
     return repo
 
 async def make_Wikifactory_request(url: str, data: list) -> str: 
-    print(
-        f"Constructing and making an API request to Wikifactory for repository {url} for the following data {data}", 
-        file = sys.stderr
-    )
+    try: 
+        # First, check if there is a custom Wikifactory API URL and if it works
+        if WIF_API_URL != WIF_API_URL_DEFAULT: 
+            print(
+                f"Checking custom Wikifactory API URL: {WIF_API_URL}", 
+                file = sys.stderr
+                )
+            try: 
+                api_url_response = urllib.request.urlopen(
+                    WIF_API_URL, 
+                    timeout=5
+                    )
+            except (urllib.error.URLError): 
+                print(f"Unable to reach Wikifactory API at: {WIF_API_URL}", file=sys.stderr)
+                raise exceptions.BadWIFAPIError
 
-    # Create a dictionary to hold results from Wikifactory API query
-    results: dict = {
-        "repository": str(url), 
-        "platform": "Wikifactory", 
-        "requested_data": {}
-    }
+        print(
+            f"Constructing and making an API request to Wikifactory for repository {url} for the following data {data}", 
+            file = sys.stderr
+        )
 
-    # Select transport with the Wikifactory API endpoint URL
-    transport = AIOHTTPTransport(url = WIF_API_URL)
+        # If the Wikifactory API is reacheable as tested above, then: 
+        # Create a dictionary to hold results from Wikifactory API query
+        results: dict = {
+            "repository": str(url), 
+            "platform": "Wikifactory", 
+            "requested_data": {}
+        }
 
-    # Get "space" and "slug" components from this repository's URL
-    space_slug: dict = parse_url(url)
+        # Select transport with the Wikifactory API endpoint URL
+        transport = AIOHTTPTransport(url = WIF_API_URL)
 
-    async with Client(transport = transport, fetch_schema_from_transport = True) as session: 
-        for data_type in data: 
-            query_result: dict = await queries[data_type](space_slug, session)
-            results["requested_data"].update(query_result)
+        # Get "space" and "slug" components from this repository's URL
+        space_slug: dict = parse_url(url)
 
-    return results
+        async with Client(transport = transport, fetch_schema_from_transport = True) as session: 
+            for data_type in data: 
+                query_result: dict = await queries[data_type](space_slug, session)
+                results["requested_data"].update(query_result)
+
+        return results
+        
+    except (exceptions.BadWIFAPIError) as err: 
+        return JSONResponse(
+                status_code = status.HTTP_400_BAD_REQUEST, 
+                content = f"Error reaching Wikifactory API URL: {WIF_API_URL} {err}"
+            )
