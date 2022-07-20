@@ -26,7 +26,7 @@ class MiningRequest(BaseModel):
     requested_data: list[str] = set()
     wikifactory_API_URL: str = WIF_API_DEFAULT
 
-# Supported data-mining request types. Items in `required_data` must
+# Supported data-mining request types. Items in `requested_data` must
 # be from this list.
 supported_data_requests: list = [
     "files_info", 
