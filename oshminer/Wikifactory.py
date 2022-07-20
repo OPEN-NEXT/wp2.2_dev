@@ -214,6 +214,8 @@ async def get_issues_level(project: dict, session) -> dict:
     return result
 
 async def get_commits_level(project: dict, session) -> dict: 
+    # `wp2.2_dev` issue #87 discusses relevant Wikfactory API calls: 
+    # https://github.com/OPEN-NEXT/wp2.2_dev/issues/87
     # Provide a GraphQL query
     query = gql(
         """
