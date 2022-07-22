@@ -49,26 +49,17 @@ app = FastAPI(
 async def root(): 
     return {"message": "Dashboard data-mining backend is on"}
 
-async def process_repo(repo: HttpUrl, requests: list[str], responses: list, WIF_API: str = WIF_API_DEFAULT): 
+async def process_repo(repo: HttpUrl, 
+                       requests: list[str], 
+                       responses: list, 
+                       WIF_API: str = WIF_API_DEFAULT): 
     platform: str = repo.host.replace("www.", "")
     # If a custom Wikifactory API URL is provided, then use it.
     if WIF_API != WIF_API_DEFAULT: 
-        try: 
-            repo_info: dict = await supported_domains[platform](repo, requests, WIF_API)
-        except exceptions.BadRepoError: 
-            return JSONResponse(
-                status_code = status.HTTP_400_BAD_REQUEST, 
-                content = f"Error with repository: {repo}"
-            )
+        repo_info: dict = await supported_domains[platform](repo, requests, WIF_API)
         responses.append(repo_info)
     else: 
-        try: 
-            repo_info: dict = await supported_domains[platform](repo, requests)
-        except exceptions.BadRepoError: 
-            return JSONResponse(
-                status_code = status.HTTP_400_BAD_REQUEST, 
-                content = f"Error with repository: {repo}"
-            )
+        repo_info: dict = await supported_domains[platform](repo, requests)
         responses.append(repo_info)
 
 @app.post(
@@ -142,27 +133,27 @@ async def mining_request(request_body: MiningRequest):
     #
     # Construct, send API requests, and get results
     #
-
-    await asyncio.gather(
-        *[
-            process_repo(
-                repo, 
-                request_body.requested_data, 
-                response_list, 
-                WIF_API=request_body.wikifactory_API_URL
-                ) for repo in request_body.repo_urls
-            ]
+    
+    try: 
+        await asyncio.gather(
+            *[
+                process_repo(
+                    repo, 
+                    request_body.requested_data, 
+                    response_list, 
+                    WIF_API=request_body.wikifactory_API_URL
+                    ) for repo in request_body.repo_urls
+                ]
+            )
+    except exceptions.BadGitHubTokenError: 
+        return JSONResponse(
+            status_code = status.HTTP_500_INTERNAL_SERVER_ERROR, 
+            content = f"Server-side GitHub API token incorrect or not in environment variable."
         )
-
-    # for repo in request_body.repo_urls: 
-    #     platform = repo.host.replace("www.", "")
-    #     try: 
-    #         repo_info: dict = await supported_domains[platform](repo, request_body.requested_data)
-    #     except exceptions.BadRepoError: 
-    #         return JSONResponse(
-    #             status_code = status.HTTP_400_BAD_REQUEST, 
-    #             content = f"Error with repository: {repo}"
-    #         )
-    #     response_list.append(repo_info)
+    except exceptions.BadRepoError: 
+        return JSONResponse(
+            status_code = status.HTTP_400_BAD_REQUEST, 
+            content = f"Error with repository: {repo}"
+        )
 
     return response_list
