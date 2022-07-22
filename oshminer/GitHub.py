@@ -4,7 +4,6 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 # Python Standard Library imports
-import csv
 import os
 import string
 import sys
@@ -140,6 +139,14 @@ async def get_file_list(project: dict, session) -> list:
 #
 
 async def get_files_editability(project: dict, session) -> dict: 
+    """
+    Return a `dict` of files in this repository and an assessment of their 
+    editability based on the `osh-file-types` lists from: 
+    https://gitlab.com/OSEGermany/osh-file-types/
+    """
+    
+    filetypes.osh_file_types
+    
     # Placeholder result
     result: dict = {
         "files_editability": "Not implemented for GitHub yet."

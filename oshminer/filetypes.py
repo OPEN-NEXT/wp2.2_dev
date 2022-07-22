@@ -3,7 +3,8 @@
 # SPDX-FileCopyrightText: 2022 Pen-Yuan Hsing
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
-# Categorised list of file extensions
+# 1. Categorised list of file extensions
+# 
 # Each category is a `list` and each extension should be in only one list.
 # 
 # Most extensions are from this paper: 
@@ -12,6 +13,20 @@
 # mining. Design Science, 4(e19). https://doi.org/10.1017/dsj.2018.15
 # 
 # Extensions changed or not from that paper are marked in comments.
+#
+# 2. Additional file extension information
+#
+# `osh_file_types` is derived from a list of open source hardware file 
+# extension information from the Open Source Ecology Germany CAD and PCB file 
+# type metadata lists: 
+# https://gitlab.com/OSEGermany/osh-file-types/
+
+# Python Standard Library imports
+import csv
+
+#
+# 1. Categorised list of file extensions
+#
 
 # Electronic CAD
 ecad: list = [
@@ -133,3 +148,42 @@ document: list = [
     "txt", 
     "yaml" # added
 ]
+
+#
+# 2. Additional file extension information
+#
+
+# Column mappings to shorter names
+column_mappings: dict = {
+    "File extension": "extension", 
+    "File format [open|proprietary|unknown]": "format", 
+    "Encoding [text|binary|both|unknown]": "encoding", 
+    "Category [source|export]": "category"
+}
+
+# Read list of CAD files
+with open("oshminer/osh-file-types/file_extension_formats-cad.csv", newline = '') as cad_formats_file: 
+    cad_reader: csv.DictReader = csv.DictReader(cad_formats_file, delimiter=',')
+    # Get column names, see: 
+    # https://stackoverflow.com/a/28837325/186904 
+    # https://www.geeksforgeeks.org/get-column-names-from-csv-using-python/
+    cad_files: list = list(cad_reader)
+# Rename `dict` keys for each entry for easier handling, see: 
+# https://stackoverflow.com/a/16475444/186904
+for column_name in list(column_mappings.keys()): 
+    cad_files: list = [{column_mappings[column_name] if k == column_name else k:v for k,v in r.items()} for r in cad_files]
+
+# Read list of PCB files
+with open("oshminer/osh-file-types/file_extension_formats-pcb.csv", newline = '') as pcb_formats_file: 
+    pcb_reader: csv.DictReader = csv.DictReader(pcb_formats_file, delimiter=',')
+    # Get column names, see: 
+    # https://stackoverflow.com/a/28837325/186904 
+    # https://www.geeksforgeeks.org/get-column-names-from-csv-using-python/
+    pcb_files: list = list(pcb_reader)
+# Rename `dict` keys for each entry for easier handling, see: 
+# https://stackoverflow.com/a/16475444/186904
+for column_name in list(column_mappings.keys()): 
+    pcb_files: list = [{column_mappings[column_name] if k == column_name else k:v for k,v in r.items()} for r in pcb_files]
+
+# Combine CAD and PCB lists
+osh_file_types: list = cad_files + pcb_files
