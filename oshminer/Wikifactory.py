@@ -418,7 +418,7 @@ def parse_url(url: str) -> dict:
     }
     return repo
 
-async def make_Wikifactory_request(url: str, data: list) -> str: 
+async def make_Wikifactory_request(url: str, data: list) -> dict: 
     try: 
         # First, check if there is a custom Wikifactory API URL and if it works
         if WIF_API_URL != WIF_API_URL_DEFAULT: 
