@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+# SPDX-FileCopyrightText: 2022 Pen-Yuan Hsing
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 [submodule "oshminer/osh-file-types"]
 	path = oshminer/osh-file-types
 	url = https://gitlab.com/OSEGermany/osh-file-types.git
