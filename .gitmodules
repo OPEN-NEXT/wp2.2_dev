@@ -4,4 +4,4 @@
 
 [submodule "oshminer/osh-file-types"]
 	path = oshminer/osh-file-types
-	url = https://gitlab.com/OSEGermany/osh-file-types.git
+	url = https://gitlab.com/penyuan/osh-file-types.git
