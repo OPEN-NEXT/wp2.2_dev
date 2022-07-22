@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 # Python Standard Library imports
+import csv
 from datetime import datetime
 import json
 import os
@@ -27,6 +28,14 @@ from oshminer.errors import exceptions
 # https://www.twilio.com/blog/environment-variables-python
 WIF_API_URL_DEFAULT: str = "https://wikifactory.com/api/graphql"
 WIF_API_URL: str = os.environ.get("WIF_API_URL", WIF_API_URL_DEFAULT)
+
+async def get_files_editability(project: dict, session) -> dict: 
+    # Placeholder result
+    result: dict = {
+        "files_editability": "Not implemented for Wikifactory yet."
+    }
+
+    return result
 
 async def get_files_info(project: dict, session) -> dict:
     # Provide a GraphQL query
@@ -391,6 +400,7 @@ async def get_license(project: dict, session) -> dict:
     return result
 
 queries: dict = {
+    "files_editability": get_files_editability, 
     "files_info": get_files_info, 
     "issues_level": get_issues_level, 
     "commits_level": get_commits_level, 

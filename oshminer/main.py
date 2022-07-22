@@ -29,6 +29,7 @@ class MiningRequest(BaseModel):
 # Supported data-mining request types. Items in `requested_data` must
 # be from this list.
 supported_data_requests: list = [
+    "files_editability", 
     "files_info", 
     "issues_level", 
     "commits_level", 

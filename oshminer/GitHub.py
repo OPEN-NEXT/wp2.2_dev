@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 
 # Python Standard Library imports
+import csv
 import os
 import string
 import sys
@@ -137,6 +138,14 @@ async def get_file_list(project: dict, session) -> list:
 #
 # Implement requestable information
 #
+
+async def get_files_editability(project: dict, session) -> dict: 
+    # Placeholder result
+    result: dict = {
+        "files_editability": "Not implemented for GitHub yet."
+    }
+
+    return result
 
 async def get_files_info(project: dict, session) -> dict: 
     """
@@ -560,6 +569,7 @@ async def get_license(project: dict, session) -> dict:
 
 # Map from request type to getter functions
 queries: dict = {
+    "files_editability": get_files_editability, 
     "files_info": get_files_info, 
     "issues_level": get_issues_level, 
     "commits_level": get_commits_level, 
