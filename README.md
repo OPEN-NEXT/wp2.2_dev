@@ -255,6 +255,16 @@ Specifically, for each repository, the response will include:
 * `repository`: String containing the repository URL.
 * `platform`: String, only `Wikifactory` for now.
 * `requested_data`: Object containing the following: 
+  * `files_editability`: Object containing the following: 
+    * `files_count`: Integer number of (presumed to be) CAD files that are not text documents or data files (like CSV).
+    * `files_openness`: Object containing the following: 
+      * `open`: Integer number of files using open formats.
+      * `closed`: Integer number of files using closed/proprietary formats.
+      * `other`: Integer number of files not categorised in either of the above.
+    * `files_encoding`: Object containing the following: 
+      * `binary`: Integer number of files using binary formats.
+      * `text`: Integer number of files using text-based formats.
+      * `other`: Integer number of files not categorised in either of the above.
   * `files_info`: Object containing the following: 
     * `total_files`: Integer of total number of files in the repository.
     * `ecad_files`: Integer number of electronic CAD files.
@@ -309,6 +319,7 @@ Specifically, for each repository, the response will include:
 
 Notes: 
 
+* For `files_editability` above, filetypes are identified by file extensions. The categories and mapping are documented in [`oshminer/filetypes.py`](./oshminer/filetypes.py), and can be traced the [`osh-file-types` list](https://gitlab.com/OSEGermany/osh-file-types/) by Open Source Ecology Germany.
 * For `files_info` above, filetypes are identified by file extensions. The categories and mapping are located in [`oshminer/filetypes.py`](./oshminer/filetypes.py).
 * The `license` information and formatting is largely based on that from the GitHub-managed [choosealicense.com repository](https://github.com/github/choosealicense.com), with the exception of some open source hardware licenses which were manually added.
 
