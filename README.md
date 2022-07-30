@@ -225,7 +225,7 @@ There are two components to each request:
    2. `files_editability`: Basic information about how "editable" the CAD files are in this repository.
    3. `license`: The license for the repository.
    4. `tags`: Aggregated tags for the repository and any associated with the maintainers of that repsitory.
-   5. `commits_level`: The hash identifier (contribution `id` for Wikifactory projects) and timestamp of each commit to the repository. This can be used to graph the commit activity level in a frontend visualisation.
+   5. `commits_level`: The hash identifier (contribution `id` for Wikifactory projects) and timestamp of each commit to the repository. This can be used to graph the commit activity level in a frontend visualisation. **Note:** This will be based on commits from the first three detected branches in the repository, including the default branch. This is because the time it takes to requests commits across various branches take a long time, and APIs might time out.
    6. `issues_level`: Similar to `commits_level`, but for all issues in the repository.
 
 The following is an example request that could be sent to the API for three Wikifactory projects: 

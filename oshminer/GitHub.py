@@ -334,8 +334,9 @@ async def get_commits_level(project: dict, session) -> dict:
     Each commit is a `dict` containing as `str`s: `oid`, `messageHeadline`, 
     `committedDate`, and `url`.
     
-    The commits are aggregated and de-duplicated across all branches up to 100
-    branches.
+    The commits are aggregated and de-duplicated across branches up to 3
+    branches including the default branch. The 3 branch limit is because 
+    otherwise the requests would take too long.
     """
     
     # 
@@ -387,6 +388,60 @@ async def get_commits_level(project: dict, session) -> dict:
     # Add branches from query results to list of branches
     for node in branches_results: 
         branches_list.append(node["name"])
+        
+    #
+    # Identify default branch name
+    #
+    
+    #
+    # Determine name of default branch
+    #
+    
+    # This can be done with GitHub v4 GraphQL API
+    query_default_branch = gql(
+        """
+        query ($owner: String!, $name: String!) {
+            repository(owner: $owner, name: $name) {
+                defaultBranchRef {
+                    name
+                }
+            }
+        }
+        """
+    )
+    # Query variables
+    params: dict = {
+        "owner": project["owner"], 
+        "name": project["name"]
+    }
+    # Execute query on the transport
+    # `execute_async()` is the asynchronous version of `execute()`
+    try: 
+        query_default_branch_response: dict = await session.execute(query_default_branch, variable_values = params)
+    except Exception as exc: 
+        # Very hacky workaround for now: 
+        # When there's an authorisation error such as a bad personal access token, 
+        # GitHub would return a 401 error response. The `gql` library woudl throw the 
+        # `gql.transport.exceptions.TransportServerError` exception.
+        # But for some reason `except gql.transport.exceptions.TransportServerError`
+        # would fail, so for now I'm manually catching the 401 code here.
+        if exc.code == 401: 
+            raise exceptions.BadGitHubTokenError()
+        else: 
+            # For all other errors, continue throwing an exception to stop execution.
+            raise Exception
+    default_branch_name: str = query_default_branch_response["repository"]["defaultBranchRef"]["name"]
+    
+    #
+    # Keep 3 branches including default branch
+    #
+    
+    if len(branches_list) > 3: 
+        print("Keeping 3 branches to query", file=sys.stderr)
+        # Keep two branches plus default branch
+        branches_list.remove(default_branch_name)
+        branches_list = branches_list[:2]
+        branches_list.append(default_branch_name)
     
     #
     # Get list of commits in each branch
