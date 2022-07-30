@@ -143,13 +143,49 @@ async def get_files_editability(project: dict, session) -> dict:
     Return a `dict` of files in this repository and an assessment of their 
     editability based on the `osh-file-types` lists from: 
     https://gitlab.com/OSEGermany/osh-file-types/
+    
+    Based on the file list of the repository on its default branch.
     """
     
-    filetypes.osh_file_types
+    # Get complete file list of the repository
+    file_list: list = await get_file_list(project, session)
+    
+    # Derive extensions from file list
+    filenames: list = [{"filename": f, "extension": f.split(".")[-1].lower()} for f in file_list]
+    # Get a list of files that are not documents (e.g. .md) or data. What's left
+    # should be mostly CAD files.
+    cad_filenames: list = [c for c in filenames if c["extension"] not in filetypes.data and c["extension"] not in filetypes.document]
+    
+    # Get lists of open/closed file extensions   
+    open_file_extensions: list = [o["extension"] for o in filetypes.osh_file_types if o["format"] == "open"]
+    closed_file_extensions: list = [o["extension"] for o in filetypes.osh_file_types if o["format"] == "proprietary"]
+    # Get lists of binary and text file extensions
+    binary_file_extensions: list = [o["extension"] for o in filetypes.osh_file_types if o["encoding"] == "binary"]
+    text_file_extensions: list = [o["extension"] for o in filetypes.osh_file_types if o["encoding"] == "text"]
+    
+    # Count number of files in repository that are open, closed, and other
+    cad_files_openness: dict = {
+        "open": len([f for f in cad_filenames if f["extension"] in open_file_extensions]), 
+        "closed": len([f for f in cad_filenames if f["extension"] in closed_file_extensions])
+    }
+    cad_files_openness["other"]: int = len(cad_filenames) - cad_files_openness["open"] - cad_files_openness["closed"]
+    
+    # Count number of files in repository that are binary, text, and other
+    cad_files_encoding: dict = {
+        "binary": len([f for f in cad_filenames if f["extension"] in binary_file_extensions]), 
+        "text": len([f for f in cad_filenames if f["extension"] in text_file_extensions])
+    }
+    cad_files_encoding["other"]: int = len(cad_filenames) - cad_files_encoding["binary"] - cad_files_encoding["text"]
+    
+    cad_files_count: int = len(cad_filenames)
     
     # Placeholder result
     result: dict = {
-        "files_editability": "Not implemented for GitHub yet."
+        "files_editability": {
+            "files_count": cad_files_count, 
+            "files_openness": cad_files_openness, 
+            "files_encoding": cad_files_encoding
+        }
     }
 
     return result
