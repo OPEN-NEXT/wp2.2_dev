@@ -23,6 +23,8 @@ Targeted at hosters of version control platforms (such as [Wikifactory](https://
   - [Install](#install)
     - [Running from source](#running-from-source)
     - [Deploy as container](#deploy-as-container)
+      - [Heroku example](#heroku-example)
+      - [Fly.io example](#flyio-example)
   - [Usage](#usage)
     - [Making requests to the REST API](#making-requests-to-the-rest-api)
     - [API response format](#api-response-format)
@@ -131,6 +133,8 @@ podman run --env PORT=8000 --env GITHUB_TOKEN=[token] -p 127.0.0.1:8000:8000 -d 
 
 Where `token` is the 40 character alphanumeric string of your GitHub API personal access token. It is in the form of "ghp_2D5TYFikFsQ4U9KPfzHyvigMycePCPqkPgWc".
 
+#### Heroku example
+
 The image built this way can be pushed to cloud hosting providers such as [Heroku](https://www.heroku.com/). With Heroku as an example: 
 
 1. Set up an empty app from your Heroku dashboard.
@@ -162,6 +166,48 @@ https://wp22dev.herokuapp.com/data
 ```
 
 This demo instance will go into a sleep state after a period of inactivity. If your API calls to this endpoint is taking more than a few seconds, it might be the demo waking from that state.
+
+#### Fly.io example
+
+Similar to Heroku, the container image created above can be deployed to an app on [Fly.io](https://fly.io/). Assuming an account has already been created: 
+
+1. Log in to Fly.io in a terminal session: 
+
+```
+flyctl auth login
+```
+
+2. Launch a new app. Run the following command, which will ask for an app name. Enter `[your app name]`, replacing it with whatever name you'd like: 
+
+```
+flyctl launch
+```
+
+3. Authorise pushing a container image to the Fly.io image registry: 
+
+```
+flyctl auth docker
+```
+
+4. Push the locally built image to the remote Fly.io image registry: 
+
+```
+podman push wp22dev registry.fly.io/[your app name]
+```
+
+5. Deploy the app: 
+
+```
+flyctl deploy --image registry.fly.io/[your app name]
+```
+
+6. Set GitHub API personal access token as environmental variable: 
+
+```
+flyctl secrets set GITHUB_TOKEN=[token]
+```
+
+Where `token` is the 40 character alphanumeric string of your GitHub API personal access token. It is in the form of "ghp_2D5TYFikFsQ4U9KPfzHyvigMycePCPqkPgWc".
 
 ## Usage
 
