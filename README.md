@@ -135,19 +135,21 @@ The image built this way can be pushed to cloud hosting providers such as [Herok
 
 1. Set up an empty app from your Heroku dashboard.
 
-2. With the [Heroku commandline interface](https://devcenter.heroku.com/categories/command-line) installed, first login from your terminal: 
+2. In the Settings page for your Heroku app, set a [Config Var](https://devcenter.heroku.com/articles/config-vars) with Key "GITHUB_TOKEN" and Value being your GitHub API personal access token.
+
+3. With the [Heroku commandline interface](https://devcenter.heroku.com/categories/command-line) installed, first login from your terminal: 
 
 ```sh
 heroku container:login
 ```
 
-3. Push the container image built above to your Heroku app: 
+4. Push the container image built above to your Heroku app: 
 
 ```sh
 podman push wp22dev registry.heroku.com/[your app name]/web
 ```
 
-4. Release the pushed container into production: 
+5. Release the pushed container into production: 
 
 ```sh
 heroku container:release web --app=[your app name]
