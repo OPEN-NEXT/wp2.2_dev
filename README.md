@@ -72,6 +72,7 @@ This project requires [Python](https://www.python.org/) version 3.10 or later on
 * [`fastapi>=0.70`](https://pypi.org/project/fastapi/)
 * [`gql>=3.0.0`](https://pypi.org/project/gql/)
 * [`PyYAML>=5.4`](https://pypi.org/project/pyyaml/)
+* [`requests>=2.28`](https://requests.readthedocs.io/en/latest/)
 * [`uvicorn>=0.15`](https://pypi.org/project/uvicorn/)
 
 In addition to Python and the dependencies listed above, the following programs must be installed and accessible from the command line: 
