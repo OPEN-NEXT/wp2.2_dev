@@ -79,7 +79,7 @@ In addition to Python and the dependencies listed above, the following programs 
 * [`git`](https://git-scm.com/) (version 2.7.4 or later)
 * [`pip`](https://pip.pypa.io/) (version 19.3.1 or later)
 
-A [GitHub personal access token](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token) is required *in an upcoming iteration*, because the Python scripts will use it for GitHub API queries.
+A [GitHub personal access token](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token) is required top be available as an environmental variable. This is because the Python scripts will use it for GitHub API queries. This token is an alphanumeric string in the form of "ghp_2D5TYFikFsQ4U9KPfzHyvigMycePCPqkPgWc".
 
 ### Running from source
 
@@ -125,8 +125,10 @@ Replace the command `podman` with `docker` depending on which one is available (
 Then, the run the container on port 8000 at 127.0.0.1 with this command: 
 
 ```sh
-podman run --env PORT=8000 -p 127.0.0.1:8000:8000 wp22dev
+podman run --env PORT=8000 --env GITHUB_TOKEN=[token] -p 127.0.0.1:8000:8000 -d wp22dev
 ```
+
+Where `token` is the 40 character alphanumeric string of your GitHub API personal access token. It is in the form of "ghp_2D5TYFikFsQ4U9KPfzHyvigMycePCPqkPgWc".
 
 The image built this way can be pushed to cloud hosting providers such as [Heroku](https://www.heroku.com/). With Heroku as an example: 
 
