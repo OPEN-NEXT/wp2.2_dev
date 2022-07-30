@@ -222,10 +222,11 @@ There are two components to each request:
 
 2. `requested_data`: An array of strings representing the types of repository metrics desired for each repository. Currently, the following are implemented for Wikifactory projects: 
    1. `files_info`: The numbers and proportions of mechanical and electronic computer-assisted design (CAD), image, data, document, and other file types in the repository.
-   2. `license`: The license for the repository.
-   3. `tags`: Aggregated tags for the repository and any associated with the maintainers of that repsitory.
-   4. `commits_level`: The hash identifier (contribution `id` for Wikifactory projects) and timestamp of each commit to the repository. This can be used to graph the commit activity level in a frontend visualisation.
-   5. `issues_level`: Similar to `commits_level`, but for all issues in the repository.
+   2. `files_editability`: Basic information about how "editable" the CAD files are in this repository.
+   3. `license`: The license for the repository.
+   4. `tags`: Aggregated tags for the repository and any associated with the maintainers of that repsitory.
+   5. `commits_level`: The hash identifier (contribution `id` for Wikifactory projects) and timestamp of each commit to the repository. This can be used to graph the commit activity level in a frontend visualisation.
+   6. `issues_level`: Similar to `commits_level`, but for all issues in the repository.
 
 The following is an example request that could be sent to the API for three Wikifactory projects: 
 
@@ -236,8 +237,9 @@ The following is an example request that could be sent to the API for three Wiki
         "https://wikifactory.com/@luzleanne/community-composter", 
         "https://wikifactory.com/+elektricworks/pikon-telescope"
     ], 
-        "requested_data": [
+    "requested_data": [
         "files_info", 
+        "files_editability", 
         "license", 
         "tags",
         "commits_level", 
