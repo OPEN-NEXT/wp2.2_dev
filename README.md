@@ -17,7 +17,7 @@ Targeted at hosters of version control platforms (such as [Wikifactory](https://
 **Please see the [Install](#install) and [Usage](#usage) sections to get up and running with this tool**. For more details on its background and design considerations, please see the [Background](#background), ~~[Design notes](#design-notes), and [Future work](#future-work) sections. There is also a detailed [step-by-step walkthrough](docs/usage-example.md).~~
 ## Table of Contents
 
-- [OSD status dashboard _(wp2.2_dev)_](#osd-status-dashboard-wp22_dev)
+- [OSD status dashboard _(wp2.2\_dev)_](#osd-status-dashboard-wp22_dev)
   - [Table of Contents](#table-of-contents)
   - [Background](#background)
   - [Install](#install)
@@ -120,7 +120,7 @@ With the repository cloned by `git` onto your system, navigate to it and build t
 podman build -t wp22dev ./ --format=docker
 ```
 
-Replace the command `podman` with `docker` depending on which one is available, and `wp22dev` can be replaced with any other name. `--format=docker` is needed to explicitly build this as a Docker-formatted container that will be accepted by cloud services like [Heroku](https://www.heroku.com/).
+Replace the command `podman` with `docker` depending on which one is available (this project has been tested with Podman 4.0.2), and `wp22dev` can be replaced with any other name. `--format=docker` is needed to explicitly build this as a Docker-formatted container that will be accepted by cloud services like [Heroku](https://www.heroku.com/).
 
 Then, the run the container on port 8000 at 127.0.0.1 with this command: 
 
