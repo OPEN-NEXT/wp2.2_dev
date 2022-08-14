@@ -8,26 +8,28 @@
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](./CODE_OF_CONDUCT.md)
 [![GitHub license](https://img.shields.io/github/license/OPEN-NEXT/wp2.2_dev.svg?style=flat)](./LICENSE)
 
-*Initial proof-of-concept of data-mining backend for an open source development status dashboard*
+***Demonstrator** data-mining backend for an open source development status dashboard*
 
 Targeted at hosters of version control platforms (such as [Wikifactory](https://wikifactory.com/), [GitLab](https://gitlab.com/), or [GitHub](https://github.com/)), this Python backend program mines open source hardware repositories for metadata and calculates metrics based on it. This backend exposes a representational state transfer ([REST](https://en.wikipedia.org/wiki/Representational_state_transfer)) application programming interface ([API](https://en.wikipedia.org/wiki/Web_API)) where requests for those metrics can be made.
 
 ***This software is not for general consumers to just "double click" on and install on their devices***.
 
-**Please see the [Install](#install) and [Usage](#usage) sections to get up and running with this tool**. For more details on its background and design considerations, please see the [Background](#background), ~~[Design notes](#design-notes), and [Future work](#future-work) sections. There is also a detailed [step-by-step walkthrough](docs/usage-example.md).~~
+**Please see the [Install](#install) and [Usage](#usage) sections to get up and running with this tool**.
+
 ## Table of Contents
 
-- [OSD status dashboard _(wp2.2_dev)_](#osd-status-dashboard-wp22_dev)
+- [OSD status dashboard _(wp2.2\_dev)_](#osd-status-dashboard-wp22_dev)
   - [Table of Contents](#table-of-contents)
   - [Background](#background)
   - [Install](#install)
     - [Running from source](#running-from-source)
     - [Deploy as container](#deploy-as-container)
+      - [Heroku deployment example](#heroku-deployment-example)
+      - [Fly.io example](#flyio-example)
   - [Usage](#usage)
     - [Making requests to the REST API](#making-requests-to-the-rest-api)
     - [API response format](#api-response-format)
     - [Custom Wikifactory URLs](#custom-wikifactory-urls)
-  - [Design notes](#design-notes)
   - [Maintainers](#maintainers)
   - [Contributing](#contributing)
   - [Acknowledgements](#acknowledgements)
@@ -39,17 +41,11 @@ Targeted at hosters of version control platforms (such as [Wikifactory](https://
 
 [OPENNEXT](https://opennext.eu/) is a collaboration between 19 industry and academic partners across Europe. Funded by the [European Union](https://europa.eu/)'s [Horizon 2020](https://ec.europa.eu/programmes/horizon2020/) programme, this project seeks to enable small and medium enterprises (SMEs) to work with consumers, makers, and other communities in rethinking how products are designed and produced. [Open source hardware](https://www.oshwa.org/definition/) is a key enabler of this goal where the design of a physical product is released with the freedoms for anyone to study, modify, share, and redistribute copies. These essential freedoms are based on those of [open source software](https://opensource.org/osd), which is itself derived from [free software](https://www.gnu.org/philosophy/free-sw.en.html) where the word free refers to freedom, *not* free-of-charge. When put in practice, these freedoms could potentially not only reduce proprietary vendor lock-in, planned obsolescence, or waste but also stimulate novel – even disruptive – business models. The SME partners in OPENNEXT are experimenting with producing open source hardware and even opening up the development process to wider community participation. They produce diverse products ranging from [desks](https://stykka.com/), [cargo bike modules](http://www.xyzcargo.com/), to a [digital scientific instrument platform](https://pslab.io/) (and [more](https://opennext.eu/project-team/#sme)).
 
-Work package 2 of OPENNEXT is gathering theoretical and practical insights on best practices for company-community collaboration when developing open source hardware. This includes running [Delphi studies](https://www.edelphi.org/) to develop a maturity model to describe the collaboration and developing a precise definition for what the "source" is in open source hardware. In particular, task 2.2 in this work package is developing a project status dashboard with "health" indicators showing the evolution of a project within the maturity model; design activities; or progress towards success based on project goals.
+Work package 2 (WP2) of OPENNEXT is gathering theoretical and practical insights on best practices for company-community collaboration when developing open source hardware. This includes running [Delphi studies](https://www.edelphi.org/) to develop a maturity model to describe the collaboration and developing a precise definition for what the "source" is in open source hardware. In particular, task 2.2 in this work package is developing a demonstration project status dashboard with "health" indicators showing the evolution of a project within the maturity model; design activities; or progress towards success based on project goals. Details of the dashboard's technical architecture are described in the deliverable 2.5 (D2.5) report.
 
-~~To that end, the month 18 deliverable for task 2.2 is focused on establishing the underlying "behind the scenes" infrastructure to mine data about open source hardware projects from version control repositories that they are hosted on (`osmine`). The Python scripts in this repository currently query the public [application programming interfaces](https://en.wikipedia.org/wiki/API) (APIs) of [GitHub](https://www.github.com/) and [Wikifactory](https://www.wikifactory.com/). Both platforms host version control repositories with the latter having a focus on supporting open source hardware projects. There is also a barebones proof-of-concept user-facing demonstration dashboard (`osdash`) which computes core metrics from the mined data and presents interactive visualisations. This dashboard is only to show that the underlying data could be displayed, and is not meant to confer immediate usefulness at this time.~~
-
-To be clear, this deliverable ***is***: Designed to be deployed on a server operated by version control platforms such as Wikifactory or GitHub.
+This repository contains the backend code for D2.5 and to be clear, this deliverable ***is***: Designed to be deployed on a server operated by version control platforms such as Wikifactory or GitHub.
 
 This deliverable ***is not***: For general end-users to install on consumer devices and "double click" to open.
-
-There are other excellent open source software for open source project analytics and data visualisation, with [Grimoirelab](https://chaoss.github.io/grimoirelab/) being a prime example. However, the full Grimoirelab pipeline requires a full server stack necessitating advanced skills in heavy-duty (but potentially complicated) web technologies such as [Kibana](https://www.elastic.co/products/kibana) or [Elastisearch](https://www.elastic.co/products/elasticsearch). This project aims to create a lighter, more focused solution needing only the use of Python.
-
-This documentation aims to demonstrate practices that facilitate design reuse, including of this repository. In addition to the [Install](#install) and [Usage](#usage) sections that increase reproducibility, ~~[Design notes](#design-notes) and [Future work](#future-work) communicate the thought process and lessons-learned while developing the dashboard. Together, they constitute an intangible body of "know-how" that is very often undocumented. For example, motivations for the internal data model or the approach to compressing data at the end of the section [Internal data structure](#internal-data-structure) which reduces disk usage are of practical benefit. But "snippets" of practical experience like these are seldom recorded.~~
 
 In addition, this repository aims to follow international standards and good practices in open source development such as, but not limited to: 
 
@@ -62,7 +58,7 @@ In addition, this repository aims to follow international standards and good pra
 
 ## Install
 
-This section assumes knowledge of Python, Git, and using a GNU/Linux-based server including installing software from package managers and running a terminal session.
+This section assumes knowledge of [Python](https://www.python.org/), [Git](https://git-scm.com/), and using a GNU/Linux-based server including installing software from package managers and running a terminal session.
 
 **Note:** This software is designed to be deployed on a server by system administrators or developers, not on generic consumer devices.
 
@@ -72,6 +68,7 @@ This project requires [Python](https://www.python.org/) version 3.10 or later on
 * [`fastapi>=0.70`](https://pypi.org/project/fastapi/)
 * [`gql>=3.0.0`](https://pypi.org/project/gql/)
 * [`PyYAML>=5.4`](https://pypi.org/project/pyyaml/)
+* [`requests>=2.28`](https://requests.readthedocs.io/en/latest/)
 * [`uvicorn>=0.15`](https://pypi.org/project/uvicorn/)
 
 In addition to Python and the dependencies listed above, the following programs must be installed and accessible from the command line: 
@@ -79,11 +76,11 @@ In addition to Python and the dependencies listed above, the following programs 
 * [`git`](https://git-scm.com/) (version 2.7.4 or later)
 * [`pip`](https://pip.pypa.io/) (version 19.3.1 or later)
 
-A [GitHub personal access token](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token) is required *in an upcoming iteration*, because the Python scripts will use it for GitHub API queries.
+A [GitHub personal access token](https://docs.github.com/en/github/authenticating-to-github/creating-a-personal-access-token) is required top be available as an environmental variable. This is because the Python scripts will use it for GitHub API queries. This token is an alphanumeric string in the form of "ghp_2D5TYFikFsQ4U9KPfzHyvigMycePCPqkPgWc".
 
 ### Running from source
 
-The code can be run from source and has been tested on updated versions of GNU/Linux server operating systems including [Red Hat Enterprise Linux](https://redhat.com/en/technologies/linux-platforms/enterprise-linux) 8.5. While effort has been made to keep the Python scripts platform-agnostic, they have not been tested under other operating systems such as [BSD](https://en.wikipedia.org/wiki/Berkeley_Software_Distribution)-derivatives, [Apple macOS](https://www.apple.com/macos/) or [Microsoft Windows](https://www.microsoft.com/windows/) as they are rarely used for hosting code such as this (especially the latter two).
+The code can be run from source and has been tested on updated versions of GNU/Linux server operating systems including [Red Hat Enterprise Linux](https://redhat.com/en/technologies/linux-platforms/enterprise-linux) 8.5. While effort has been made to keep the Python scripts platform-agnostic, they have not been tested under other operating systems such as [BSD](https://en.wikipedia.org/wiki/Berkeley_Software_Distribution)-derivatives, [Apple macOS](https://www.apple.com/macos/) or [Microsoft Windows](https://www.microsoft.com/windows/) as they - especially the latter two- are rarely used for hosting code such as this.
 
 On your server, with the tools [`git`](https://git-scm.com/) and [`pip`](https://pip.pypa.io/) installed, run the following commands in a terminal session to retrieve the latest version of this repository and prepare it for development and running locally (usually for testing): 
 
@@ -110,7 +107,7 @@ This means the server API is up an running, and should be accessible on your loc
 
 ### Deploy as container
 
-There is a [`Dockerfile`](./Dockerfile) in this repository that defines a [container](https://en.wikipedia.org/wiki/OS-level_virtualization) within which this program can run.
+There is a [`Dockerfile`](./Dockerfile) in this repository that defines a [container](https://en.wikipedia.org/wiki/OS-level_virtualization) within which this code can run.
 
 To build and use the container, you need to have programs like [Podman](https://podman.io) or [Docker](https://en.wikipedia.org/wiki/Docker_(software)) installed.
 
@@ -120,31 +117,37 @@ With the repository cloned by `git` onto your system, navigate to it and build t
 podman build -t wp22dev ./ --format=docker
 ```
 
-Replace the command `podman` with `docker` depending on which one is available, and `wp22dev` can be replaced with any other name. `--format=docker` is needed to explicitly build this as a Docker-formatted container that will be accepted by cloud services like [Heroku](https://www.heroku.com/).
+Replace the command `podman` with `docker` depending on which one is available (this project has been tested with Podman 4.0.2), and `wp22dev` can be replaced with any other name. `--format=docker` is needed to explicitly build this as a Docker-formatted container that will be accepted by cloud services like [Heroku](https://www.heroku.com/).
 
 Then, the run the container on port 8000 at 127.0.0.1 with this command: 
 
 ```sh
-podman run --env PORT=8000 -p 127.0.0.1:8000:8000 wp22dev
+podman run --env PORT=8000 --env GITHUB_TOKEN=[token] -p 127.0.0.1:8000:8000 -d wp22dev
 ```
+
+Where `token` is the 40 character alphanumeric string of your GitHub API personal access token. It is in the form of "ghp_2D5TYFikFsQ4U9KPfzHyvigMycePCPqkPgWc".
+
+#### Heroku deployment example
 
 The image built this way can be pushed to cloud hosting providers such as [Heroku](https://www.heroku.com/). With Heroku as an example: 
 
 1. Set up an empty app from your Heroku dashboard.
 
-2. With the [Heroku commandline interface](https://devcenter.heroku.com/categories/command-line) installed, first login from your terminal: 
+2. In the Settings page for your Heroku app, set a [Config Var](https://devcenter.heroku.com/articles/config-vars) with Key "GITHUB_TOKEN" and Value being your GitHub API personal access token.
+
+3. With the [Heroku commandline interface](https://devcenter.heroku.com/categories/command-line) installed, first login from your terminal: 
 
 ```sh
 heroku container:login
 ```
 
-3. Push the container image built above to your Heroku app: 
+4. Push the container image built above to your Heroku app: 
 
 ```sh
 podman push wp22dev registry.heroku.com/[your app name]/web
 ```
 
-4. Release the pushed container into production: 
+5. Release the pushed container into production: 
 
 ```sh
 heroku container:release web --app=[your app name]
@@ -156,25 +159,68 @@ A demo of this is hosted on Heroku with this API endpoint:
 https://wp22dev.herokuapp.com/data
 ```
 
-This demo instance will go into a sleep state after a period of inactivity. If your API calls to this endpoint is taking more than a few seconds, it might be the demo waking from that state.
+This demo instance will go into a sleep state after a period of inactivity (approximately 30 minutes at time of writing). If your API calls to this endpoint is taking more than a few seconds, it might be the demo waking from that state.
+
+#### Fly.io example
+
+Similar to Heroku, the container image created above can be deployed to an app on [Fly.io](https://fly.io/). Assuming a Fly.io account has already been created: 
+
+1. Log in to Fly.io in a terminal session: 
+
+```
+flyctl auth login
+```
+
+2. Launch a new app. Run the following command, which will ask for an app name. Enter `[your app name]`, replacing it with whatever name you'd like: 
+
+```
+flyctl launch
+```
+
+3. Authorise pushing a container image to the Fly.io image registry: 
+
+```
+flyctl auth docker
+```
+
+4. Push the locally built image to the remote Fly.io image registry: 
+
+```
+podman push wp22dev registry.fly.io/[your app name]
+```
+
+5. Deploy the app: 
+
+```
+flyctl deploy --image registry.fly.io/[your app name]
+```
+
+6. Set GitHub API personal access token as environmental variable: 
+
+```
+flyctl secrets set GITHUB_TOKEN=[token]
+```
+
+Where `token` is the 40 character alphanumeric string of your GitHub API personal access token. It is in the form of "ghp_2D5TYFikFsQ4U9KPfzHyvigMycePCPqkPgWc".
 
 ## Usage
 
-The backend server listens to requests for information about a list of open source hardware (and software) repositories hosted on Wikifactory or GitHub. The GitHub backend is a placeholder for now, but the Wikifactory backend is now accessible.
+The backend server listens to requests for information about a list of open source hardware (and software) repositories hosted on Wikifactory or GitHub.
 ### Making requests to the REST API
 
 [GET requests](https://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol#Request_methods) to the API are formed as [JSON](https://www.json.org/json-en.html) payloads to the `/data` endpoint.
 
 There are two components to each request: 
 
-1. `repo_urls`: An array of strings of repository [URL](https://en.wikipedia.org/wiki/URL)s, such as `https://wikifactory.com/+elektricworks/pikon-telescope`. Currently, metadata retrieval for Wikifactory project URLs is implemented. Each URL is composed of the Wikifactory domain (`wikifactory.com`), space (e.g. `+elektricworks`), and project (e.g. `pikon-telescope`).
+1. `repo_urls`: An array of strings of repository [URL](https://en.wikipedia.org/wiki/URL)s, such as `https://wikifactory.com/+elektricworks/pikon-telescope`. Currently, metadata retrieval for Wikifactory project and GitHub repository URLs are implemented. Each URL is composed of the Wikifactory domain (`wikifactory.com`), space (e.g. `+elektricworks`), and project (e.g. `pikon-telescope`).
 
 2. `requested_data`: An array of strings representing the types of repository metrics desired for each repository. Currently, the following are implemented for Wikifactory projects: 
    1. `files_info`: The numbers and proportions of mechanical and electronic computer-assisted design (CAD), image, data, document, and other file types in the repository.
-   2. `license`: The license for the repository.
-   3. `tags`: Aggregated tags for the repository and any associated with the maintainers of that repsitory.
-   4. `commits_level`: The hash identifier (contribution `id` for Wikifactory projects) and timestamp of each commit to the repository. This can be used to graph the commit activity level in a frontend visualisation.
-   5. `issues_level`: Similar to `commits_level`, but for all issues in the repository.
+   2. `files_editability`: Basic information about how "editable" the CAD files are in this repository.
+   3. `license`: The license for the repository.
+   4. `tags`: Aggregated tags for the repository and any associated with the maintainers of that repsitory.
+   5. `commits_level`: The hash identifier (contribution `id` for Wikifactory projects) and timestamp of each commit to the repository. This can be used to graph the commit activity level in a frontend visualisation. **Note:** This will be based on commits from the first three detected branches in the repository, including the default branch. This is because the time it takes to requests commits across various branches take a long time, and APIs might time out. Also note that branches are not implemented by Wikifactory, so it will behave as if there is only one branch.
+   6. `issues_level`: Similar to `commits_level`, but for all issues in the repository.
 
 The following is an example request that could be sent to the API for three Wikifactory projects: 
 
@@ -185,8 +231,9 @@ The following is an example request that could be sent to the API for three Wiki
         "https://wikifactory.com/@luzleanne/community-composter", 
         "https://wikifactory.com/+elektricworks/pikon-telescope"
     ], 
-        "requested_data": [
+    "requested_data": [
         "files_info", 
+        "files_editability", 
         "license", 
         "tags",
         "commits_level", 
@@ -204,6 +251,16 @@ Specifically, for each repository, the response will include:
 * `repository`: String containing the repository URL.
 * `platform`: String, only `Wikifactory` for now.
 * `requested_data`: Object containing the following: 
+  * `files_editability`: Object containing the following: 
+    * `files_count`: Integer number of (presumed to be) CAD files that are not text documents or data files (like CSV).
+    * `files_openness`: Object containing the following: 
+      * `open`: Integer number of files using open formats.
+      * `closed`: Integer number of files using closed/proprietary formats.
+      * `other`: Integer number of files not categorised in either of the above.
+    * `files_encoding`: Object containing the following: 
+      * `binary`: Integer number of files using binary formats.
+      * `text`: Integer number of files using text-based formats.
+      * `other`: Integer number of files not categorised in either of the above.
   * `files_info`: Object containing the following: 
     * `total_files`: Integer of total number of files in the repository.
     * `ecad_files`: Integer number of electronic CAD files.
@@ -258,6 +315,7 @@ Specifically, for each repository, the response will include:
 
 Notes: 
 
+* For `files_editability` above, filetypes are identified by file extensions. The categories and mapping are documented in [`oshminer/filetypes.py`](./oshminer/filetypes.py), and can be traced the [`osh-file-types` list](https://gitlab.com/OSEGermany/osh-file-types/) by Open Source Ecology Germany.
 * For `files_info` above, filetypes are identified by file extensions. The categories and mapping are located in [`oshminer/filetypes.py`](./oshminer/filetypes.py).
 * The `license` information and formatting is largely based on that from the GitHub-managed [choosealicense.com repository](https://github.com/github/choosealicense.com), with the exception of some open source hardware licenses which were manually added.
 
@@ -268,14 +326,10 @@ By default, this tool will:
 1. Identify whether a provided repository URL in the JSON request body as a Wikifactory project if it is under the domain `wikifactory.com`
 2. Use the public Wikifactory GraphQL API endpoint at `https://wikifactory.com/api/graphql`
 
-Both can be customised with the following environmental variables: 
+Both can be customised with the following environmental variables during deployment: 
 
 1. `WIF_BASE_URL` - (default: `wikifactory.com`) The base domain used for pattern-matching and identifying Wikifactory project URLs in the JSON request body in the form of `example.com`. If this is customised, then the requested Wikifactory project URLs passed to this tool should also use that domain instead of `wikifactory.com`. Otherwise, an "Repository URL domain not supported" error will be returned.
 2. `WIF_API_URL` - (default: `https://wikifactory.com/api/graphql`) The full URL of the GraphQL API endpoint to make queries regarding Wikifactory projects in the form of `https://example.com[:port]/foo/bar`.
-
-## Design notes
-
-[to be updated]
 
 ## Maintainers
 
@@ -299,6 +353,7 @@ The maintainer would like to gratefully acknowledge:
 * OPENNEXT internal reviewers Dr Jean-François Boujut ([@boujut](https://github.com/boujut)) and Martin Häuer ([@moedn](https://github.com/moedn)) for constructive criticism.
 * OPENNEXT project researchers Robert Mies ([@MIE5R0](https://github.com/MIE5R0)), Mehera Hassan ([@meherrahassan](https://github.com/meherahassan)), and Sonika Gogineni ([@GoSFhg](https://github.com/GoSFhg)) for useful feedback and extensive administrative support.
 * The Linux Foundation [CHAOSS](https://chaoss.community/) group for insights on open source community health metrics.
+* The following people for their valuable feedback via a survey (see D2.5 report for details) (in alphabetical order of last name): Jean-François Boujut ([@boujut](https://github.com/boujut)), Martin Häuer ([@moedn](https://github.com/moedn)), James Jones (CubeSpawn), Max Kampik ([@mkampik](https://github.com/mkampik)), Johannes Střelka-Petz.
 
 [![EU flag](./docs/images/EU_flag.svg)](https://commons.wikimedia.org/wiki/File:Flag_of_Europe.svg)
 

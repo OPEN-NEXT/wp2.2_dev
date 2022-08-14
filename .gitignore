@@ -7,6 +7,9 @@
 .deta/prog_info
 .deta/state
 
+# Fly.io files
+fly.toml
+
 # LibreOffice lock files
 .~lock*
 
