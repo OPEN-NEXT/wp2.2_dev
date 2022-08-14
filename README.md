@@ -7,6 +7,7 @@
 [![REUSE compliance status](https://api.reuse.software/badge/github.com/OPEN-NEXT/wp2.2_dev)](https://api.reuse.software/info/github.com/OPEN-NEXT/wp2.2_dev)
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](./CODE_OF_CONDUCT.md)
 [![GitHub license](https://img.shields.io/github/license/OPEN-NEXT/wp2.2_dev.svg?style=flat)](./LICENSE)
+[![DOI](https://zenodo.org/badge/258479982.svg)](https://zenodo.org/badge/latestdoi/258479982)
 
 ***Demonstrator** data-mining backend for an open source development status dashboard*
 
