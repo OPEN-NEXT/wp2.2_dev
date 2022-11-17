@@ -1,6 +1,6 @@
 # OSD status dashboard _(wp2.2_dev)_
 
-[![Demo backend API](https://img.shields.io/badge/Demo-CLICK%20HERE-red.svg?style=flat)](https://wp22dev.herokuapp.com/)
+[![Demo backend API](https://img.shields.io/badge/Demo-CLICK%20HERE-red.svg?style=flat)](https://wp22dev.fly.dev/)
 [![Python version](https://img.shields.io/badge/Python-3.10-blue.svg?style=flat&logo=Python&logoColor=white)](https://docs.python.org/3.8/)
 ![CodeQL](https://github.com/OPEN-NEXT/wp2.2_dev/workflows/CodeQL/badge.svg)
 [![standard-readme compliant](https://img.shields.io/badge/readme%20style-standard-brightgreen.svg?style=flat)](https://github.com/RichardLitt/standard-readme)
@@ -81,7 +81,7 @@ A [GitHub personal access token](https://docs.github.com/en/github/authenticatin
 
 ### Running from source
 
-The code can be run from source and has been tested on updated versions of GNU/Linux server operating systems including [Red Hat Enterprise Linux](https://redhat.com/en/technologies/linux-platforms/enterprise-linux) 8.5. While effort has been made to keep the Python scripts platform-agnostic, they have not been tested under other operating systems such as [BSD](https://en.wikipedia.org/wiki/Berkeley_Software_Distribution)-derivatives, [Apple macOS](https://www.apple.com/macos/) or [Microsoft Windows](https://www.microsoft.com/windows/) as they - especially the latter two- are rarely used for hosting code such as this.
+The code can be run from source and has been tested on updated versions of GNU/Linux server operating systems including [Red Hat Enterprise Linux](https://redhat.com/en/technologies/linux-platforms/enterprise-linux) 8.7. While effort has been made to keep the Python scripts platform-agnostic, they have not been tested under other operating systems such as [BSD](https://en.wikipedia.org/wiki/Berkeley_Software_Distribution)-derivatives, [Apple macOS](https://www.apple.com/macos/) or [Microsoft Windows](https://www.microsoft.com/windows/) as they - especially the latter two - are rarely used for hosting code such as this.
 
 On your server, with the tools [`git`](https://git-scm.com/) and [`pip`](https://pip.pypa.io/) installed, run the following commands in a terminal session to retrieve the latest version of this repository and prepare it for development and running locally (usually for testing): 
 
@@ -154,14 +154,6 @@ podman push wp22dev registry.heroku.com/[your app name]/web
 heroku container:release web --app=[your app name]
 ```
 
-A demo of this is hosted on Heroku with this API endpoint: 
-
-```
-https://wp22dev.herokuapp.com/data
-```
-
-This demo instance will go into a sleep state after a period of inactivity (approximately 30 minutes at time of writing). If your API calls to this endpoint is taking more than a few seconds, it might be the demo waking from that state.
-
 #### Fly.io example
 
 Similar to Heroku, the container image created above can be deployed to an app on [Fly.io](https://fly.io/). Assuming a Fly.io account has already been created: 
@@ -203,6 +195,14 @@ flyctl secrets set GITHUB_TOKEN=[token]
 ```
 
 Where `token` is the 40 character alphanumeric string of your GitHub API personal access token. It is in the form of "ghp_2D5TYFikFsQ4U9KPfzHyvigMycePCPqkPgWc".
+
+A demo of this is hosted on Fly.io with this API endpoint: 
+
+```
+https://wp22dev.fly.dev/data
+```
+
+This demo instance will go into a sleep state after a period of inactivity (approximately 30 minutes at time of writing). If your API calls to this endpoint is taking more than a few seconds, it might be the demo waking from that state.
 
 ## Usage
 
